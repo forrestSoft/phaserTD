@@ -53,7 +53,6 @@ export default class extends Phaser.State {
   move_player () {
     let target_position;
     target_position = new Phaser.Point(this.game.input.activePointer.x, this.game.input.activePointer.y);
-    
     this.prefabs.player.move_to(target_position);
   }
 
@@ -105,7 +104,7 @@ export default class extends Phaser.State {
     
     
 
-    // return
+    return
     const bannerText = 'Phaser + ES6 + Webpack'
     let banner = this.add.text(this.world.centerX, this.game.height - 80, bannerText)
     banner.font = 'Bangers'
@@ -125,9 +124,9 @@ export default class extends Phaser.State {
     this.game.add.existing(this.mushroom)
   }
 
-  render () {
-    if (__DEV__) {
-      this.game.debug.spriteInfo(this.mushroom, 32, 32)
-    }
-  }
+  // render () {
+  //   if (__DEV__) {
+  //     // this.game.debug.spriteInfo(this.mushroom, 32, 32)
+  //   }
+  // }
 }

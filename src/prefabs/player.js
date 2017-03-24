@@ -4,30 +4,31 @@ export default class extends Prefab {
     constructor (game_state, name, position, properties) {
         super(game_state, name, position, properties);
         
-        //this.anchor.setTo(0.5);
-        //this.scale.setTo(0.666, 0.5);
+        this.anchor.setTo(0.5);
+        this.scale.setTo(0.666, 0.5);
         
         this.walking_speed = +properties.walking_speed;
 
         this.game_state.game.physics.arcade.enable(this);
         // change the size and position of the collision box
-        this.body.setSize(12, 12, 0, 4);
+        // this.body.setSize(12, 12, 0, 4);
         this.body.collideWorldBounds = true;
         
         // set anchor point to be the center of the collision box
-        this.anchor.setTo(0.5, 0.75);
+        this.anchor.setTo(0.5, 0.5);
         
         this.path = [];
         this.path_step = -1;
     }
 
     update () {
+        // console.log(this.path, this.path_step)
         let next_position, velocity;
         this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
         
         if (this.path.length > 0) {
             next_position = this.path[this.path_step];
-
+            
             if (!this.reached_target_position(next_position)) {
                 velocity = new Phaser.Point(next_position.x - this.position.x,
                                        next_position.y - this.position.y);
@@ -38,8 +39,10 @@ export default class extends Prefab {
                 this.position.x = next_position.x;
                 this.position.y = next_position.y;
                 if (this.path_step < this.path.length - 1) {
+                    console.log('moving through path', this.path_step)
                     this.path_step += 1;
                 } else {
+                    console.log('path ended', this.path_step)
                     this.path = [];
                     this.path_step = -1;
                     this.body.velocity.x = 0;
