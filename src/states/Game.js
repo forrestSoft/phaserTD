@@ -33,6 +33,10 @@ export default class extends Phaser.State {
     // initialize pathfinding
     tile_dimensions = new Phaser.Point(this.map.tileWidth, this.map.tileHeight);
     this.pathfinding = this.game.plugins.add(Pathfinding, this.map.layers[1].data, [-1], tile_dimensions);
+
+    this.signals = {
+      playerMove: new Phaser.Signal()
+    }
   }
 
   create_object (object) {
@@ -53,11 +57,10 @@ export default class extends Phaser.State {
     var y = this.layers['background'].getTileY(game.input.activePointer.worldY);
 
     var tile = this.map.getTile(x, y, 0);
-    console.log(tile)
 
     target_position = new Phaser.Point(this.game.input.activePointer.x, this.game.input.activePointer.y);
-    // console.log('target_positition',target_position, this.map.getTile(target_position.x,target_position.y,0))
-    this.prefabs.player.move_to(target_position);
+    // this.prefabs.player.move_to(target_position);
+    this.signals.playerMove.dispatch(target_position)
   }
 
   render () {
@@ -107,7 +110,6 @@ export default class extends Phaser.State {
     
     // add user input to move player
     this.game.input.onDown.add(this.move_player, this);
-    console.log(this.map.getTile(1,1,0))
 
     //////////////////
     this.marker = game.add.graphics();
@@ -125,12 +127,11 @@ export default class extends Phaser.State {
   }
 
   getTileProperties() {
-    console.log('click', this.layers)
     var x = this.layers.background.getTileX(this.game.input.activePointer.worldX);
     var y = this.layers.background.getTileY(this.game.input.activePointer.worldY);
 
     var tile = this.map.getTile(x, y, this.layers.background);
-
+    console.log(tile)
     tile.properties.wibble = true;
 
   }

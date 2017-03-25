@@ -19,6 +19,8 @@ export default class extends Prefab {
         
         this.path = [];
         this.path_step = -1;
+        
+        this.game_state.signals.playerMove.add(this.move_to, this);
     }
 
     update () {
