@@ -39,10 +39,10 @@ export default class extends Prefab {
                 this.position.x = next_position.x;
                 this.position.y = next_position.y;
                 if (this.path_step < this.path.length - 1) {
-                    console.log('moving through path', this.path_step)
+                    // console.log('moving through path', this.path_step)
                     this.path_step += 1;
                 } else {
-                    console.log('path ended', this.path_step)
+                    // console.log('path ended', this.path_step)
                     this.path = [];
                     this.path_step = -1;
                     this.body.velocity.x = 0;

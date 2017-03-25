@@ -10,10 +10,6 @@ export default class extends Phaser.State {
     centerGameObjects([this.loaderBg, this.loaderBar])
 
     this.load.setPreloadSprite(this.loaderBar,0)
-    //
-    // load your assets
-    //
-    // this.load.onFileComplete.add(() => {console.log(this);})
     this.load.image('mushroom', 'assets/images/mushroom2.png')
 
     let assets, asset_loader, asset_key, asset;

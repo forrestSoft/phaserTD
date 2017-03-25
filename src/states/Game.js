@@ -12,7 +12,7 @@ export default class extends Phaser.State {
         "player": Player
     };
 
-    var tileset_index, tile_dimensions;
+    let tileset_index, tile_dimensions, map;
     this.level_data = this.cache.getJSON('level1');
     
     this.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
@@ -24,19 +24,16 @@ export default class extends Phaser.State {
     this.game.physics.arcade.gravity.y = 0;
 
     // create map and set tileset
-    this.map = this.game.add.tilemap(this.level_data.map.key);
-    tileset_index = 0;
-    this.map.tilesets.forEach(function (tileset) {
-        this.map.addTilesetImage(tileset.name, this.level_data.map.tilesets[tileset_index]);
-        tileset_index += 1;
+    map = this.level_data.map
+    this.map = this.game.add.tilemap(map.assetKey);
+    this.map.tilesets.forEach(function (tileset, i) {
+        this.map.addTilesetImage(tileset.name, map.tilesets[i]);
     }, this);
 
     // initialize pathfinding
     tile_dimensions = new Phaser.Point(this.map.tileWidth, this.map.tileHeight);
     this.pathfinding = this.game.plugins.add(Pathfinding, this.map.layers[1].data, [-1], tile_dimensions);
   }
-
-  preload () {}
 
   create_object (object) {
     let object_y, position, prefab;
@@ -52,12 +49,20 @@ export default class extends Phaser.State {
 
   move_player () {
     let target_position;
+    var x = this.layers['background'].getTileX(game.input.activePointer.worldX);
+    var y = this.layers['background'].getTileY(game.input.activePointer.worldY);
+
+    var tile = this.map.getTile(x, y, 0);
+    console.log(tile)
+
     target_position = new Phaser.Point(this.game.input.activePointer.x, this.game.input.activePointer.y);
+    // console.log('target_positition',target_position, this.map.getTile(target_position.x,target_position.y,0))
     this.prefabs.player.move_to(target_position);
   }
 
   render () {
       this.game.debug.body(this.prefabs.player);
+      this.game.debug.body(this.marker);
   }
 
   create () {
@@ -66,6 +71,7 @@ export default class extends Phaser.State {
     // create map layers
     this.layers = {};
     this.map.layers.forEach(function (layer) {
+      console.log(layer.name)
         this.layers[layer.name] = this.map.createLayer(layer.name);
         if (layer.properties.collision) { // collision layer
             collision_tiles = [];
@@ -101,32 +107,31 @@ export default class extends Phaser.State {
     
     // add user input to move player
     this.game.input.onDown.add(this.move_player, this);
-    
-    
+    console.log(this.map.getTile(1,1,0))
 
-    return
-    const bannerText = 'Phaser + ES6 + Webpack'
-    let banner = this.add.text(this.world.centerX, this.game.height - 80, bannerText)
-    banner.font = 'Bangers'
-    banner.padding.set(10, 16)
-    banner.fontSize = 40
-    banner.fill = '#77BFA3'
-    banner.smoothed = false
-    banner.anchor.setTo(0.5)
+    //////////////////
+    this.marker = game.add.graphics();
+    this.marker.lineStyle(2, 0xffffff, 1);
+    this.marker.drawRect(0, 0, 16, 16);
 
-    this.mushroom = new Mushroom({
-      game: this,
-      x: this.world.centerX,
-      y: this.world.centerY,
-      asset: 'mushroom'
-    })
+    this.game.input.addMoveCallback(this.updateMarker, this);
 
-    this.game.add.existing(this.mushroom)
+    this.game.input.onDown.add(this.getTileProperties, this);
   }
 
-  // render () {
-  //   if (__DEV__) {
-  //     // this.game.debug.spriteInfo(this.mushroom, 32, 32)
-  //   }
-  // }
+  updateMarker() {
+    this.marker.x = this.layers.background.getTileX(this.game.input.activePointer.worldX) * 16;
+    this.marker.y = this.layers.background.getTileY(this.game.input.activePointer.worldY) * 16;
+  }
+
+  getTileProperties() {
+    console.log('click', this.layers)
+    var x = this.layers.background.getTileX(this.game.input.activePointer.worldX);
+    var y = this.layers.background.getTileY(this.game.input.activePointer.worldY);
+
+    var tile = this.map.getTile(x, y, this.layers.background);
+
+    tile.properties.wibble = true;
+
+  }
 }

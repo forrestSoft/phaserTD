@@ -9,7 +9,7 @@
         "players"        
     ],
     "map": {
-        "key": "level_tilemap",
+        "assetKey": "level_tilemap",
         "tilesets": ["map_tileset", "male_fighter_spritesheet"]
     }
 }
