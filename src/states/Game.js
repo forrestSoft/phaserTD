@@ -10,14 +10,17 @@ import Player from '../prefabs/player'
 
 export default class extends base_level {
   init () {
+    this.blah = true
     this.prefab_classes = {
         "player": Player
     };
     this.level_data = this.cache.getJSON('level1');
+    this.globalOffset = {
+      x: 0,
+      y: 16
+    }
 
     let tileset_index, tile_dimensions, map;
-    // this.level_data = this.cache.getJSON('level1');
-    
     this.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
     // this.scale.pageAlignHorizontally = true;
     // this.scale.pageAlignVertically = true;
@@ -32,6 +35,7 @@ export default class extends base_level {
     this.map.tilesets.forEach(function (tileset, i) {
         this.map.addTilesetImage(tileset.name, map.tilesets[i]);
     }, this);
+
     this.brushIDs = [8,9,25]
     this.brushID = 0
     this.game.input.onDown.add(this.setTile, this);
@@ -39,11 +43,89 @@ export default class extends base_level {
     // initialize pathfinding
     tile_dimensions = new Phaser.Point(this.map.tileWidth, this.map.tileHeight);
     this.pathfinding = this.game.plugins.add(Pathfinding, this.map.layers[1].data, [-1, 25], tile_dimensions);
-    // debugger
 
     this.signals = {
       playerMove: new Phaser.Signal()
     }
+  }
+
+  create () {
+    let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
+
+    this.layers = {}
+    this.groups = {}
+    this.groups.board = this.game.add.group()
+    this.map.layers.forEach(function (layer) {
+      layerObj = this.map.createLayer(layer.name);
+      this.layers[layer.name] = layerObj
+      this.groups.board.addChild(layerObj)
+
+      this.layers[layer.name].fixedToCamera = false;
+          // this.layers[layer.name].scrollFactorX = 0;
+          // this.layers[layer.name].scrollFactorY = 0;
+          return
+      if (layer.properties.collision) { // collision layer
+          collision_tiles = [];
+          layer.data.forEach(function (data_row) { // find tiles used in the layer
+
+              data_row.forEach(function (tile) {
+                  // check if it's a valid tile index and isn't already in the list
+                  if (tile.index > 0 && collision_tiles.indexOf(tile.index) === -1) {
+                      collision_tiles.push(tile.index);
+                  }
+              }, this);
+          }, this);
+          
+          window.l = this.layers
+      } 
+    }, this);
+
+    // resize the world to be the size of the current layer
+    this.baseLayer = this.layers[this.map.layer.name]
+    // this.baseLayer.resizeWorld();
+    
+    
+    // create groups
+    this.level_data.groups.forEach(function (group_name) {
+        this.groups[group_name] = this.game.add.group();
+    }, this);
+    
+    this.prefabs = {};
+    let data = this.map.objects.objects[0];
+    data.y = this.globalOffset.y
+    
+    this.groups.board.addChild(this.create_object(data))
+    
+
+    // // add user input to move player
+    this.game.input.onDown.add(this.move_player, this);
+
+    // this.createTileSelector()
+    this.buildAndBind_cursor()
+    window.g = this.game
+    window.t = this
+    
+    this.groups.board.y = this.globalOffset.y
+
+    this.mask = game.add.graphics(0, 0);
+    this.mask.beginFill(0xffffff);
+    game.stage.updateTransform()
+    let rect
+    rect = this.layers.background.getBounds()
+    this.mask.drawRect(rect.x, rect.y, 320,320);
+    this.groups.board.mask = this.mask
+  }
+
+  createTileSelector() {
+    //  Our tile selection window
+    let tileSelector = this.game.add.group();
+     this.tileSelector = tileSelector
+    let tileSelectorBackground = this.game.make.graphics();
+    tileSelectorBackground.beginFill(0x000000, 0.5);
+    tileSelectorBackground.drawRect(288, 0, 32, 16);
+    tileSelectorBackground.endFill();
+
+    tileSelector.add(tileSelectorBackground);
   }
 
   nextBrushID (){
@@ -59,67 +141,15 @@ export default class extends base_level {
   setTile (sprite, pointer){
     let {x,y} = this.game.input.activePointer
 
-    this.map.putTile(this.nextBrushID(), this.baseLayer.getTileX(x),this.baseLayer.getTileY(y), 'collision');
+    this.map.putTile(this.nextBrushID(), this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
 
-    this.prefabs.player.position.x = 0;
-    this.prefabs.player.position.y = 0;
+    this.prefabs.player.position.x = this.globalOffset.x;
+    this.prefabs.player.position.y = this.globalOffset.y / 2;
 
     this.pathfinding.setGrid(this.map.layers[1].data)
   }
 
-  create () {
-    let group_name, object_layer, collision_tiles, tile_dimensions;
-    
-    this.layers = {}
-    this.map.layers.forEach(function (layer) {
-        this.layers[layer.name] = this.map.createLayer(layer.name);
-        if (layer.properties.collision) { // collision layer
-            collision_tiles = [];
-            layer.data.forEach(function (data_row) { // find tiles used in the layer
-
-                data_row.forEach(function (tile) {
-                    // check if it's a valid tile index and isn't already in the list
-                    if (tile.index > 0 && collision_tiles.indexOf(tile.index) === -1) {
-                        collision_tiles.push(tile.index);
-                    }
-                }, this);
-            }, this);
-            this.map.setCollision(collision_tiles, true, layer.name);
-        }
-    }, this);
-
-    // resize the world to be the size of the current layer
-    this.baseLayer = this.layers[this.map.layer.name]
-    this.baseLayer.resizeWorld();
-    
-    this.collision_tiles = []
-    
-    // create groups
-    this.groups = {};
-    this.level_data.groups.forEach(function (group_name) {
-        this.groups[group_name] = this.game.add.group();
-    }, this);
-    
-    this.prefabs = {};
-    for (object_layer in this.map.objects) {
-        if (this.map.objects.hasOwnProperty(object_layer)) {
-            // create layer objects
-            this.map.objects[object_layer].forEach(this.create_object, this);
-        }
-    }
-
-    // // add user input to move player
-    this.game.input.onDown.add(this.move_player, this);
-
-    this.buildAndBind_cursor()
-  }
-
   move_player () {
     this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
-  }
-
-  render () {
-      // this.game.debug.body(this.prefabs.player);
-      // this.game.debug.body(this.marker);
   }
 }

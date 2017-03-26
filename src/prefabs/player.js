@@ -13,7 +13,7 @@ export default class extends Prefab {
         // change the size and position of the collision box
         // this.body.setSize(12, 12, 0, 4);
         this.body.collideWorldBounds = true;
-        
+            
         // set anchor point to be the center of the collision box
         this.anchor.setTo(0.5, 0.5);
         
@@ -50,8 +50,8 @@ export default class extends Prefab {
                     // loop
                     this.body.velocity.x = 0;
                     this.body.velocity.y = 0;
-                    this.body.x = 0;
-                    this.body.y = 0;
+                    this.body.x = this.game_state.globalOffset.x;
+                    this.body.y = this.game_state.globalOffset.y;
                     this.move_through_path(tempPath)
                 }
             }
@@ -69,6 +69,7 @@ export default class extends Prefab {
     }
 
     move_through_path (path) {
+        console.log(path)
         if (path !== null) {
             this.path = path;
             this.path_step = 0;

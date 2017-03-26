@@ -5,16 +5,12 @@ export default class extends Phaser.Plugin {
     constructor (game, parent){
         super(game, parent);
         this.easy_star = new Easystar.js();
+        // this.easy_star.enableDiagonals()
     }
 
     init (world_grid, acceptable_tiles, tile_dimensions){
-        // this.easy_star = new Easystar.js()
-        
-        
         this.grid_dimensions = {row: world_grid.length, column: world_grid[0].length};
         
-        
-
         this.easy_star.setGrid(this.getGrid(world_grid));
         this.easy_star.setAcceptableTiles(acceptable_tiles);    
 

@@ -12,13 +12,11 @@ export default class extends Phaser.State {
 	    this.marker.drawRect(0, 0, 16,16);
 
 	    this.game.input.addMoveCallback(this.updateMarker, this);
-
-	    // this.game.input.onDown.add(this.getTileProperties, this);
 	}
 
 	updateMarker() {
 		this.marker.x = this.baseLayer.getTileX(this.game.input.activePointer.worldX) * this.map.tileWidth;
-		this.marker.y = this.baseLayer.getTileY(this.game.input.activePointer.worldY) * this.map.tileHeight;
+		this.marker.y = this.baseLayer.getTileY(this.game.input.activePointer.worldY) * this.map.tileHeight ;
 	}
 
 	getTileProperties() {
@@ -62,5 +60,6 @@ export default class extends Phaser.State {
 		  prefab = new this.prefab_classes[object.type](this, object.name, position, object.properties);
 		}
 		this.prefabs[object.name] = prefab;
+		return prefab
 	}
 }
