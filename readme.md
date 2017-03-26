@@ -1,4 +1,4 @@
-= Jeff TD built with Phaser
+## Jeff TD built with Phaser
 
 ```
  git clone
