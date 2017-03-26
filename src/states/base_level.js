@@ -17,8 +17,8 @@ export default class extends Phaser.State {
 	}
 
 	updateMarker() {
-		this.marker.x = this.layers.layer1.getTileX(this.game.input.activePointer.worldX) * 16;
-		this.marker.y = this.layers.layer1.getTileY(this.game.input.activePointer.worldY) * 16;
+		this.marker.x = this.baseLayer.getTileX(this.game.input.activePointer.worldX) * this.map.tileWidth;
+		this.marker.y = this.baseLayer.getTileY(this.game.input.activePointer.worldY) * this.map.tileHeight;
 	}
 
 	getTileProperties() {
@@ -58,6 +58,7 @@ export default class extends Phaser.State {
 		position = {"x": object.x + (this.map.tileHeight / 2), "y": object_y};
 		// create object according to its type
 		if (this.prefab_classes.hasOwnProperty(object.type)) {
+			console.log(1)
 		  prefab = new this.prefab_classes[object.type](this, object.name, position, object.properties);
 		}
 		this.prefabs[object.name] = prefab;

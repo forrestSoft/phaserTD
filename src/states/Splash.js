@@ -24,6 +24,7 @@ export default class extends Phaser.State {
                 this.load.image(asset_key, asset.source);
                 break;
             case "spritesheet":
+                console.log(asset_key)
                 this.load.spritesheet(asset_key, asset.source, asset.frame_width, asset.frame_height, asset.frames, asset.margin, asset.spacing);
                 break;
             case "tilemap":

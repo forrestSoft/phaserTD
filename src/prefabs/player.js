@@ -25,7 +25,7 @@ export default class extends Prefab {
 
     update () {
         // console.log(this.path, this.path_step)
-        let next_position, velocity;
+        let next_position, velocity, tempPath;
         this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
         
         if (this.path.length > 0) {
@@ -41,14 +41,18 @@ export default class extends Prefab {
                 this.position.x = next_position.x;
                 this.position.y = next_position.y;
                 if (this.path_step < this.path.length - 1) {
-                    // console.log('moving through path', this.path_step)
                     this.path_step += 1;
                 } else {
-                    // console.log('path ended', this.path_step)
+                    tempPath = this.path
                     this.path = [];
                     this.path_step = -1;
+
+                    // loop
                     this.body.velocity.x = 0;
                     this.body.velocity.y = 0;
+                    this.body.x = 0;
+                    this.body.y = 0;
+                    this.move_through_path(tempPath)
                 }
             }
         }

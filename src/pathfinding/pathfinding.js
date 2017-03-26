@@ -10,28 +10,43 @@ export default class extends Phaser.Plugin {
     init (world_grid, acceptable_tiles, tile_dimensions){
         // this.easy_star = new Easystar.js()
         
-        let grid_row, grid_column, grid_indices;
+        
         this.grid_dimensions = {row: world_grid.length, column: world_grid[0].length};
         
-        grid_indices = [];
-        for (grid_row = 0; grid_row < world_grid.length; grid_row += 1) {
-            grid_indices[grid_row] = [];
-            for (grid_column = 0; grid_column < world_grid[grid_row].length; grid_column += 1) {
-                grid_indices[grid_row][grid_column] = world_grid[grid_row][grid_column].index;
-            }
-        }
+        
 
-        this.easy_star.setGrid(grid_indices);
+        this.easy_star.setGrid(this.getGrid(world_grid));
         this.easy_star.setAcceptableTiles(acceptable_tiles);    
 
         this.tile_dimensions = tile_dimensions;
     }
 
+    getGrid (world_grid) {
+        let grid_row, grid_column, grid_indices;
+        grid_indices = [];
+        for (grid_row = 0; grid_row < world_grid.length; grid_row += 1) {
+            grid_indices[grid_row] = [];
+            for (grid_column = 0; grid_column < world_grid[grid_row].length; grid_column += 1) {
+                if(world_grid[grid_row][grid_column].index != -1){
+                    console.log(world_grid[grid_row][grid_column].index)
+                }
+                grid_indices[grid_row][grid_column] = world_grid[grid_row][grid_column].index;
+            }
+        }
+        return grid_indices
+    }
+
+    setGrid(world_grid){
+        this.easy_star.setGrid(this.getGrid(world_grid));
+    }
+
     find_path (origin, target, callback, context) {
         let origin_coord, target_coord;
 
-        origin_coord = this.get_coord_from_point(origin);
-        target_coord = this.get_coord_from_point(target);
+        // origin_coord = this.get_coord_from_point(origin);
+        // target_coord = this.get_coord_from_point(target);
+        origin_coord = {row: 0, column: 0}
+        target_coord = {row: 3, column: 19}
         
         if (!this.outside_grid(origin_coord) && !this.outside_grid(target_coord)) {
             this.easy_star.findPath(origin_coord.column, origin_coord.row, target_coord.column, target_coord.row, this.call_callback_function.bind(this, callback, context));
@@ -40,6 +55,10 @@ export default class extends Phaser.Plugin {
         } else {
             return false;
         }
+    }
+
+    avoidAdditionalPoint (x ,y){
+        this.easy_star.avoidAdditionalPoint(x,y)
     }
 
     call_callback_function (callback, context, path) {
