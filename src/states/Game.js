@@ -36,9 +36,8 @@ export default class extends base_level {
         this.map.addTilesetImage(tileset.name, map.tilesets[i]);
     }, this);
 
-    this.brushIDs = [8,9,25]
-    this.brushID = 0
-    this.game.input.onDown.add(this.setTile, this);
+    this.buildBrush();
+    
 
     // initialize pathfinding
     tile_dimensions = new Phaser.Point(this.map.tileWidth, this.map.tileHeight);
@@ -53,8 +52,10 @@ export default class extends base_level {
     let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
 
     this.layers = {}
-    this.groups = {}
-    this.groups.board = this.game.add.group()
+    this.groups = {
+      board: this.game.add.group()
+    }
+
     this.map.layers.forEach(function (layer) {
       layerObj = this.map.createLayer(layer.name);
       this.layers[layer.name] = layerObj
@@ -64,25 +65,11 @@ export default class extends base_level {
           // this.layers[layer.name].scrollFactorX = 0;
           // this.layers[layer.name].scrollFactorY = 0;
           return
-      if (layer.properties.collision) { // collision layer
-          collision_tiles = [];
-          layer.data.forEach(function (data_row) { // find tiles used in the layer
-
-              data_row.forEach(function (tile) {
-                  // check if it's a valid tile index and isn't already in the list
-                  if (tile.index > 0 && collision_tiles.indexOf(tile.index) === -1) {
-                      collision_tiles.push(tile.index);
-                  }
-              }, this);
-          }, this);
           
           window.l = this.layers
-      } 
     }, this);
 
-    // resize the world to be the size of the current layer
     this.baseLayer = this.layers[this.map.layer.name]
-    // this.baseLayer.resizeWorld();
     
     
     // create groups
@@ -102,15 +89,23 @@ export default class extends base_level {
 
     // this.createTileSelector()
     this.buildAndBind_cursor()
+    this.maskBoard()
+
+
     window.g = this.game
     window.t = this
     
     this.groups.board.y = this.globalOffset.y
 
+  }
+
+  maskBoard (){
+    let rect
     this.mask = game.add.graphics(0, 0);
     this.mask.beginFill(0xffffff);
-    game.stage.updateTransform()
-    let rect
+
+    game.stage.updateTransform();
+    
     rect = this.layers.background.getBounds()
     this.mask.drawRect(rect.x, rect.y, 320,320);
     this.groups.board.mask = this.mask
@@ -128,6 +123,11 @@ export default class extends base_level {
     tileSelector.add(tileSelectorBackground);
   }
 
+  buildBrush (){
+    this.brushIDs = [8,9,25]
+    this.brushID = 0
+    this.game.input.onDown.add(this.setTile, this);
+  }
   nextBrushID (){
     if(this.brushID < this.brushIDs.length - 1){
       this.brushID ++
@@ -143,8 +143,8 @@ export default class extends base_level {
 
     this.map.putTile(this.nextBrushID(), this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
 
-    this.prefabs.player.position.x = this.globalOffset.x;
-    this.prefabs.player.position.y = this.globalOffset.y / 2;
+    this.prefabs.player.x = this.globalOffset.x;
+    this.prefabs.player.y = this.globalOffset.y / 2;
 
     this.pathfinding.setGrid(this.map.layers[1].data)
   }

@@ -29,9 +29,11 @@ export default class extends Phaser.State {
 	}
 
 	getPointFrom(where) {
+		let p;
 		switch (where){
 			case 'mouse':
-				return new Phaser.Point(this.game.input.activePointer.x, this.game.input.activePointer.y)
+				p = new Phaser.Point(this.game.input.activePointer.x, this.game.input.activePointer.y)
+				Phaser.Input.prototype.getLocalPosition(this.layers.background, p)
 				break
 		}
 	}
