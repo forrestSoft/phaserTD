@@ -14,7 +14,9 @@ export default class extends base_level {
     this.prefab_classes = {
         "player": Player
     };
+
     this.level_data = this.cache.getJSON('level1');
+
     this.globalOffset = {
       x: 0,
       y: 16
@@ -30,8 +32,9 @@ export default class extends base_level {
     this.game.physics.arcade.gravity.y = 0;
 
     // create map and set tileset
+    // debugger
     map = this.level_data.map
-    this.map = this.game.add.tilemap(map.assetKey);
+    this.map = this.game.add.tilemap('level1');
     this.map.tilesets.forEach(function (tileset, i) {
         this.map.addTilesetImage(tileset.name, map.tilesets[i]);
     }, this);
@@ -85,7 +88,7 @@ export default class extends base_level {
     
 
     // // add user input to move player
-    this.game.input.onDown.add(this.move_player, this);
+    this.game.input.onDown.add(this.onClick, this);
 
     // this.createTileSelector()
     this.buildAndBind_cursor()
@@ -96,7 +99,6 @@ export default class extends base_level {
     window.t = this
     
     this.groups.board.y = this.globalOffset.y
-
   }
 
   maskBoard (){
@@ -105,7 +107,7 @@ export default class extends base_level {
     this.mask.beginFill(0xffffff);
 
     game.stage.updateTransform();
-    
+
     rect = this.layers.background.getBounds()
     this.mask.drawRect(rect.x, rect.y, 320,320);
     this.groups.board.mask = this.mask
@@ -114,7 +116,7 @@ export default class extends base_level {
   createTileSelector() {
     //  Our tile selection window
     let tileSelector = this.game.add.group();
-     this.tileSelector = tileSelector
+    this.tileSelector = tileSelector
     let tileSelectorBackground = this.game.make.graphics();
     tileSelectorBackground.beginFill(0x000000, 0.5);
     tileSelectorBackground.drawRect(288, 0, 32, 16);
@@ -126,7 +128,7 @@ export default class extends base_level {
   buildBrush (){
     this.brushIDs = [8,9,25]
     this.brushID = 0
-    this.game.input.onDown.add(this.setTile, this);
+    // this.game.input.onDown.add(this.setTile, this);
   }
   nextBrushID (){
     if(this.brushID < this.brushIDs.length - 1){
@@ -138,18 +140,24 @@ export default class extends base_level {
     return this.brushIDs[this.brushID]
   }
 
+  onClick (point, event){
+    this.setTile.apply(this, arguments)
+    this.move_player.apply(this,arguments)
+  }
   setTile (sprite, pointer){
     let {x,y} = this.game.input.activePointer
 
     this.map.putTile(this.nextBrushID(), this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
 
-    this.prefabs.player.x = this.globalOffset.x;
-    this.prefabs.player.y = this.globalOffset.y / 2;
-
+    // this.prefabs.player.x = this.globalOffset.x;
+    // this.prefabs.player.y = this.globalOffset.y / 2;
+    // console.log(x,y,this.map.layers[1].data)
     this.pathfinding.setGrid(this.map.layers[1].data)
+    // console.log(arguments)
   }
 
   move_player () {
+    console.log('mp', this.getPointFrom('mouse'))
     this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
   }
 }

@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { centerGameObjects } from '../utils'
+import Level1 from '../level1config'
 
 export default class extends Phaser.State {
   init () {}
@@ -18,21 +19,22 @@ export default class extends Phaser.State {
     for (asset_key in assets) { // load assets according to asset key
         if (assets.hasOwnProperty(asset_key)) {
             asset = assets[asset_key];
-            console.log(asset);
             switch (asset.type) {
             case "image":
                 this.load.image(asset_key, asset.source);
                 break;
             case "spritesheet":
-                console.log(asset_key)
                 this.load.spritesheet(asset_key, asset.source, asset.frame_width, asset.frame_height, asset.frames, asset.margin, asset.spacing);
                 break;
             case "tilemap":
+            console.log(assets)
                 this.load.tilemap(asset_key, asset.source, null, Phaser.Tilemap.TILED_JSON);
                 break;
             }
         }
     }
+
+    this.load.tilemap('level1', null, Level1, Phaser.Tilemap.TILED_JSON)
   }
 
   create () { 

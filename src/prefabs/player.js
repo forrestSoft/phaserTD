@@ -43,7 +43,7 @@ export default class extends Prefab {
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
-                    tempPath = this.path
+                    tempPath = this.path.slice()
                     this.path = [];
                     this.path_step = -1;
 
@@ -52,6 +52,7 @@ export default class extends Prefab {
                     this.body.velocity.y = 0;
                     this.body.x = this.game_state.globalOffset.x;
                     this.body.y = this.game_state.globalOffset.y;
+                    console.log('t',tempPath)
                     this.move_through_path(tempPath)
                 }
             }
@@ -65,11 +66,17 @@ export default class extends Prefab {
     }
 
     move_to (target_position) {
+        // console.group('move to')
+        // console.log('player position',this.position)
+        // console.log('target position',target_position)
+        // // console.log(this.move_through_path)
+        // console.log( this)
+        // console.groupEnd()
         this.game_state.pathfinding.find_path(this.position, target_position, this.move_through_path, this);
     }
 
     move_through_path (path) {
-        console.log(path)
+        console.log('p',path)
         if (path !== null) {
             this.path = path;
             this.path_step = 0;
