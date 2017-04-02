@@ -51,7 +51,7 @@ data = {
 	                    {
 	                     "group":"players",
 	                     "texture":"male_fighter_spritesheet",
-	                     "walking_speed":"10"
+	                     "walking_speed":"30"
 	                    },
 	                 "type":"player",
 	                 "visible":true,

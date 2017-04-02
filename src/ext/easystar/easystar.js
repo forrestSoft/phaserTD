@@ -77,7 +77,7 @@ import Heap from './easystar_heap'
 	    **/
 	    this.setGrid = function (grid) {
 	        collisionGrid = grid;
-	        console.log('sg',grid)
+	        
 	        //Setup cost map
 	        for (var y = 0; y < collisionGrid.length; y++) {
 	            for (var x = 0; x < collisionGrid[0].length; x++) {
