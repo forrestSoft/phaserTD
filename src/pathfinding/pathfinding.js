@@ -12,10 +12,9 @@ export default class extends Phaser.Plugin {
     init (world_grid, acceptable_tiles, tile_dimensions, data){
         var data = data || {}
         this.data = {}
-        // console.log(this.data)
+        
         this.data.width = data.width || 10
         this.grid_dimensions = {row: world_grid.length, column: world_grid[0].length};
-        // debugger    
         this.easy_star.setGrid(this.getGrid(world_grid));
         this.easy_star.setAcceptableTiles(acceptable_tiles);    
 
@@ -28,9 +27,9 @@ export default class extends Phaser.Plugin {
         for (grid_row = 0; grid_row < world_grid.length; grid_row += 1) {
             grid_indices[grid_row] = [];
             for (grid_column = 0; grid_column < world_grid[grid_row].length; grid_column += 1) {
-                if(world_grid[grid_row][grid_column].index != -1){
+                // if(world_grid[grid_row][grid_column].index != -1){
                     // console.log(world_grid[grid_row][grid_column].index)
-                }
+                // }
                 grid_indices[grid_row][grid_column] = world_grid[grid_row][grid_column].index;
             }
         }
@@ -43,11 +42,13 @@ export default class extends Phaser.Plugin {
 
     find_path (origin, target, callback, context) {
         let origin_coord, target_coord;
+
         origin_coord = this.get_coord_from_point(origin);
-        target_coord = {row: 3, column: this.data.width - 1}
-        // console.log('fp', origin_coord, this.outside_grid(origin_coord)  ,this.outside_grid(target_coord))
-        // target_coord = this.get_coord_from_point(target);
         // origin_coord = {row: 0, column: 0}
+
+        target_coord = {row: 3, column: this.data.width - 1}
+        // target_coord = this.get_coord_from_point(target);
+        
         if (!this.outside_grid(origin_coord) && !this.outside_grid(target_coord)) {
             this.easy_star.findPath(origin_coord.column, origin_coord.row, target_coord.column, target_coord.row, this.call_callback_function.bind(this, callback, context));
             this.easy_star.calculate();
@@ -62,21 +63,22 @@ export default class extends Phaser.Plugin {
     }
 
     call_callback_function (callback, context, path) {
-        console.log(1)
-        let path_positions;
+        let path_positions, pt, p,x,y;
         path_positions = [];
         if (path !== null) {
-            path.forEach(function (path_coord) {
-                // console.log(this.get_point_from_coord({row: path_coord.y, column: path_coord.x}))
+            path.forEach(function (path_coord, i) {
                 path_positions.push(this.get_point_from_coord({row: path_coord.y, column: path_coord.x}));
             }, this);
+
+            //account for the very small draft that has happened while this was calculating
+            p = ({x, y} =  context.position)
+            pt = new Phaser.Point(p.x,p.y)
+            path_positions[0] = (pt);
         }
         callback.call(context, path_positions);
     }
 
     outside_grid (coord) {
-        // debugger
-        // console.log(coord, this.grid_dimensions, coord.column > this.grid_dimensions.column - 1)
         return coord.row < 0 || coord.row > this.grid_dimensions.row - 1 || coord.column < 0 || coord.column > this.grid_dimensions.column - 1;
     }
 

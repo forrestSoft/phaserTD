@@ -11,7 +11,7 @@ export default class extends Prefab {
 
         this.game_state.game.physics.arcade.enable(this);
         // change the size and position of the collision box
-        // this.body.setSize(12, 12, 0, 4);
+        this.body.setSize(12, 12, 0, 4);
         this.body.collideWorldBounds = true;
             
         // set anchor point to be the center of the collision box
@@ -43,17 +43,16 @@ export default class extends Prefab {
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
-                    tempPath = this.path.slice()
-                    this.path = [];
-                    this.path_step = -1;
+                    this.path_step = 0;
 
                     // loop
                     this.body.velocity.x = 0;
                     this.body.velocity.y = 0;
-                    this.body.x = this.game_state.globalOffset.x;
-                    this.body.y = this.game_state.globalOffset.y;
-                    console.log('t',tempPath)
-                    this.move_through_path(tempPath)
+                    // this.body.x = this.game_state.globalOffset.x;
+                    // this.body.y = this.game_state.globalOffset.y;
+                    this.x = 8;
+                    this.y = 8;
+                    this.move_to()
                 }
             }
         }
@@ -66,17 +65,18 @@ export default class extends Prefab {
     }
 
     move_to (target_position) {
-        // console.group('move to')
-        // console.log('player position',this.position)
-        // console.log('target position',target_position)
-        // // console.log(this.move_through_path)
-        // console.log( this)
-        // console.groupEnd()
+        console.log('player position',this.position)
+        this.calculateOffsetHack()
         this.game_state.pathfinding.find_path(this.position, target_position, this.move_through_path, this);
     }
 
+    calculateOffsetHack (){
+        let x,y
+        this.offsetPosition = ({x, y} =  this.position)
+    }
+
     move_through_path (path) {
-        console.log('p',path)
+        console.log('mtp', path)
         if (path !== null) {
             this.path = path;
             this.path_step = 0;

@@ -33,7 +33,6 @@ export default class extends Phaser.State {
 		switch (where){
 			case 'mouse':
 				p = new Phaser.Point(this.game.input.activePointer.x, this.game.input.activePointer.y)
-				console.log(p)
 				return Phaser.Input.prototype.getLocalPosition(this.layers.background, p)
 				break
 		}
@@ -59,7 +58,6 @@ export default class extends Phaser.State {
 		position = {"x": object.x + (this.map.tileHeight / 2), "y": object_y};
 		// create object according to its type
 		if (this.prefab_classes.hasOwnProperty(object.type)) {
-			// console.log(1)
 		  prefab = new this.prefab_classes[object.type](this, object.name, position, object.properties);
 		}
 		this.prefabs[object.name] = prefab;
