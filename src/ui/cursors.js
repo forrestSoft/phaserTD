@@ -47,7 +47,7 @@ export const Brush = Stampit()
 		instance.currentBrush = 0
 		instance.paints = paints
 
-		p.game.input.onDown.add(this.setTile, this);
+		game.inputMasks.board.events.onInputDown.add(this.setTile, this);
 
 	  })
 	.props({ // if nothing was passed this value will be used

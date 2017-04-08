@@ -7,6 +7,8 @@ import Pathfinding from '../pathfinding/pathfinding'
 
 import base_level from './base_level'
 
+import { buildBoundInputMask } from '../utils'
+
 import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
 import {Cursor, Brush} from '../ui/cursors'
@@ -81,21 +83,15 @@ export default class extends base_level {
     let data = this.map.objects.objects[0];
     data.y = this.globalOffset.y
     
+    this.groups.board.inputEnabled = true
     this.groups.board.addChild(this.create_object(data))
     
-
-    // // add user input to move player
-
-    // this.createTileSelector()
-
+    this.maskBoard()
     this.palette = Palette()
     this.cursor = Cursor({p:this})
     this.brush = Brush({p:this, paints: [9]})
-    // this.buildAndBind_cursor()
-    this.maskBoard()
 
-
-    this.baseLayer.events.onInputDown.add(this.onClick, this);
+    game.inputMasks.board.events.onInputDown.add(this.onClick, this);
     window.g = this.game
     window.t = this
     
@@ -103,32 +99,28 @@ export default class extends base_level {
   }
 
   maskBoard (){
-    let rect
-    this.mask = game.add.graphics(0, 0);
-    this.mask.beginFill(0xffffff);
-
-    game.stage.updateTransform();
-
-    rect = this.layers.background.getBounds()
-    this.mask.drawRect(rect.x, rect.y, 320,320);
-    this.groups.board.mask = this.mask
+    let rect = {
+      x: 0,
+      y:16,
+      height: 160,
+      width: 160,
+      objectToMask: this.groups.board,
+      name: 'board'
+    }
+    this.mask = buildBoundInputMask(rect)
   }
-
-  createTileSelector() {
-    //  Our tile selection window
-    
-  }
-
-  
 
   onClick (point, event){
     // this.setTile.apply(this, arguments)
     this.move_player.apply(this,arguments)
   }
   
-
   move_player () {
     // console.log('mp', this.getPointFrom('mouse'))
     this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
+  }
+
+  update () {
+    console.log(game.inputMasks.board.input.pointerOver(),game.inputMasks.palette.input.pointerDown())
   }
 }
