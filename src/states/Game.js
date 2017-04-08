@@ -10,6 +10,7 @@ import base_level from './base_level'
 import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
 import {Cursor, Brush} from '../ui/cursors'
+import {Palette} from '../ui/palette'
 
 export default class extends base_level {
   init () {
@@ -87,13 +88,14 @@ export default class extends base_level {
 
     // this.createTileSelector()
 
+    this.palette = Palette()
     this.cursor = Cursor({p:this})
     this.brush = Brush({p:this, paints: [9]})
     // this.buildAndBind_cursor()
     this.maskBoard()
 
 
-    this.game.input.onDown.add(this.onClick, this);
+    this.baseLayer.events.onInputDown.add(this.onClick, this);
     window.g = this.game
     window.t = this
     
@@ -114,14 +116,7 @@ export default class extends base_level {
 
   createTileSelector() {
     //  Our tile selection window
-    let tileSelector = this.game.add.group();
-    this.tileSelector = tileSelector
-    let tileSelectorBackground = this.game.make.graphics();
-    tileSelectorBackground.beginFill(0x000000, 0.5);
-    tileSelectorBackground.drawRect(288, 0, 32, 16);
-    tileSelectorBackground.endFill();
-
-    tileSelector.add(tileSelectorBackground);
+    
   }
 
   
