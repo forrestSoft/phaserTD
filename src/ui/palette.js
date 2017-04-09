@@ -7,17 +7,18 @@ export const Palette = Stampit()
 	.methods({
 		build( ){
 			let group = game.add.group()
-		    let brushes = [1,2,3,4,5,6,7,8]
-		    let tw,th,pW,ch, l
+		    // let brushes = Array.from(new Array(50), (x,i) => i+1)
+		    let brushes = [28,32,33,34, 46,24]
+		    let tw,th,pW, l
 		    l = brushes.length
 		    tw = 16
 		    th = 16
-		    pW = 2
+		    pW = 10
 
-		    const res = [...Array(9)].map((_, i) => {
+		    const res = [...Array(l)].map((_, i) => {
 		    	let y = Math.floor(i/pW) * 16
 		    	let x = (i%pW)* 16
-		    	let s = game.make.sprite(x,y, 'ms', brushes[i%l])
+		    	let s = game.make.sprite(x,y, 'ms', brushes[i])
 		    	s.inputEnabled = true
 		    	s.events.onInputDown.add(this.changeTile,this)
 		    	group.addChild(s)
@@ -35,19 +36,20 @@ export const Palette = Stampit()
 		      objectToMask: group,
 		      name: 'palette'
 		    }
-		    this.paletteMask = buildBoundInputMask(rect)
 		},
 		changeTile(sprite, pointer){
-			// let t = this.map.getTileWorldXY(pointer.x,pointer.y, null,null,this.layer)
-			console.log(222,sprite._frame.index, arguments)
+			let index  = sprite._frame.index
+			//something about tilemap and sprite indexes being off by 1?
+			let brush = index+1
+
+			// blank tile is a noop
+			if(brush == 47){
+				return
+			}
+			game.currentBrush = brush
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {
-		// instance.p = p
-		// console.log(game.cache.getJSON('palette'))
+		game.currentBrush = 25
 		this.build()
-
 	  })
-	.props({ // if nothing was passed this value will be used
-		p: null
-	});

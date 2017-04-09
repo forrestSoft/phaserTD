@@ -11,22 +11,25 @@ import { buildBoundInputMask } from '../utils'
 
 import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
+
+import {Board} from '../ui/board'
 import {Cursor, Brush} from '../ui/cursors'
 import {Palette} from '../ui/palette'
 
 export default class extends base_level {
   init () {
-    this.blah = true
-    this.prefab_classes = {
+    window.GLOBALS = {
+      globalOffset: {
+        x: 0,
+        y: 16
+      },
+      prefab_classes: {
         "player": Player
-    };
+      }
+    }
 
     this.level_data = this.cache.getJSON('level1');
-
-    this.globalOffset = {
-      x: 0,
-      y: 16
-    }
+    this.globalOffset = GLOBALS.globalOffset
 
     let tileset_index, tile_dimensions, map;
     this.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
@@ -35,22 +38,14 @@ export default class extends base_level {
     
     // start physics system
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.game.physics.arcade.gravity.y = 0;
+    this.game.physics.arcade.gravity
 
-    // create map and set tileset
-    // debugger
-    map = this.level_data.map
-    this.map = this.game.add.tilemap('level1');
-    this.map.tilesets.forEach(function (tileset, i) {
-        this.map.addTilesetImage(tileset.name, map.tilesets[i]);
-    }, this);
-
-    // this.buildBrush();
-    
+    this.board = Board(null,{name: 'level1', mapData: this.level_data.map})
+    this.map = this.board.buildMap()
 
     // initialize pathfinding
-    tile_dimensions = new Phaser.Point(this.map.tileWidth, this.map.tileHeight);
-    this.pathfinding = this.game.plugins.add(Pathfinding, this.map.layers[1].data, [-1, 25], tile_dimensions);
+    tile_dimensions = new Phaser.Point(this.board.map.tileWidth, this.board.map.tileHeight);
+    this.pathfinding = this.game.plugins.add(Pathfinding, this.board.map.layers[1].data, [-1, 25], tile_dimensions);
 
     this.signals = {
       playerMove: new Phaser.Signal()
@@ -64,37 +59,21 @@ export default class extends base_level {
     this.groups = {
       board: this.game.add.group()
     }
-
-    this.map.layers.forEach((layer) => {
-      layerObj = this.map.createLayer(layer.name);
-      this.layers[layer.name] = layerObj
-      this.groups.board.addChild(layerObj)
-      this.layers[layer.name].fixedToCamera = false;
-    }, this);
-
-    this.baseLayer = this.layers[this.map.layer.name]
-    
-    // create groups
-    this.level_data.groups.forEach(function (group_name) {
-        this.groups[group_name] = this.game.add.group();
-    }, this);
-    
-    this.prefabs = {};
-    let data = this.map.objects.objects[0];
-    data.y = this.globalOffset.y
-    
-    this.groups.board.inputEnabled = true
-    this.groups.board.addChild(this.create_object(data))
-    
+    this.prefabs = {}
+    this.board.buildLayers(this.groups, this.layers)
+    this.board.buildGroups(this.groups)
+    this.board.buildObjects(this.groups, this.prefabs,this)
+  
+    this.baseLayer = this.layers['background']
+  
     this.maskBoard()
     this.palette = Palette()
     this.cursor = Cursor({p:this})
-    this.brush = Brush({p:this, paints: [9]})
+    this.brush = Brush()
 
     game.inputMasks.board.events.onInputDown.add(this.onClick, this);
     window.g = this.game
     window.t = this
-    
     this.groups.board.y = this.globalOffset.y
   }
 
@@ -107,20 +86,20 @@ export default class extends base_level {
       objectToMask: this.groups.board,
       name: 'board'
     }
-    this.mask = buildBoundInputMask(rect)
+    buildBoundInputMask(rect)
   }
 
   onClick (point, event){
-    // this.setTile.apply(this, arguments)
+    this.brush.setTile.apply(this, arguments)
     this.move_player.apply(this,arguments)
   }
   
   move_player () {
-    // console.log('mp', this.getPointFrom('mouse'))
+    console.log('mp', this.getPointFrom('mouse'))
     this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
   }
 
   update () {
-    console.log(game.inputMasks.board.input.pointerOver(),game.inputMasks.palette.input.pointerDown())
+    // console.log(game.inputMasks.board.input.pointerOver(),game.inputMasks.palette.input.pointerDown())
   }
 }

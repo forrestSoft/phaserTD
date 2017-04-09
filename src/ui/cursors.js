@@ -7,12 +7,30 @@ export const Cursor = Stampit()
 		    this.marker.lineStyle(2, 0xffffff, 1);
 		    this.marker.drawRect(0, 0, 16,16);
 
-		    this.p.game.input.addMoveCallback(this.updateMarker, this);
+		    game.input.addMoveCallback(this.updateMarker, this);
 		},
 
 		updateMarker() {
-			this.marker.x = this.p.baseLayer.getTileX(parent.game.input.activePointer.worldX) * this.p.map.tileWidth;
-			this.marker.y = this.p.baseLayer.getTileY(parent.game.input.activePointer.worldY) * this.p.map.tileHeight;
+			let x,y
+			x = (Math.floor(parent.game.input.activePointer.worldX/16))*16
+			y = (Math.floor(parent.game.input.activePointer.worldY/16))*16
+			this.marker.x = x
+			this.marker.y = y
+
+			this.sprite
+			if(game.inputMasks.board.input.pointerOver()){
+				if(!this.sprite){
+					this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
+				}else{
+					this.sprite.x = x
+					this.sprite.y = y
+				}
+			}else{
+				if(this.sprite){
+					this.sprite.destroy()
+					delete this.sprite
+				}
+			}
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {
@@ -21,36 +39,14 @@ export const Cursor = Stampit()
 		this.buildAndBind_cursor()
 
 	  })
-	.props({ // if nothing was passed this value will be used
-		p: null
-	});
-
+	
 export const Brush = Stampit()
 	.methods({
-		  nextBrushID (){
-		    if(this.currentBrush < this.paints.length - 1){
-		      this.currentBrush ++
-		    }else{
-		      this.currentBrush = 0
-		    }
-		    return this.paints[this.currentBrush]
-		  },
 		  setTile (sprite, pointer){
-			let {x,y} = this.p.game.input.activePointer
+		  	console.log('st', game.currentBrush)
+			let {x,y} = game.input.activePointer
 
-			this.p.map.putTile(this.nextBrushID(), this.p.baseLayer.getTileX(x-this.p.globalOffset.x),this.p.baseLayer.getTileY(y-this.p.globalOffset.y) , 'collision');
-			this.p.pathfinding.setGrid(this.p.map.layers[1].data)
+			this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+			this.pathfinding.setGrid(this.map.layers[1].data)
 		  }
 	})
-	.init(function ({p, paints}, {args, instance, stamp}) {
-		instance.p = p
-		instance.currentBrush = 0
-		instance.paints = paints
-
-		game.inputMasks.board.events.onInputDown.add(this.setTile, this);
-
-	  })
-	.props({ // if nothing was passed this value will be used
-		p: null
-	});
-

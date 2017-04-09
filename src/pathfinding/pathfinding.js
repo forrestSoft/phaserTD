@@ -28,7 +28,7 @@ export default class extends Phaser.Plugin {
             grid_indices[grid_row] = [];
             for (grid_column = 0; grid_column < world_grid[grid_row].length; grid_column += 1) {
                 // if(world_grid[grid_row][grid_column].index != -1){
-                    // console.log(world_grid[grid_row][grid_column].index)
+                //     console.log(world_grid[grid_row][grid_column].index)
                 // }
                 grid_indices[grid_row][grid_column] = world_grid[grid_row][grid_column].index;
             }
@@ -47,6 +47,7 @@ export default class extends Phaser.Plugin {
         // origin_coord = {row: 0, column: 0}
 
         target_coord = {row: 3, column: this.data.width - 1}
+        // console.log('fp',origin,this.outside_grid(origin_coord) ,this.outside_grid(target_coord))
         // target_coord = this.get_coord_from_point(target);
         
         if (!this.outside_grid(origin_coord) && !this.outside_grid(target_coord)) {
@@ -70,7 +71,7 @@ export default class extends Phaser.Plugin {
                 path_positions.push(this.get_point_from_coord({row: path_coord.y, column: path_coord.x}));
             }, this);
 
-            //account for the very small draft that has happened while this was calculating
+            //account for the very small drift that has happened while this was calculating
             p = ({x, y} =  context.position)
             pt = new Phaser.Point(p.x,p.y)
             path_positions[0] = (pt);

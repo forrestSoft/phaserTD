@@ -25,7 +25,7 @@ export default class extends Prefab {
         this.animations.add('walkSouth', [6,7,8], 10, true)
         this.animations.add('walkWest', [9,10,11], 10, true)
         
-        this.game_state.signals.playerMove.add(this.move_to, this);
+        game_state.signals.playerMove.add(this.move_to, this);
     }
 
     update () {
@@ -95,6 +95,7 @@ export default class extends Prefab {
     }
 
     move_through_path (path) {
+        // console.log('p',path)
         if (path !== null) {
             this.path = path;
             this.path_step = 0;
