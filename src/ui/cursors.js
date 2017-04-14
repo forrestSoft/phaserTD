@@ -1,6 +1,8 @@
 import stampit from 'stampit'
 import Phaser from 'phaser'
 
+import {Points} from '../utils'
+
 import GLOBALS from '../config/globals'
 
 export const Cursor = Stampit()
@@ -18,15 +20,15 @@ export const Cursor = Stampit()
 			let x,y
 			x = (Math.floor(parent.game.input.activePointer.worldX/16))*16
 			y = (Math.floor(parent.game.input.activePointer.worldY/16))*16
+			
 			if(this.marker.x == x && this.marker.y == y){
 				return
 			}
 			this.marker.x = x
 			this.marker.y = y
+			let coord = Points.get_coord_from_point({x,y})
 
-			// this.sprite
-
-			if(game.inputMasks.board.input.pointerOver()){
+			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
 				if(!this.sprite){
 					this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
 					this.sprite.alpha = .75
@@ -52,7 +54,6 @@ export const Cursor = Stampit()
 				game.allowPaint = false
 				this.sprite.tint = 0xff0000
 			}
-			console.log('test',arguments)
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {

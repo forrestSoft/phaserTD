@@ -88,6 +88,8 @@ export default class extends base_level {
     this.board.buildLayers(this.groups, this.layers)
     this.board.buildGroups(this.groups)
     this.board.buildObjects(this.groups, this.prefabs,this)
+    this.board.buildGoal(this.groups)
+    this.board.buildSpawn(this.groups)
   
     this.baseLayer = this.layers['background']
   

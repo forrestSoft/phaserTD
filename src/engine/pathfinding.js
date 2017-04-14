@@ -66,12 +66,13 @@ export const Pathfinder =  stampit()
 	        origin_coord = Points.get_coord_from_point(origin);
 	        // origin_coord = {row: 0, column: 0}
 
-	        target_coord = {row: 3, column: GLOBALS.width - 1}
+	        // target_coord = {row: 3, column: GLOBALS.width - 1}
+	        target_coord = GLOBALS.exit
 	        // console.log('find path',origin_coord,this.outside_grid(origin_coord) ,this.outside_grid(target_coord))
 	        // target_coord = this.get_coord_from_point(target);
 	        
 	        if (!Points.outside_grid(origin_coord) && !Points.outside_grid(target_coord)) {
-	            console.time()
+	            console.time('astar time')
 	            this.star.findPath(origin_coord.column, origin_coord.row, target_coord.column, target_coord.row, this.call_callback_function.bind(this, callback, context));
 	            this.star.calculate();
 	            return true;
@@ -118,7 +119,7 @@ export const Pathfinder =  stampit()
 	        }else{
 	            path_positions = null
 	        }
-	        console.timeEnd()
+	        console.timeEnd('astar time')
 
 	        callback.call(context, path_positions);
 	    }

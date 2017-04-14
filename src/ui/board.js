@@ -39,6 +39,14 @@ export var Board = stampit()
 		    prefabs[data.name] = this.create_object(data,state)
 		    groups.board.addChild(prefabs[data.name])
 		},
+		buildSpawn(groups){
+			let spawn = game.make.sprite(GLOBALS.entrance.column*GLOBALS.ty,GLOBALS.entrance.row*GLOBALS.tx,'ms',43)
+			groups.board.addChild(spawn)
+		},
+		buildGoal(groups){
+			let goal = game.make.sprite(GLOBALS.exit.column*GLOBALS.ty,GLOBALS.exit.row*GLOBALS.tx,'ms',43)
+			groups.board.addChild(goal)
+		},
 		create_object (object, state) {
 			let object_y, position, prefab;
 			object_y = object_y//(object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);

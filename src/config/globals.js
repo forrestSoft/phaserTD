@@ -10,5 +10,13 @@ export default {
   grid_dimensions: {
     row: this.height, 
     column: this.width
+  },
+  entrance: {
+    row: 0,
+    column: 0
+  },
+  exit: {
+    row: 3,
+    column: 9
   }
 }
