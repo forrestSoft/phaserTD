@@ -12,48 +12,57 @@ export var Board = stampit()
 		    }, this);
 		    return this.map
 		},
-		buildLayers(groups, layers) {
+		buildLayers() {
 			this.map.layers.forEach((layer) => {
 		      let layerObj = this.map.createLayer(layer.name);
-		      layers[layer.name] = layerObj
-		      groups.board.addChild(layerObj)
-		      layers[layer.name].fixedToCamera = false;
+		      this.layers[layer.name] = layerObj
+		      this.groups.board.addChild(layerObj)
+		      this.layers[layer.name].fixedToCamera = false;
 		    }, this);
 
 		    // layers['goals'].bringToTop()
 		},
 
-		buildGroups(groups){
+		buildGroups(){
 		    this.level_data.groups.forEach(function (group_name) {
-		        groups[group_name] = game.add.group();
+		        this.groups[group_name] = game.add.group();
 		    }, this);
 		},
-
-		buildObjects(groups, prefabs, state){
+		buildCreep(){
+			let data = this.map.objects.objects[0];
+			let prefab = this.create_object(data,this.state)
+		    this.groups.board.addChild(prefab)
+		},
+		buildCreepNew(){
+			this.buildCreep()
+			this.objects['goal'].bringToTop()
+			this.objects['spawn'].bringToTop()
+		},
+		buildObjects(){
 			let prefab;
 			let data = this.map.objects.objects[0];
 			// console.log(data)
 		    // data.y = GLOBALS.globalOffset.y
 		    
-		    groups.board.inputEnabled = true
-		    prefabs[data.name] = this.create_object(data,state)
-		    groups.board.addChild(prefabs[data.name])
+		    // groups.board.inputEnabled = true
+		    this.prefabs[data.name] = this.create_object(data,this.state)
+		    this.groups.board.addChild(this.prefabs[data.name])
 		},
-		buildSpawn(groups){
-			let spawn = game.make.sprite(GLOBALS.entrance.column*GLOBALS.ty,GLOBALS.entrance.row*GLOBALS.tx,'ms',43)
-			groups.board.addChild(spawn)
+		buildSpawn(){
+			this.objects['spawn'] = game.make.sprite(GLOBALS.entrance.column*GLOBALS.ty,GLOBALS.entrance.row*GLOBALS.tx,'ms',43)
+			this.groups.board.addChild(this.objects['spawn'])
 		},
-		buildGoal(groups){
-			let goal = game.make.sprite(GLOBALS.exit.column*GLOBALS.ty,GLOBALS.exit.row*GLOBALS.tx,'ms',43)
-			groups.board.addChild(goal)
+		buildGoal(){
+			this.objects['goal'] = game.make.sprite(GLOBALS.exit.column*GLOBALS.ty,GLOBALS.exit.row*GLOBALS.tx,'ms',43)
+			this.groups.board.addChild(this.objects['goal'])
 		},
-		create_object (object, state) {
+		create_object (object) {
 			let object_y, position, prefab;
 			object_y = object_y//(object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);
 			// console.log(object)
 			position = {"x": object.x , "y": object.y};
 			if (GLOBALS.prefab_classes.hasOwnProperty(object.type)) {
-			  prefab = new GLOBALS.prefab_classes[object.type](state, object.name, position, object.properties);
+			  prefab = new GLOBALS.prefab_classes[object.type](this.state, object.name, position, object.properties);
 			}
 			return prefab
 		}
@@ -62,7 +71,13 @@ export var Board = stampit()
 		name: 'level1'
 	})
 	.init(function (a, {args, instance, stamp}) {
+		console.log(arguments)
 		// console.log(game.cache.getJSON('level1'))
+		let iArgs = args[1]
 		instance.level_data = game.cache.getJSON('level1')
+		instance.groups =iArgs.groups
+		instance.layers = iArgs.layers
+		instance.state = iArgs.state
+		instance.objects = iArgs.objects
 	})
 

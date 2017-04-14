@@ -28,9 +28,43 @@ export default class extends Prefab {
         this.animations.add('walkWest', [9,10,11], 10, true)
         
         game_state.signals.playerMove.add(this.move_to, this);
+        GLOBALS.signals.creepPathReset.add(this.reset,this)
+    }
+    reset(){
+        // if(this.name != )
+        // debugger
+        this.path = GLOBALS.stars.get_path('creep')
+
+        if(this.path_step == -1){
+            this.path_step = 0
+        }else{
+            console.log('reset', arguments, this.position, this.path)
+            this.path.some((point,i)=>{
+                if(this.position.x < point.x && this.position.y < point.y){
+                console.log(this.position.x, point.x, this.position.y, point.y)
+                    console.log(i)
+                    this.path_step = i
+                    return true
+                }else{
+                    return false
+                }
+            })
+        }
     }
 
     update () {
+        // console.log(GLOBALS.stars.get('creep'))
+        if(!GLOBALS.stars.get('creep').hasPath){
+            return
+        }
+
+        if(this.path_step == -1){
+            this.path_step = 0
+        }
+
+        this.path = GLOBALS.stars.get_path('creep')
+        // debugger
+
         let next_position, velocity, tempPath;
         this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
         
@@ -64,16 +98,19 @@ export default class extends Prefab {
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
-                    this.path_step = 0;
+                    this.destroy()
+                    this.game_state.board.buildCreepNew()
+                    // return
+                    // this.path_step = 0;
 
-                    // loop
-                    this.body.velocity.x = 0;
-                    this.body.velocity.y = 0;
-                    // this.body.x = this.game_state.globalOffset.x;
-                    // this.body.y = this.game_state.globalOffset.y;
-                    this.x = 0;
-                    this.y = 0;
-                    this.move_to()
+                    // // loop
+                    // this.body.velocity.x = 0;
+                    // this.body.velocity.y = 0;
+                    // // this.body.x = this.game_state.globalOffset.x;
+                    // // this.body.y = this.game_state.globalOffset.y;
+                    // this.x = 0;
+                    // this.y = 0;
+                    // this.move_to()
                 }
             }
         }
@@ -88,7 +125,7 @@ export default class extends Prefab {
     move_to (target_position) {
         // console.log(tiles'player position',this.position)
         this.calculateOffsetHack()
-        GLOBALS.stars.get('creep').find_path(this.position, target_position, this.move_through_path, this);
+        // GLOBALS.stars.get('creep').find_path(this.position, target_position, this.move_through_path, this);
     }
 
     // move_to_brush (target_position) {

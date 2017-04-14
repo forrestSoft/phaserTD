@@ -72,5 +72,6 @@ export const Brush = Stampit()
 			
 			this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
 			GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
+			GLOBALS.stars.get('creep').find_path_goal_spawn()
 		  }
 	})

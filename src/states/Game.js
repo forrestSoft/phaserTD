@@ -35,6 +35,10 @@ export default class extends base_level {
     GLOBALS.prefab_classes =  {
       "player": Player
     }
+
+    GLOBALS.signals = {
+      creepPathReset: new Phaser.Signal()
+    }
     
 
     this.level_data = this.cache.getJSON('level1');
@@ -50,7 +54,20 @@ export default class extends base_level {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.arcade.gravity
 
-    this.board = Board(null,{name: 'level1', mapData: this.level_data.map})
+    this.layers = {}
+    this.groups = {
+      board: this.game.add.group()
+    }
+    this.prefabs = {}
+    this.objects = {}
+    this.board = Board(null,{
+      name: 'level1',
+      mapData: this.level_data.map,
+      groups: this.groups,
+      layers:this.layers,
+      state: this,
+      objects: this.objects
+    })
     this.map = this.board.buildMap()
 
     // initialize pathfinding
@@ -80,14 +97,9 @@ export default class extends base_level {
   create () {
     let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
 
-    this.layers = {}
-    this.groups = {
-      board: this.game.add.group()
-    }
-    this.prefabs = {}
     this.board.buildLayers(this.groups, this.layers)
     this.board.buildGroups(this.groups)
-    this.board.buildObjects(this.groups, this.prefabs,this)
+    this.board.buildCreep(this.groups, this.prefabs,this)
     this.board.buildGoal(this.groups)
     this.board.buildSpawn(this.groups)
   
@@ -102,6 +114,8 @@ export default class extends base_level {
     window.g = this.game
     window.t = this
     this.groups.board.y = this.globalOffset.y
+
+    GLOBALS.stars.get('creep').find_path_goal_spawn();
   }
 
   maskBoard (){
@@ -123,7 +137,7 @@ export default class extends base_level {
   
   move_player () {
     // console.log('mp', this.getPointFrom('mouse'))
-    this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
+    // this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
   }
 
   update () {

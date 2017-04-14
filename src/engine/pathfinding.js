@@ -15,6 +15,7 @@ export const Pathfinders = stampit().
 			for (let [key, value] of Object.entries(stars)) {
 				console.log(arguments, key, value)
 				this.stars[key] = Pathfinder()
+				this.stars[key].name = key
 			// debugger
 				this.stars[key].build(value)
 			}
@@ -23,6 +24,9 @@ export const Pathfinders = stampit().
 		},
 		get(star){
 			return this.stars[star]
+		},
+		get_path(star){
+			return this.stars[star].path
 		}
 	})
 export const Pathfinder =  stampit()
@@ -80,7 +84,11 @@ export const Pathfinder =  stampit()
 	            return false;
 	        }
 	    },
-
+	    find_path_goal_spawn(){
+	    	let origin_coord = {x: 0, y: 0}
+	        let target_coord = {x:GLOBALS.exit.row * GLOBALS.tx, y:GLOBALS.exit.column * GLOBALS.ty}
+	        this.find_path(origin_coord, target_coord)
+	    },
 	    find_path_from_brush (origin, target, callback, context) {
 	        let grid = GLOBALS.currentCollisionLayer()
 	        let c = Object.assign({}, game.input.activePointer)
@@ -105,22 +113,32 @@ export const Pathfinder =  stampit()
 	    },
 
 	    call_callback_function (callback, context, path) {
+	    	// debugger
 	        let path_positions, pt, p,x,y;
 	        path_positions = [];
 	        if (path !== null) {
+	        	this.hasPath = true
 	            path.forEach(function (path_coord, i) {
 	                path_positions.push(Points.get_point_from_coord({row: path_coord.y, column: path_coord.x}));
 	            }, this);
 
 	            //account for the very small drift that has happened while this was calculating
-	            p = ({x, y} =  context.position)
-	            pt = new Phaser.Point(p.x,p.y)
-	            path_positions[0] = (pt);
+	            // p = ({x, y} =  context.position)
+	            // pt = new Phaser.Point(p.x,p.y)
+	            // path_positions[0] = (pt);
 	        }else{
+	        	this.hasPath = false
 	            path_positions = null
 	        }
+	        this.path = path_positions
+	        if(this.name === 'creep'){
+	        // debugger
+		        GLOBALS.signals.creepPathReset.dispatch()
+		    }
 	        console.timeEnd('astar time')
-
+	        if(!callback){
+	        	return
+	        }
 	        callback.call(context, path_positions);
 	    }
 	})
