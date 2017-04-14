@@ -8,6 +8,10 @@ backgroundArray = Array.from(new Array(boardSize), (x,i) => 25)
 
 let collisionArray
 collisionArray = Array.from(new Array(boardSize), (x,i) => 0)
+collisionArray[1] = 33
+
+let goalsArray = Array.from(new Array(boardSize), (x,i) => 0)
+goalsArray[0] = 44
 
 var data
 data = { 
@@ -38,7 +42,22 @@ data = {
 	         "width":boardWidth,
 	         "x":0,
 	         "y":0
-	        }, 
+	        },
+	        // {
+	        //  "data":goalsArray,
+	        //  "height":boardHeight,
+	        //  "name":"goals",
+	        //  "opacity":1,
+	        //  "properties":
+	        //     {
+	        //      // "collision":"true"
+	        //     },
+	        //  "type":"tilelayer",
+	        //  "visible":true,
+	        //  "width":boardWidth,
+	        //  "x":0,
+	        //  "y":0
+	        // }, 
 	        {
 	         "height":boardHeight,
 	         "name":"objects",
