@@ -69,8 +69,8 @@ export default class extends Prefab {
                     this.body.velocity.y = 0;
                     // this.body.x = this.game_state.globalOffset.x;
                     // this.body.y = this.game_state.globalOffset.y;
-                    this.x = 8;
-                    this.y = 8;
+                    this.x = 0;
+                    this.y = 0;
                     this.move_to()
                 }
             }
@@ -88,6 +88,14 @@ export default class extends Prefab {
         this.calculateOffsetHack()
         this.game_state.pathfinding.find_path(this.position, target_position, this.move_through_path, this);
     }
+
+    // move_to_brush (target_position) {
+    //     this.game_state.pathfinding.find_path_from_brush(this.position, target_position, this.blah, this);
+    // }
+
+    // blah (){
+    //     console.log('blah',arguments)
+    // }
 
     calculateOffsetHack (){
         let x,y

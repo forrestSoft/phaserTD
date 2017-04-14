@@ -62,5 +62,9 @@ module.exports = {
       'p2': p2,
       'stampit': stampit
     }
+  },
+  stats: {
+    timings: true,
+    maxModules: 400
   }
 }

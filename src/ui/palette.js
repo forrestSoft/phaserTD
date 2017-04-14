@@ -7,8 +7,8 @@ export const Palette = Stampit()
 	.methods({
 		build( ){
 			let group = game.add.group()
-		    // let brushes = Array.from(new Array(50), (x,i) => i+1)
-		    let brushes = [28,32,33,34, 46,24]
+		    let brushes = Array.from(new Array(50), (x,i) => i+1)
+		    // let brushes = [28,32,33,34, 46,24]
 		    let tw,th,pW, l
 		    l = brushes.length
 		    tw = 16

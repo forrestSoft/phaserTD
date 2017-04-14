@@ -47,10 +47,11 @@ export default class extends Phaser.Plugin {
         // origin_coord = {row: 0, column: 0}
 
         target_coord = {row: 3, column: this.data.width - 1}
-        // console.log('fp',origin,this.outside_grid(origin_coord) ,this.outside_grid(target_coord))
+        console.log('find path',origin_coord,this.outside_grid(origin_coord) ,this.outside_grid(target_coord))
         // target_coord = this.get_coord_from_point(target);
         
         if (!this.outside_grid(origin_coord) && !this.outside_grid(target_coord)) {
+            console.time()
             this.easy_star.findPath(origin_coord.column, origin_coord.row, target_coord.column, target_coord.row, this.call_callback_function.bind(this, callback, context));
             this.easy_star.calculate();
             return true;
@@ -59,6 +60,21 @@ export default class extends Phaser.Plugin {
         }
     }
 
+    find_path_from_brush (origin, target, callback, context) {
+        let grid = GLOBALS.currentCollisionLayer()
+        let c = Object.assign({}, game.input.activePointer)
+        c.x-= GLOBALS.globalOffset.x
+        c.y-= GLOBALS.globalOffset.y
+
+        let t =  this.get_coord_from_point(c)
+        if(this.outside_grid(t)){
+            return
+        }
+
+        grid[t.row][t.column].index = game.currentBrush
+        this.setGrid(grid)
+        this.find_path(c, null, callback, context)
+    }
     avoidAdditionalPoint (x ,y){
         this.easy_star.avoidAdditionalPoint(x,y)
     }
@@ -75,7 +91,13 @@ export default class extends Phaser.Plugin {
             p = ({x, y} =  context.position)
             pt = new Phaser.Point(p.x,p.y)
             path_positions[0] = (pt);
+        }else{
+            path_positions = null
         }
+        console.timeEnd()
+
+        //set the grid back to the real collision layer after we run a*
+        this.setGrid(GLOBALS.currentCollisionLayer())
         callback.call(context, path_positions);
     }
 
