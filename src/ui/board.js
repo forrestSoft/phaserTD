@@ -1,5 +1,7 @@
 import stampit from 'stampit'
 
+import GLOBALS from '../config/globals'
+
 export var Board = stampit()
 	.methods({
 		buildMap (){
@@ -17,6 +19,8 @@ export var Board = stampit()
 		      groups.board.addChild(layerObj)
 		      layers[layer.name].fixedToCamera = false;
 		    }, this);
+
+		    // layers['goals'].bringToTop()
 		},
 
 		buildGroups(groups){
@@ -28,8 +32,8 @@ export var Board = stampit()
 		buildObjects(groups, prefabs, state){
 			let prefab;
 			let data = this.map.objects.objects[0];
-			console.log(data)
-		    data.y = GLOBALS.globalOffset.y
+			// console.log(data)
+		    // data.y = GLOBALS.globalOffset.y
 		    
 		    groups.board.inputEnabled = true
 		    prefabs[data.name] = this.create_object(data,state)

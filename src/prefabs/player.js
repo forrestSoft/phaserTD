@@ -1,5 +1,7 @@
 import Prefab from './prefab'
 
+import GLOBALS from '../config/globals'
+
 export default class extends Prefab {
     constructor (game_state, name, position, properties) {
         super(game_state, name, position, properties);
@@ -84,9 +86,9 @@ export default class extends Prefab {
     }
 
     move_to (target_position) {
-        // console.log('player position',this.position)
+        // console.log(tiles'player position',this.position)
         this.calculateOffsetHack()
-        this.game_state.pathfinding.find_path(this.position, target_position, this.move_through_path, this);
+        GLOBALS.stars.get('creep').find_path(this.position, target_position, this.move_through_path, this);
     }
 
     // move_to_brush (target_position) {

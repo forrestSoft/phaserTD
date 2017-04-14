@@ -1,3 +1,4 @@
+import GLOBALS from './config/globals'
 export const centerGameObjects = (objects) => {
   objects.forEach(function (object) {
     object.anchor.setTo(0.5)
@@ -17,4 +18,28 @@ export const buildBoundInputMask = ({x,y,height,width, objectToMask, name}) => {
     objectToMask.mask = mask
 
     game.inputMasks[name] = mask	  
+}
+
+export const Points = {
+    tile_dimensions: {
+        x: GLOBALS.tx,
+        y: GLOBALS.ty
+    },
+    outside_grid (coord) {
+        return coord.row < 0 || coord.row > GLOBALS.grid_dimensions.row - 1 || coord.column < 0 || coord.column > GLOBALS.grid_dimensions.column - 1;
+    },
+
+    get_coord_from_point (point) {
+        let row, column;
+        row = Math.floor(point.y / this.tile_dimensions.y);
+        column = Math.floor(point.x / this.tile_dimensions.x);
+        return {row: row, column: column};
+    },
+
+    get_point_from_coord (coord, dimensions) {
+        let x, y;
+        x = (coord.column * this.tile_dimensions.x) + (this.tile_dimensions.x / 2);
+        y = (coord.row * this.tile_dimensions.y) + (this.tile_dimensions.y / 2);
+        return new Phaser.Point(x, y);
+    }
 }

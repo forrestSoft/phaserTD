@@ -1,6 +1,8 @@
 import stampit from 'stampit'
 import Phaser from 'phaser'
 
+import GLOBALS from '../config/globals'
+
 export const Cursor = Stampit()
 	.methods({
 		buildAndBind_cursor (){
@@ -34,7 +36,7 @@ export const Cursor = Stampit()
 				}
 
 				this.position = {x:0,y:0}
-				this.p.pathfinding.find_path_from_brush(null,null, this.test, this);
+				GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.test, this);
 			}else{
 				if(this.sprite){
 					this.sprite.destroy()
@@ -68,6 +70,6 @@ export const Brush = Stampit()
 			let {x,y} = game.input.activePointer
 			
 			this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
-			this.pathfinding.setGrid(this.map.layers[1].data)
+			GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
 		  }
 	})

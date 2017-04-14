@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { centerGameObjects } from '../utils'
-import Level1 from '../level1config'
-import Palette from '../paletteConfig'
+import Level1 from '../config/level1config'
+import Palette from '../config/paletteConfig'
 
 export default class extends Phaser.State {
   init () {}

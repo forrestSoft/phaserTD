@@ -3,7 +3,7 @@
 import stampit from 'stampit'
 import Phaser from 'phaser'
 import Mushroom from '../sprites/Mushroom'
-import Pathfinding from '../pathfinding/pathfinding'
+import {Pathfinders, Pathfinder} from '../engine/pathfinding'
 
 import base_level from './base_level'
 
@@ -12,27 +12,37 @@ import { buildBoundInputMask } from '../utils'
 import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
 
+import GLOBALS from '../config/globals'
 import {Board} from '../ui/board'
 import {Cursor, Brush} from '../ui/cursors'
 import {Palette} from '../ui/palette'
 
 export default class extends base_level {
   init () {
-    window.GLOBALS = {
-      globalOffset: {
-        x: 0,
-        y: 16
-      },
-      prefab_classes: {
-        "player": Player
-      }
+    
+    GLOBALS.currentCollisionLayer =  function(){
+        let a  = []
+        this.board.map.layers[1].data.forEach( function (array,i) {
+          let subArray = []
+          array.forEach((cell,i) => {
+            subArray.push(Object.assign({},cell))
+          })
+          a.push(subArray)
+        })
+      return a
+    }.bind(this)
+
+    GLOBALS.prefab_classes =  {
+      "player": Player
     }
+    
 
     this.level_data = this.cache.getJSON('level1');
     this.globalOffset = GLOBALS.globalOffset
 
-    let tileset_index, tile_dimensions, map;
-    this.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
+    let tileset_index, tileDimensions, map;
+    this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+    this.scale.setUserScale(2,2)
     // this.scale.pageAlignHorizontally = true;
     // this.scale.pageAlignVertically = true;
     
@@ -44,8 +54,23 @@ export default class extends base_level {
     this.map = this.board.buildMap()
 
     // initialize pathfinding
-    tile_dimensions = new Phaser.Point(this.board.map.tileWidth, this.board.map.tileHeight);
-    this.pathfinding = this.game.plugins.add(Pathfinding, this.board.map.layers[1].data, [-1, 25], tile_dimensions);
+    tileDimensions = new Phaser.Point(this.board.map.tileWidth, this.board.map.tileHeight);
+    // this.pathfinding = this.game.plugins.add(Pathfinding, this.board.map.layers[1].data, [-1, 25], tile_dimensions);
+    const stars = Pathfinders()
+    stars.add({
+      creep: {
+        grid: this.board.map.layers[1].data,
+        acceptableTiles: [-1,25], 
+        tileDimensions: tileDimensions
+      },
+      cursor: {
+        grid: GLOBALS.currentCollisionLayer(),
+        acceptableTiles: [-1,25], 
+        tileDimensions: tileDimensions
+      }
+    })
+    GLOBALS.stars = stars
+    // this.pathfinding.build(this.board.map.layers[1].data, [-1, 25], tile_dimensions);
 
     this.signals = {
       playerMove: new Phaser.Signal()
