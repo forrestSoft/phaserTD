@@ -4,19 +4,24 @@ import Easystar from '../ext/easystar/easystar'
 export default class extends Phaser.Plugin {
     constructor (game, parent){
         super(game, parent);
-        this.easy_star = new Easystar.js();
-        
+        this.easy_star = new Easystar.js()
+        this.easy_star2 = new Easystar.js()
         // this.easy_star.enableDiagonals()
     }
 
     init (world_grid, acceptable_tiles, tile_dimensions, data){
+        //this.world_grid = world_grid
         var data = data || {}
         this.data = {}
         
         this.data.width = data.width || 10
         this.grid_dimensions = {row: world_grid.length, column: world_grid[0].length};
-        this.easy_star.setGrid(this.getGrid(world_grid));
+
+        this.setGrid(world_grid);
         this.easy_star.setAcceptableTiles(acceptable_tiles);    
+
+        this.setGrid2(GLOBALS.currentCollisionLayer())
+        this.easy_star2.setAcceptableTiles(acceptable_tiles)
 
         this.tile_dimensions = tile_dimensions;
     }
@@ -40,6 +45,11 @@ export default class extends Phaser.Plugin {
         this.easy_star.setGrid(this.getGrid(world_grid));
     }
 
+    setGrid2(world_grid){
+        console.log('set grid 22',this.getGrid(world_grid))
+        this.easy_star2.setGrid(this.getGrid(world_grid));   
+    }
+
     find_path (origin, target, callback, context) {
         let origin_coord, target_coord;
 
@@ -60,6 +70,26 @@ export default class extends Phaser.Plugin {
         }
     }
 
+    find_path2 (origin, target, callback, context) {
+        let origin_coord, target_coord;
+
+        // origin_coord = this.get_coord_from_point(origin);
+        origin_coord = {row: 0, column: 0}
+
+        target_coord = {row: 3, column: this.data.width - 1}
+        console.log('find path2',origin_coord,this.outside_grid(origin_coord) ,this.outside_grid(target_coord))
+        // target_coord = this.get_coord_from_point(target);
+        
+        if (!this.outside_grid(origin_coord) && !this.outside_grid(target_coord)) {
+            console.time()
+            this.easy_star2.findPath(origin_coord.column, origin_coord.row, target_coord.column, target_coord.row, this.call_callback_function.bind(this, callback, context));
+            this.easy_star2.calculate();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     find_path_from_brush (origin, target, callback, context) {
         let grid = GLOBALS.currentCollisionLayer()
         let c = Object.assign({}, game.input.activePointer)
@@ -72,8 +102,9 @@ export default class extends Phaser.Plugin {
         }
 
         grid[t.row][t.column].index = game.currentBrush
-        this.setGrid(grid)
-        this.find_path(c, null, callback, context)
+
+        this.setGrid2(grid)
+        this.find_path2(c, null, callback, context)
     }
     avoidAdditionalPoint (x ,y){
         this.easy_star.avoidAdditionalPoint(x,y)
@@ -96,8 +127,6 @@ export default class extends Phaser.Plugin {
         }
         console.timeEnd()
 
-        //set the grid back to the real collision layer after we run a*
-        this.setGrid(GLOBALS.currentCollisionLayer())
         callback.call(context, path_positions);
     }
 

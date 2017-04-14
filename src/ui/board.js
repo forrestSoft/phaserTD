@@ -6,7 +6,6 @@ export var Board = stampit()
 			let map = this.level_data.map
 		    this.map = game.add.tilemap(this.name);
 		    this.map.tilesets.forEach(function (tileset, i) {
-		      // console.log(1,tileset.name, map.tilesets[i])
 		        this.map.addTilesetImage(tileset.name, map.tilesets[i]);
 		    }, this);
 		    return this.map
@@ -38,8 +37,9 @@ export var Board = stampit()
 		},
 		create_object (object, state) {
 			let object_y, position, prefab;
-			object_y = (object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);
-			position = {"x": object.x + (this.map.tileHeight / 2), "y": object_y};
+			object_y = object_y//(object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);
+			// console.log(object)
+			position = {"x": object.x , "y": object.y};
 			if (GLOBALS.prefab_classes.hasOwnProperty(object.type)) {
 			  prefab = new GLOBALS.prefab_classes[object.type](state, object.name, position, object.properties);
 			}

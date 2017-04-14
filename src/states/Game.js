@@ -95,7 +95,7 @@ export default class extends base_level {
   }
   
   move_player () {
-    console.log('mp', this.getPointFrom('mouse'))
+    // console.log('mp', this.getPointFrom('mouse'))
     this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
   }
 

@@ -25,20 +25,15 @@ export const Cursor = Stampit()
 			// this.sprite
 
 			if(game.inputMasks.board.input.pointerOver()){
-				// debugger
 				if(!this.sprite){
-				console.log(111)
 					this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
-					// debugger
-					this.sprite.alpha = .5
+					this.sprite.alpha = .75
 				}else{
-					console.log(222)
 					this.sprite.x = x
 					this.sprite.y = y
 				}
 
 				this.position = {x:0,y:0}
-				// console.log('p')
 				this.p.pathfinding.find_path_from_brush(null,null, this.test, this);
 			}else{
 				if(this.sprite){
@@ -46,8 +41,6 @@ export const Cursor = Stampit()
 					delete this.sprite
 				}
 			}
-
-			
 		},
 		test (path) {
 			if(path){
@@ -57,7 +50,7 @@ export const Cursor = Stampit()
 				game.allowPaint = false
 				this.sprite.tint = 0xff0000
 			}
-			// console.log('test',arguments)
+			console.log('test',arguments)
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {
@@ -69,12 +62,12 @@ export const Cursor = Stampit()
 export const Brush = Stampit()
 	.methods({
 		  setTile (sprite, pointer){
-		  	console.log('st', game.currentBrush)
 		  	if(!game.allowPaint){
 		  		return
 		  	}
 			let {x,y} = game.input.activePointer
 			
 			this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+			this.pathfinding.setGrid(this.map.layers[1].data)
 		  }
 	})
