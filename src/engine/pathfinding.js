@@ -4,6 +4,8 @@ import stampit from 'stampit'
 import Phaser from 'phaser'
 import Easystar from '../ext/easystar/easystar'
 
+import {FancyBrush} from '../ui/fancyBrush'
+
 import GLOBALS from '../config/globals'
 
 export const Pathfinders = stampit().
@@ -25,6 +27,7 @@ export const Pathfinders = stampit().
 			return this.stars[star].path
 		}
 	})
+
 export const Pathfinder =  stampit()
 	.methods({
 		build({grid, acceptableTiles, tileDimenstions}){
@@ -100,28 +103,29 @@ export const Pathfinder =  stampit()
 				let pW = brush.size[0]
 				let pH = brush.size[1]
 
-	        	brush.sprite.every((spriteName, i) => {
-	        		let t =  Points.get_coord_from_point(c)
+				FancyBrush.brushLoopFromSprite({
+					vars: {pH,pW},
+					sprite: brush.sprite,
+					command: ({x,y,tX, tY}, sprite) => {
+						console.log(x,y)
+						let t =  Points.get_coord_from_point(c)	
+						let mappedX = t.column+tX
+				    	let mappedY = t.row+tY
 
-			    	let y = Math.floor(i/pW)
-			    	let x = (i%pW)
+				    	// tile is outside of grid, invalid position
+				    	let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
+				    	//overlapping existing piece, invalid position
+				    	let overlapping = (!outsideOfGrid && grid[mappedY][mappedX].index !== -1)
+				    	// console.log('abc', (!outsideOfGrid && grid[mappedY][mappedX].index),outsideOfGrid , overlapping)
+				    	if(outsideOfGrid || overlapping){
+				    		earlyAbort = true
+				    		return false
+				    	}
 
-			    	let mappedX = t.column+x
-			    	let mappedY = t.row+y
-
-			    	// tile is outside of grid, invalid position
-			    	let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
-			    	//overlapping existing piece, invalid position
-			    	let overlapping = (!outsideOfGrid && grid[mappedY][mappedX].index !== -1)
-
-			    	if(outsideOfGrid || overlapping){
-			    		earlyAbort = true
-			    		return false
-			    	}
-
-			    	grid[mappedY][mappedX].index = GLOBALS.brushMap[spriteName]
-			    	return true
-				});
+				    	grid[mappedY][mappedX].index = GLOBALS.brushMap[sprite]
+				    	return true
+					}
+				})
 
 				if(earlyAbort){
 					this.call_callback_function(callback, context, null)
@@ -135,11 +139,12 @@ export const Pathfinder =  stampit()
 		        }
 
 		        grid[t.row][t.column].index = game.currentBrush
-		        this.setGrid(grid)
 			}
+
 			this.setGrid(grid)
 	        this.find_path_goal_spawn({x: 0, y: 0}, null, callback, context)
 	    },
+	    
 	    avoidAdditionalPoint (x ,y){
 	        this.star.avoidAdditionalPoint(x,y)
 	    },

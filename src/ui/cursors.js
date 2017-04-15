@@ -2,6 +2,7 @@ import stampit from 'stampit'
 import Phaser from 'phaser'
 
 import {Points} from '../utils'
+import {FancyBrush} from './fancyBrush'
 
 import GLOBALS from '../config/globals'
 
@@ -86,12 +87,15 @@ export const Brush = Stampit()
 					x: this.baseLayer.getTileX(x-this.globalOffset.x),
 					y: this.baseLayer.getTileY(y-this.globalOffset.y)
 				}
-				brushData.sprite.forEach((sprite, i)=> {
-					let sY = Math.floor(i/3)
-			    	let sX = (i%3)
-					this.map.putTile(GLOBALS.brushMap[sprite]+1, sX+cursorTile.x,sY+cursorTile.y , 'collision');
+
+				FancyBrush.brushSpriteLoop({
+					vars: {pW: brushData.size[0],pH: brushData.size[1]},
+					sprite: brushData.sprite,
+					command: ({x,y,tX,tY},sprite) => {
+						this.map.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
+					}
 				})
-				console.log('a',GLOBALS.fancyBrushes[game.currentFancyBrush], cursorTile)
+				
 			}else{
 				this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
 			}

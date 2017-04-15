@@ -38,6 +38,7 @@ export default class extends Prefab {
             this.path_step = 0
         }else{
             this.path.some((point,i)=>{
+                    console.log('match',this.position.x < point.x , this.position.y < point.y)  
                 if(this.position.x < point.x && this.position.y < point.y){
                     this.path_step = i
                     return true
@@ -93,6 +94,7 @@ export default class extends Prefab {
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
+                    this.game_state.board.buildCreep()
                     this.destroy()
                     // this.game_state.board.buildCreepNew()
                     // return

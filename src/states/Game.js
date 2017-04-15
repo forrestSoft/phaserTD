@@ -118,7 +118,7 @@ export default class extends base_level {
     this.groups.board.y = this.globalOffset.y
 
     GLOBALS.stars.get('creep').find_path_goal_spawn();
-    game.time.events.repeat(Phaser.Timer.SECOND * 2, 10, this.board.buildCreep, this.board);
+    // game.time.events.repeat(Phaser.Timer.SECOND * 2, 0, this.board.buildCreep, this.board);
   }
 
   maskBoard (){

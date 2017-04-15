@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import stampit from 'stampit'
 
 import { buildBoundInputMask, highLightableGroup } from '../utils'
+import {FancyBrush} from './fancyBrush'
 import GLOBALS from '../config/globals'
 
 export const Palette = Stampit()
@@ -59,13 +60,13 @@ export const Palette = Stampit()
 				let pW = data.size[0]
 				let pH = data.size[1]
 
-				const res = [...Array(pW*pH)].map((_, l) => {
-			    	let y = Math.floor(l/pW) * tw
-			    	let x = (l%pW)* th
-			    	let s = game.make.sprite(x,y, 'ms', GLOBALS.brushMap[data.sprite[l]])
-			    	group.addChild(s)
-					return s;
-				});
+				FancyBrush.brushSpriteLoop({
+					vars: {pW,pH},
+					sprite: data.sprite,
+					command: ({x,y}, sprite) => {
+						group.addChild(game.make.sprite(x,y, 'ms', GLOBALS.brushMap[sprite]))
+					}
+				})
 
 				group.x = (i%pW)* (pW*th) + (i%pW*this.gridWiggle)
 				group.y = Math.floor(i/pH)*(pH*tw) + (Math.floor(i/pH)*this.gridWiggle)

@@ -30,13 +30,13 @@ let a = [...Array(boardHeight)].forEach((_,i)=>{
 	}
 })
 
-
 collisionArray = [].concat.apply([], arrays)
 // collisionArray[1] = 33
 
 let goalsArray = Array.from(new Array(boardSize), (x,i) => 0)
 goalsArray[0] = 44
 
+let creepSpeed = 21
 var data
 data = { 
 	 "height":boardHeight,
@@ -94,7 +94,7 @@ data = {
 	                    {
 	                     "group":"players",
 	                     "texture":"male_fighter_spritesheet",
-	                     "walking_speed":"30"
+	                     "walking_speed":creepSpeed
 	                    },
 	                 "type":"player",
 	                 "visible":true,

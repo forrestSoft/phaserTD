@@ -7,6 +7,8 @@ var globals = {
   width: 11,
   tx: 16,
   ty: 16,
+  tH: 16,
+  tW: 16,
   grid_dimensions: {
     row: this.height, 
     column: this.width
