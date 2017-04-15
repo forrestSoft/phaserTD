@@ -91,14 +91,53 @@ export const Pathfinder =  stampit()
 	        c.x-= GLOBALS.globalOffset.x
 	        c.y-= GLOBALS.globalOffset.y
 
-	        let t =  Points.get_coord_from_point(c)
-	        if(Points.outside_grid(t)){
-	            return
-	        }
+	        if(game.currentFancyBrush != undefined){
+	        	let brush = GLOBALS.fancyBrushes[game.currentFancyBrush]
 
-	        grid[t.row][t.column].index = game.currentBrush
-	        this.setGrid(grid)
+	        	let earlyAbort = false
+	        	const th = 16
+				const tw = 16
+				let pW = brush.size[0]
+				let pH = brush.size[1]
 
+	        	brush.sprite.every((spriteName, i) => {
+	        		let t =  Points.get_coord_from_point(c)
+
+			    	let y = Math.floor(i/pW)
+			    	let x = (i%pW)
+
+			    	let mappedX = t.column+x
+			    	let mappedY = t.row+y
+
+			    	// tile is outside of grid, invalid position
+			    	let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
+			    	//overlapping existing piece, invalid position
+			    	let overlapping = (!outsideOfGrid && grid[mappedY][mappedX].index !== -1)
+
+			    	if(outsideOfGrid || overlapping){
+			    		earlyAbort = true
+			    		return false
+			    	}
+
+			    	grid[mappedY][mappedX].index = GLOBALS.brushMap[spriteName]
+			    	return true
+				});
+
+				if(earlyAbort){
+					this.call_callback_function(callback, context, null)
+					return
+				}
+
+	        }else{
+		        let t =  Points.get_coord_from_point(c)
+		        if(Points.outside_grid(t)){
+		            return
+		        }
+
+		        grid[t.row][t.column].index = game.currentBrush
+		        this.setGrid(grid)
+			}
+			this.setGrid(grid)
 	        this.find_path_goal_spawn({x: 0, y: 0}, null, callback, context)
 	    },
 	    avoidAdditionalPoint (x ,y){

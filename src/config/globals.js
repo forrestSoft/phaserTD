@@ -18,7 +18,7 @@ var globals = {
   exit: {
     row: 5
   },
-  acceptableTiles: [-1,25,31,32],
+  acceptableTiles: [-1,25,30,31,32],
   brushMap: {
     brownWall: 34,
     straightDownA: 30,
