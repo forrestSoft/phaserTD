@@ -106,7 +106,8 @@ export default class extends base_level {
     this.baseLayer = this.layers['background']
   
     this.maskBoard()
-    this.palette = Palette()
+
+    this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
     this.cursor = Cursor({p:this})
     this.brush = Brush()
 
@@ -118,6 +119,7 @@ export default class extends base_level {
     GLOBALS.stars.get('creep').find_path_goal_spawn();
     game.time.events.repeat(Phaser.Timer.SECOND * 2, 10, this.board.buildCreep, this.board);
   }
+
 
   maskBoard (){
     let rect = {

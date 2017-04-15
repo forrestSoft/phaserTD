@@ -10,6 +10,7 @@ export const Cursor = Stampit()
 		buildAndBind_cursor (){
 			this.marker = game.add.graphics();
 		    this.marker.lineStyle(2, 0xffffff, 1);
+		    this.marker.alpha = 0
 		    this.marker.drawRect(0, 0, 16,16);
 
 		    game.input.pollRate = 2
@@ -18,17 +19,18 @@ export const Cursor = Stampit()
 
 		updateMarker() {
 			let x,y
-			x = (Math.floor(parent.game.input.activePointer.worldX/16))*16
-			y = (Math.floor(parent.game.input.activePointer.worldY/16))*16
-			
-			if(this.marker.x == x && this.marker.y == y){
-				return
-			}
-			this.marker.x = x
-			this.marker.y = y
-			let coord = Points.get_coord_from_point({x,y})
 
 			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
+				x = (Math.floor(parent.game.input.activePointer.worldX/16))*16
+				y = (Math.floor(parent.game.input.activePointer.worldY/16))*16
+				
+				if(this.marker.x == x && this.marker.y == y){
+					return
+				}
+				this.marker.x = x
+				this.marker.y = y
+				this.marker.alpha = 1
+
 				if(!this.sprite){
 					this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
 					this.sprite.alpha = .75
@@ -40,6 +42,8 @@ export const Cursor = Stampit()
 				this.position = {x:0,y:0}
 				GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.test, this);
 			}else{
+				this.marker.alpha = 0
+
 				if(this.sprite){
 					this.sprite.destroy()
 					delete this.sprite

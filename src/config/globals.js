@@ -17,7 +17,21 @@ var globals = {
   },
   exit: {
     row: 5
-  }
+  },
+  fancyBrushes: [
+    {
+      sprite: [32,37,32,
+               32,37,32,
+               32,37,32],
+      size: [3,3]
+    },
+    {
+      sprite: [7,37,32,
+               32,37,32,
+               32,37,32],
+      size: [3,3]
+    }
+  ]
 }
 
 const tempGlobalsExit = {

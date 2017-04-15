@@ -43,3 +43,27 @@ export const Points = {
         return new Phaser.Point(x, y);
     }
 }
+
+export class highLightableGroup extends Phaser.Group {
+    constructor ({game, parent, name, addToStage, enableBody, physicsBodyType, size}) {
+        super(game, parent, name, addToStage, enableBody, physicsBodyType)
+        this._hasHighlight = false
+        this.marker = game.make.graphics();
+        this.marker.lineStyle(2, 0xffffff, 1);
+        this.marker.drawRect(0, 0, 16*size[0],16*size[1]);
+        this.addChild(this.marker)
+    }
+    update(){
+        if(game.input.hitTest(this, game.input.activePointer, new Phaser.Point())){
+            this.swap(this.marker, this.getTop())
+            this.marker.alpha = 1
+
+            if(game.input.activePointer.isDown){
+                console.log('is down', this.name)
+                game.currentFancyBrush = this.name
+            }
+        }else{
+            this.marker.alpha = 0
+        }
+    }
+}
