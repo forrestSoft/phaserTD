@@ -20,26 +20,28 @@ import {Palette} from '../ui/palette'
 export default class extends base_level {
   init () {
     
-    GLOBALS.currentCollisionLayer =  function(){
-        let a  = []
-        this.board.map.layers[1].data.forEach( function (array,i) {
-          let subArray = []
-          array.forEach((cell,i) => {
-            subArray.push(Object.assign({},cell))
+    const tempGLOBALS = {
+      currentCollisionLayer: function(){
+          let a  = []
+          this.board.map.layers[1].data.forEach( function (array,i) {
+            let subArray = []
+            array.forEach((cell,i) => {
+              subArray.push(Object.assign({},cell))
+            })
+            a.push(subArray)
           })
-          a.push(subArray)
-        })
-      return a
-    }.bind(this)
+        return a
+      }.bind(this),
 
-    GLOBALS.prefab_classes =  {
-      "player": Player
-    }
+      prefab_classes:  {
+        "player": Player
+      },
 
-    GLOBALS.signals = {
-      creepPathReset: new Phaser.Signal()
+      signals: {
+        creepPathReset: new Phaser.Signal()
+      }
     }
-    
+    Object.assign(GLOBALS, tempGLOBALS)
 
     this.level_data = this.cache.getJSON('level1');
     this.globalOffset = GLOBALS.globalOffset
@@ -72,7 +74,6 @@ export default class extends base_level {
 
     // initialize pathfinding
     tileDimensions = new Phaser.Point(this.board.map.tileWidth, this.board.map.tileHeight);
-    // this.pathfinding = this.game.plugins.add(Pathfinding, this.board.map.layers[1].data, [-1, 25], tile_dimensions);
     const stars = Pathfinders()
     stars.add({
       creep: {
@@ -87,7 +88,6 @@ export default class extends base_level {
       }
     })
     GLOBALS.stars = stars
-    // this.pathfinding.build(this.board.map.layers[1].data, [-1, 25], tile_dimensions);
 
     this.signals = {
       playerMove: new Phaser.Signal()
@@ -97,11 +97,11 @@ export default class extends base_level {
   create () {
     let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
 
-    this.board.buildLayers(this.groups, this.layers)
-    this.board.buildGroups(this.groups)
-    this.board.buildCreep(this.groups, this.prefabs,this)
-    this.board.buildGoal(this.groups)
-    this.board.buildSpawn(this.groups)
+    this.board.buildLayers()
+    this.board.buildGroups()
+    this.board.buildCreep()
+    this.board.buildGoal()
+    this.board.buildSpawn()
   
     this.baseLayer = this.layers['background']
   
@@ -116,14 +116,15 @@ export default class extends base_level {
     this.groups.board.y = this.globalOffset.y
 
     GLOBALS.stars.get('creep').find_path_goal_spawn();
+    game.time.events.repeat(Phaser.Timer.SECOND * 2, 10, this.board.buildCreep, this.board);
   }
 
   maskBoard (){
     let rect = {
       x: 0,
       y:16,
-      height: 160,
-      width: 160,
+      width: GLOBALS.height * GLOBALS.tx,
+      height: GLOBALS.width * GLOBALS.ty,
       objectToMask: this.groups.board,
       name: 'board'
     }

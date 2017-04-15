@@ -38,6 +38,7 @@ export default class extends Phaser.Plugin {
                 grid_indices[grid_row][grid_column] = world_grid[grid_row][grid_column].index;
             }
         }
+        console.log(grid_indices)
         return grid_indices
     }
 

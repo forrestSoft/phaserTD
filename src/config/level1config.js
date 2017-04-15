@@ -1,14 +1,38 @@
+import {Counting} from '../utils'
+import GLOBALS from '../config/globals'
+
 var backgroundArray, boardWidth, boardHeight, boardSize
 
-boardWidth = 10
-boardHeight = 10
-// debugger
+boardWidth = GLOBALS.width
+boardHeight = GLOBALS.height
 boardSize = boardWidth * boardHeight
 backgroundArray = Array.from(new Array(boardSize), (x,i) => 25)
 
 let collisionArray
-collisionArray = Array.from(new Array(boardSize), (x,i) => 0)
-collisionArray[1] = 33
+let arrays = [...Array(boardHeight)].map((a,i)=>{
+	return Array(boardWidth).fill(0)
+})
+
+let a = [...Array(boardHeight)].forEach((_,i)=>{
+	if(i == GLOBALS.exit.row){
+		arrays[i][boardWidth-1] = 0
+	}else{
+		arrays[i][boardWidth-1] = 33
+	}
+
+	arrays[boardHeight-1][i] = 33
+	arrays[i][0] = 33
+
+	if(i == GLOBALS.entrance.column){
+		arrays[0][i] = 0
+	}else{
+		arrays[0][i] = 33
+	}
+})
+
+
+collisionArray = [].concat.apply([], arrays)
+// collisionArray[1] = 33
 
 let goalsArray = Array.from(new Array(boardSize), (x,i) => 0)
 goalsArray[0] = 44
@@ -75,8 +99,8 @@ data = {
 	                 "type":"player",
 	                 "visible":true,
 	                 "width":0,
-	                 "x":0,
-	                 "y":0
+	                 "x":GLOBALS.entrance.columnPX,
+	                 "y":GLOBALS.entrance.rowPX
 	                }],
 	         "opacity":1,
 	         "type":"objectgroup",

@@ -31,18 +31,14 @@ export default class extends Prefab {
         GLOBALS.signals.creepPathReset.add(this.reset,this)
     }
     reset(){
-        // if(this.name != )
-        // debugger
+        console.log('reset')
         this.path = GLOBALS.stars.get_path('creep')
 
         if(this.path_step == -1){
             this.path_step = 0
         }else{
-            console.log('reset', arguments, this.position, this.path)
             this.path.some((point,i)=>{
                 if(this.position.x < point.x && this.position.y < point.y){
-                console.log(this.position.x, point.x, this.position.y, point.y)
-                    console.log(i)
                     this.path_step = i
                     return true
                 }else{
@@ -53,7 +49,6 @@ export default class extends Prefab {
     }
 
     update () {
-        // console.log(GLOBALS.stars.get('creep'))
         if(!GLOBALS.stars.get('creep').hasPath){
             return
         }
@@ -99,7 +94,7 @@ export default class extends Prefab {
                     this.path_step += 1;
                 } else {
                     this.destroy()
-                    this.game_state.board.buildCreepNew()
+                    // this.game_state.board.buildCreepNew()
                     // return
                     // this.path_step = 0;
 
@@ -142,7 +137,6 @@ export default class extends Prefab {
     }
 
     move_through_path (path) {
-        // console.log('p',path)
         if (path !== null) {
             this.path = path;
             this.path_step = 0;

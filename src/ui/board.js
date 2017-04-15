@@ -49,17 +49,16 @@ export var Board = stampit()
 		    this.groups.board.addChild(this.prefabs[data.name])
 		},
 		buildSpawn(){
-			this.objects['spawn'] = game.make.sprite(GLOBALS.entrance.column*GLOBALS.ty,GLOBALS.entrance.row*GLOBALS.tx,'ms',43)
+			this.objects['spawn'] = game.make.sprite(GLOBALS.entrance.columnPX,GLOBALS.entrance.rowPX,'ms',43)
 			this.groups.board.addChild(this.objects['spawn'])
 		},
 		buildGoal(){
-			this.objects['goal'] = game.make.sprite(GLOBALS.exit.column*GLOBALS.ty,GLOBALS.exit.row*GLOBALS.tx,'ms',43)
+			this.objects['goal'] = game.make.sprite(GLOBALS.exit.columnPX,GLOBALS.exit.rowPX,'ms',43)
 			this.groups.board.addChild(this.objects['goal'])
 		},
 		create_object (object) {
 			let object_y, position, prefab;
-			object_y = object_y//(object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);
-			// console.log(object)
+			// object_y = object_y//(object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);
 			position = {"x": object.x , "y": object.y};
 			if (GLOBALS.prefab_classes.hasOwnProperty(object.type)) {
 			  prefab = new GLOBALS.prefab_classes[object.type](this.state, object.name, position, object.properties);
@@ -71,8 +70,6 @@ export var Board = stampit()
 		name: 'level1'
 	})
 	.init(function (a, {args, instance, stamp}) {
-		console.log(arguments)
-		// console.log(game.cache.getJSON('level1'))
 		let iArgs = args[1]
 		instance.level_data = game.cache.getJSON('level1')
 		instance.groups =iArgs.groups

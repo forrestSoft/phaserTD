@@ -13,14 +13,10 @@ export const Pathfinders = stampit().
 				this.stars = {}
 			}
 			for (let [key, value] of Object.entries(stars)) {
-				console.log(arguments, key, value)
 				this.stars[key] = Pathfinder()
 				this.stars[key].name = key
-			// debugger
 				this.stars[key].build(value)
 			}
-
-			console.log(this.stars)
 		},
 		get(star){
 			return this.stars[star]
@@ -72,7 +68,7 @@ export const Pathfinder =  stampit()
 
 	        // target_coord = {row: 3, column: GLOBALS.width - 1}
 	        target_coord = GLOBALS.exit
-	        // console.log('find path',origin_coord,this.outside_grid(origin_coord) ,this.outside_grid(target_coord))
+	        // console.log('find path',origin_coord, target_coord)
 	        // target_coord = this.get_coord_from_point(target);
 	        
 	        if (!Points.outside_grid(origin_coord) && !Points.outside_grid(target_coord)) {
@@ -84,10 +80,10 @@ export const Pathfinder =  stampit()
 	            return false;
 	        }
 	    },
-	    find_path_goal_spawn(){
-	    	let origin_coord = {x: 0, y: 0}
-	        let target_coord = {x:GLOBALS.exit.row * GLOBALS.tx, y:GLOBALS.exit.column * GLOBALS.ty}
-	        this.find_path(origin_coord, target_coord)
+	    find_path_goal_spawn(origin, target, callback, context){
+		    let origin_coord = {x: GLOBALS.entrance.columnPX, y: GLOBALS.entrance.rowPX}
+	        let target_coord = {x:GLOBALS.exit.columnPX, y:GLOBALS.exit.rowPX}
+	        this.find_path(origin_coord, target_coord, callback, context)
 	    },
 	    find_path_from_brush (origin, target, callback, context) {
 	        let grid = GLOBALS.currentCollisionLayer()
@@ -100,20 +96,16 @@ export const Pathfinder =  stampit()
 	            return
 	        }
 
-	        // temp collisision grid index set from current pointer
 	        grid[t.row][t.column].index = game.currentBrush
-
 	        this.setGrid(grid)
 
-	        // pathing for the cursor always starts at the goal
-	        this.find_path({x: 0, y: 0}, null, callback, context)
+	        this.find_path_goal_spawn({x: 0, y: 0}, null, callback, context)
 	    },
 	    avoidAdditionalPoint (x ,y){
 	        this.star.avoidAdditionalPoint(x,y)
 	    },
 
 	    call_callback_function (callback, context, path) {
-	    	// debugger
 	        let path_positions, pt, p,x,y;
 	        path_positions = [];
 	        if (path !== null) {
@@ -132,7 +124,6 @@ export const Pathfinder =  stampit()
 	        }
 	        this.path = path_positions
 	        if(this.name === 'creep'){
-	        // debugger
 		        GLOBALS.signals.creepPathReset.dispatch()
 		    }
 	        console.timeEnd('astar time')
