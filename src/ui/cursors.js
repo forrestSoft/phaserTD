@@ -32,7 +32,13 @@ export const Cursor = Stampit()
 				this.marker.alpha = 1
 
 				if(!this.sprite){
-					this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
+					console.log('has fancy brush', game.currentFancyBrush === '0')
+					if(game.currentFancyBrush != undefined){
+						this.sprite = game.add.sprite(x,y,game.fancyBrushSprites[game.currentFancyBrush].generateTexture())
+					}else{
+						this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
+					}
+
 					this.sprite.alpha = .75
 				}else{
 					this.sprite.x = x
@@ -72,9 +78,24 @@ export const Brush = Stampit()
 		  	if(!game.allowPaint){
 		  		return
 		  	}
+
 			let {x,y} = game.input.activePointer
-			console.log((game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision'))
-			this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+			if(game.currentFancyBrush != undefined){
+				let brushData = GLOBALS.fancyBrushes[game.currentFancyBrush]
+				let cursorTile = {
+					x: this.baseLayer.getTileX(x-this.globalOffset.x),
+					y: this.baseLayer.getTileY(y-this.globalOffset.y)
+				}
+				brushData.sprite.forEach((sprite, i)=> {
+					let sY = Math.floor(i/3)
+			    	let sX = (i%3)
+					this.map.putTile(GLOBALS.brushMap[sprite]+1, sX+cursorTile.x,sY+cursorTile.y , 'collision');
+				})
+				console.log('a',GLOBALS.fancyBrushes[game.currentFancyBrush], cursorTile)
+			}else{
+				this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+			}
+
 			GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
 			GLOBALS.stars.get('creep').find_path_goal_spawn()
 		  }

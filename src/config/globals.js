@@ -3,7 +3,7 @@ var globals = {
     x: 0,
     y: 16
   },
-  height: 10,
+  height: 11,
   width: 11,
   tx: 16,
   ty: 16,
@@ -18,18 +18,75 @@ var globals = {
   exit: {
     row: 5
   },
+  acceptableTiles: [-1,25,31,32],
+  brushMap: {
+    brownWall: 34,
+    straightDownA: 30,
+    straightDownB: 31
+  },
   fancyBrushes: [
-    {
-      sprite: [32,37,32,
-               32,37,32,
-               32,37,32],
-      size: [3,3]
+    { 
+      sprite: ['brownWall','brownWall','brownWall',
+               'brownWall','straightDownB','straightDownA',
+               'brownWall','straightDownB' ,'brownWall'],
+      size: [3,3],
+      name: 'NS'
     },
     {
-      sprite: [7,37,32,
-               32,37,32,
-               32,37,32],
-      size: [3,3]
+      sprite: ['brownWall','brownWall','brownWall',
+               'straightDownB','straightDownB','straightDownA',
+               'brownWall','brownWall','brownWall'],
+      size: [3,3],
+      name: 'EW'
+    },
+    {
+      sprite: ['brownWall','brownWall','brownWall',
+               'straightDownA','straightDownB','brownWall',
+               'brownWall','straightDownB' ,'brownWall'],
+      size: [3,3],
+      name: 'NS'
+    },
+    {
+      sprite: ['brownWall','straightDownA','brownWall',
+               'brownWall','straightDownB','brownWall',
+               'brownWall','straightDownB' ,'brownWall'],
+      size: [3,3],
+      name: 'NS'
+    },
+    {
+      sprite: ['brownWall','straightDownB','brownWall',
+               'brownWall','straightDownB','straightDownA',
+               'brownWall','brownWall','brownWall'],
+      size: [3,3],
+      name: 'downRight90'
+    },
+    {
+      sprite: ['brownWall','straightDownA','brownWall',
+               'brownWall','straightDownB','brownWall',
+               'brownWall','straightDownB' ,'brownWall'],
+      size: [3,3],
+      name: 'NS'
+    },
+    {
+      sprite: ['brownWall','straightDownB','brownWall',
+               'brownWall','straightDownB','straightDownA',
+               'brownWall','brownWall','brownWall'],
+      size: [3,3],
+      name: 'downRight90'
+    },
+    {
+      sprite: ['brownWall','brownWall','brownWall',
+               'straightDownB','straightDownB','straightDownA',
+               'brownWall','brownWall','brownWall'],
+      size: [3,3],
+      name: 'EW'
+    },
+    {
+      sprite: ['brownWall','straightDownB','brownWall',
+               'straightDownA','straightDownB','brownWall',
+               'brownWall','brownWall','brownWall'],
+      size: [3,3],
+      name: 'upRight90'
     }
   ]
 }

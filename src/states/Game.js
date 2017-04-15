@@ -78,12 +78,12 @@ export default class extends base_level {
     stars.add({
       creep: {
         grid: this.board.map.layers[1].data,
-        acceptableTiles: [-1,25], 
+        acceptableTiles: GLOBALS.acceptableTiles, 
         tileDimensions: tileDimensions
       },
       cursor: {
         grid: GLOBALS.currentCollisionLayer(),
-        acceptableTiles: [-1,25], 
+        acceptableTiles: GLOBALS.acceptableTiles, 
         tileDimensions: tileDimensions
       }
     })
@@ -108,6 +108,7 @@ export default class extends base_level {
     this.maskBoard()
 
     this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
+    this.palette2 = Palette({ y: 0, x: 240})
     this.cursor = Cursor({p:this})
     this.brush = Brush()
 
@@ -119,7 +120,6 @@ export default class extends base_level {
     GLOBALS.stars.get('creep').find_path_goal_spawn();
     game.time.events.repeat(Phaser.Timer.SECOND * 2, 10, this.board.buildCreep, this.board);
   }
-
 
   maskBoard (){
     let rect = {
