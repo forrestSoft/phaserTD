@@ -7,23 +7,18 @@ import GLOBALS from '../config/globals'
 export const Palette = Stampit()
 	.methods({
 		build( ){
-			if(this.fancyBrush){
-				this.buildFancyBrushes()
-				return
-			}
-
 			let group = game.add.group()
 		    let brushes = this.brushes
 		    // let brushes = [28,32,33,34, 46,24]
 		    let tw,th,pW, l
 		    l = brushes.length
-		    tw = 16
-		    th = 16
+		    tw = GLOBALS.tx
+		    th = GLOBALS.ty
 		    pW = 10
 
 		    const res = [...Array(l)].map((_, i) => {
-		    	let y = Math.floor(i/pW) * 16
-		    	let x = (i%pW)* 16
+		    	let y = Math.floor(i/pW) * tw
+		    	let x = (i%pW)* th
 		    	let s = game.make.sprite(x,y, 'ms', brushes[i])
 		    	s.inputEnabled = true
 		    	s.events.onInputDown.add(this.changeTile,this)
@@ -31,8 +26,8 @@ export const Palette = Stampit()
 			  return s;
 			});
 
-		    group.x = 16*11 + this.xOffset
-		    group.y = 16 + this.yOffset
+		    group.x = tw*11 + this.xOffset
+		    group.y = th + this.yOffset
 
 		    let rect = {
 		      x: group.x,
@@ -47,12 +42,12 @@ export const Palette = Stampit()
 		buildFancyBrushes(){
 			game.fancyBrushSprites = []
 			let brushGroup = game.add.group()
-			// game.add(brushGroup)
-			brushGroup.x = 16*12
-		    brushGroup.y = 16
-
-			const tw = 16
 		    const th = 16
+			const tw = 16
+
+			brushGroup.x = tw*(GLOBALS.width + 1)
+		    brushGroup.y = th
+
 			this.brushes.forEach((data,i)=>{
 				let group = new highLightableGroup({
 					game: game, 
@@ -64,7 +59,7 @@ export const Palette = Stampit()
 				let pW = data.size[0]
 				let pH = data.size[1]
 
-				const res = [...Array(data.size[0]*data.size[1])].map((_, l) => {
+				const res = [...Array(pW*pH)].map((_, l) => {
 			    	let y = Math.floor(l/pW) * tw
 			    	let x = (l%pW)* th
 			    	let s = game.make.sprite(x,y, 'ms', GLOBALS.brushMap[data.sprite[l]])
@@ -72,32 +67,13 @@ export const Palette = Stampit()
 					return s;
 				});
 
-				group.x = (i%pW)* (pW*16) + (i%pW*5)
-				group.y = Math.floor(i/3)*(pH*16) + (Math.floor(i/3)*5)
+				group.x = (i%pW)* (pW*th) + (i%pW*this.gridWiggle)
+				group.y = Math.floor(i/pH)*(pH*tw) + (Math.floor(i/pH)*this.gridWiggle)
 				game.fancyBrushSprites.push(group)
 				brushGroup.addChild(group)
-
-				// let name = `palette_brush${i}`
-				// let rect = {
-			 //      x: brushGroup.x,
-			 //      y: brushGroup.y,
-			 //      height: tw*pW,
-			 //      width: th*(pW+1/2),
-			 //      objectToMask: group,
-			 //      name: name
-			 //    }
-			    // buildBoundInputMask(rect)
 			})
 		},
 
-		test(sprite, pointer){ 
-			// console.log(sprite.parent)
-			if(game.input.hitTest(sprite.parent, game.input.activePointer, new Phaser.Point())){
-				sprite.parent._hasHighlight = true
-			}else{
-				sprite.parent._hasHighlight = false
-			}
-		},
 		changeTile(sprite, pointer){
 			let index  = sprite._frame.index
 			//something about tilemap and sprite indexes being off by 1?
@@ -116,5 +92,11 @@ export const Palette = Stampit()
 		instance.fancyBrush = args[0].fancyBrush || false
 		instance.xOffset = args[0].x || 0
 		instance.yOffset = args[0].y || 0
-		this.build()
+		instance.gridWiggle = args[0].gridWiggle || 5
+
+		if(instance.fancyBrush){
+			this.buildFancyBrushes()
+		}else{
+			this.build()
+		}
 	  })
