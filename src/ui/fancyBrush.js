@@ -18,7 +18,6 @@ export const FancyBrush = {
 	},
 
 	brushLoopFromSprite({sprite, vars, command}){
-		console.log(sprite)
 		sprite.every((spriteName, i) => {
 			let tY = Math.floor(i/vars.pW)
 	    	let y = tY * GLOBALS.tW

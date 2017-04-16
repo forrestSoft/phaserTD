@@ -36,6 +36,7 @@ var globals = {
       index: 45
     }
   ],
+  towerFoundation: 35,
   fancyBrushes: [
     { 
       sprite: ['brownWall','brownWall','brownWall',

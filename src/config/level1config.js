@@ -36,6 +36,8 @@ collisionArray = [].concat.apply([], arrays)
 let goalsArray = Array.from(new Array(boardSize), (x,i) => 0)
 goalsArray[0] = 44
 
+let towersArray = Array.from(new Array(boardSize), (x,i) => 0)
+
 let creepSpeed = 21
 var data
 data = { 
@@ -67,21 +69,21 @@ data = {
 	         "x":0,
 	         "y":0
 	        },
-	        // {
-	        //  "data":goalsArray,
-	        //  "height":boardHeight,
-	        //  "name":"goals",
-	        //  "opacity":1,
-	        //  "properties":
-	        //     {
-	        //      // "collision":"true"
-	        //     },
-	        //  "type":"tilelayer",
-	        //  "visible":true,
-	        //  "width":boardWidth,
-	        //  "x":0,
-	        //  "y":0
-	        // }, 
+	        {
+	         "data":towersArray,
+	         "height":boardHeight,
+	         "name":"towers",
+	         "opacity":1,
+	         "properties":
+	            {
+	             // "collision":"true"
+	            },
+	         "type":"tilelayer",
+	         "visible":true,
+	         "width":boardWidth,
+	         "x":0,
+	         "y":0
+	        }, 
 	        {
 	         "height":boardHeight,
 	         "name":"objects",

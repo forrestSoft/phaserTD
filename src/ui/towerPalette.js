@@ -9,7 +9,6 @@ import GLOBALS from '../config/globals'
 let base = Stampit()
 	.methods({
 		build( ){
-			console.log('b')
 			let group = this.getGroup() || game.add.group()
 		    let brushes = GLOBALS.towers
 		    // let brushes = [28,32,33,34, 46,24]
@@ -55,13 +54,11 @@ let base = Stampit()
 		},
 
 		setTower(sprite, pointer){
-			console.log('abc',sprite._frame.index)
 			game.currentCursorType = 'tower'
 			game.currentBrush = sprite._frame.index
 		},
 
 		setCursor(sprite, pointer){
-			console.log('set cursor', sprite)
 			let {x,y} = sprite.position
 			let {width,height} = sprite.texture.frame
 			this.updateCursor({x,y,width,height})

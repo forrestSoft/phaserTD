@@ -107,7 +107,6 @@ export const Pathfinder =  stampit()
 					vars: {pH,pW},
 					sprite: brush.sprite,
 					command: ({x,y,tX, tY}, sprite) => {
-						console.log(x,y)
 						let t =  Points.get_coord_from_point(c)	
 						let mappedX = t.column+tX
 				    	let mappedY = t.row+tY

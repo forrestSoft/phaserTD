@@ -69,22 +69,28 @@ export const Cursor = Stampit()
 				this.marker.x = x
 				this.marker.y = y
 				this.marker.alpha = 1
-				console.log(this.lastBrushType , game.currentCursorType , this.lastBrushType != undefined)
-					
-				if(this.sprite && (this.lastBrushType !== game.currentCursorType) && (this.lastBrushType != undefined)){
-					console.log('ddd')
-					this.sprite.destroy()
-					delete this.sprite
+				
+				let xN = (x)/16
+				let yN = (y)/16-1
+
+				let tileC = this.p.map.getTile(xN,yN,'collision', true).index
+				let tileT = this.p.map.getTile(xN,yN,'towers', true).index
+				if(GLOBALS.towerFoundation == tileC && ![44,45].includes(tileT) ){
+					game.canPlaceTower = true
+				}else{
+					game.canPlaceTower = false
 				}
+
 				if(!this.sprite){
-					console.log('has fancy brush', game.currentCursorType)
 					switch (game.currentCursorType){
 						case 'tower':
 							console.log('tower', game.currentBrush)
 							this.lastBrushType = 'tower'
 							this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush)
 							break
+
 						case 'wall':
+							console.log('wall', game.currentBrush)
 							if(game.currentFancyBrush != undefined){
 								this.sprite = game.add.sprite(x,y,game.fancyBrushSprites[game.currentFancyBrush].generateTexture())
 							}else{
@@ -99,7 +105,33 @@ export const Cursor = Stampit()
 				}else{
 					this.sprite.x = x
 					this.sprite.y = y
+
+					switch (game.currentCursorType){
+						case 'tower':
+							if(game.canPlaceTower){
+								this.sprite.tint = 0xffffff
+							}else{
+								this.sprite.tint = 0xff0000
+							}
+							break
+
+						case 'wall':
+							if(game.allowPaint){
+								this.sprite.tint = 0xffffff
+							}else{
+								this.sprite.tint = 0xff0000
+							}
+							break
+					}
 				}
+				// console.log('tds',!!this.sprite,(game.allowPaint || game.canPlaceTower))
+
+				
+				// if((game.allowPaint || game.canPlaceTower) && this.sprite){
+				// 	this.sprite.tint = 0xffffff
+				// }else if(this.sprite){
+				// 	this.sprite.tint = 0xff0000
+				// }
 
 				if(game.currentCursorType === 'wall'){
 					this.position = {x:0,y:0}
@@ -117,10 +149,8 @@ export const Cursor = Stampit()
 		test (path) {
 			if(path){
 				game.allowPaint = true
-				this.sprite.tint = 0xffffff
 			}else{
 				game.allowPaint = false
-				this.sprite.tint = 0xff0000
 			}
 		}
 	})
@@ -133,31 +163,49 @@ export const Cursor = Stampit()
 export const Brush = Stampit()
 	.methods({
 		  setTile (sprite, pointer){
-		  	if(!game.allowPaint){
-		  		return
-		  	}
-
 			let {x,y} = game.input.activePointer
-			if(game.currentFancyBrush != undefined){
-				let brushData = GLOBALS.fancyBrushes[game.currentFancyBrush]
-				let cursorTile = {
-					x: this.baseLayer.getTileX(x-this.globalOffset.x),
-					y: this.baseLayer.getTileY(y-this.globalOffset.y)
-				}
-
-				FancyBrush.brushSpriteLoop({
-					vars: {pW: brushData.size[0],pH: brushData.size[1]},
-					sprite: brushData.sprite,
-					command: ({x,y,tX,tY},sprite) => {
-						this.map.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
-					}
-				})
-				
-			}else{
-				this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+			let cursorTile = {
+				x: this.baseLayer.getTileX(x-this.globalOffset.x),
+				y: this.baseLayer.getTileY(y-this.globalOffset.y)
 			}
 
-			GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
-			GLOBALS.stars.get('creep').find_path_goal_spawn()
-		  }
+			switch (game.currentCursorType){
+				case 'tower':
+					let tile = this.map.getTile(cursorTile.x,cursorTile.y,'collision', true)
+					console.log(tile.index , GLOBALS.towerFoundation)
+					if(tile.index == GLOBALS.towerFoundation){
+						game.canPlaceTower = true
+						console.log('tower click',cursorTile, this.map.getTile(cursorTile.x,cursorTile.y,'collision', true))
+						this.map.putTile(game.currentBrush+1, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'towers');
+					}else{
+						game.canPlaceTower = false
+					}
+					break
+
+				case 'wall':
+					if(!game.allowPaint){
+				  		return
+				  	}
+
+					if(game.currentFancyBrush != undefined){
+						let brushData = GLOBALS.fancyBrushes[game.currentFancyBrush]
+						
+
+						FancyBrush.brushSpriteLoop({
+							vars: {pW: brushData.size[0],pH: brushData.size[1]},
+							sprite: brushData.sprite,
+							command: ({x,y,tX,tY},sprite) => {
+								this.map.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
+							}
+						})
+						
+					}else{
+						this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+					}
+
+					GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
+					GLOBALS.stars.get('creep').find_path_goal_spawn()
+					break
+			}
+	    }
 	})
