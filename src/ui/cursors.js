@@ -6,6 +6,44 @@ import {FancyBrush} from './fancyBrush'
 
 import GLOBALS from '../config/globals'
 
+export const MiniCursor = Stampit()
+	.methods({
+		buildCursor(){
+			this.marker = game.add.graphics();
+		    this.getGroup().addChild(this.marker)
+		},
+		updateCursor({x,y,width,height}){
+			this.marker.clear()
+			this.marker.lineStyle(2, 0xfffccf, 1);
+			this.marker.drawRect(x, y, height,width);
+		},
+		clearCursor(){
+			this.marker.clear()
+		}
+	})
+	.init(function ({}, {args, instance, stamp}) {
+		console.log('mini', args)
+		this.buildCursor()
+
+	})
+
+export const GroupManager = Stampit()
+	.methods({
+		getGroup(){
+			if(!this.group){
+				this.group = game.make.group()
+			}
+			return this.group
+		},
+		attach(){
+			game.stage.addChild(this.getGroup())
+		}
+	})
+	.init(function ({}, {args, instance, stamp}) {
+		console.log('gman', args)
+		instance.attachObj = game
+	})
+
 export const Cursor = Stampit()
 	.methods({
 		buildAndBind_cursor (){
@@ -31,23 +69,42 @@ export const Cursor = Stampit()
 				this.marker.x = x
 				this.marker.y = y
 				this.marker.alpha = 1
-
+				console.log(this.lastBrushType , game.currentCursorType , this.lastBrushType != undefined)
+					
+				if(this.sprite && (this.lastBrushType !== game.currentCursorType) && (this.lastBrushType != undefined)){
+					console.log('ddd')
+					this.sprite.destroy()
+					delete this.sprite
+				}
 				if(!this.sprite){
-					console.log('has fancy brush', game.currentFancyBrush === '0')
-					if(game.currentFancyBrush != undefined){
-						this.sprite = game.add.sprite(x,y,game.fancyBrushSprites[game.currentFancyBrush].generateTexture())
-					}else{
-						this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
-					}
+					console.log('has fancy brush', game.currentCursorType)
+					switch (game.currentCursorType){
+						case 'tower':
+							console.log('tower', game.currentBrush)
+							this.lastBrushType = 'tower'
+							this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush)
+							break
+						case 'wall':
+							if(game.currentFancyBrush != undefined){
+								this.sprite = game.add.sprite(x,y,game.fancyBrushSprites[game.currentFancyBrush].generateTexture())
+							}else{
+								this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
+							}
 
-					this.sprite.alpha = .75
+							this.sprite.alpha = .75
+
+							this.lastBrushType = 'wall'
+							break
+					}
 				}else{
 					this.sprite.x = x
 					this.sprite.y = y
 				}
 
-				this.position = {x:0,y:0}
-				GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.test, this);
+				if(game.currentCursorType === 'wall'){
+					this.position = {x:0,y:0}
+					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.test, this);
+				}				
 			}else{
 				this.marker.alpha = 0
 

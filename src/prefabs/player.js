@@ -94,7 +94,7 @@ export default class extends Prefab {
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
-                    this.game_state.board.buildCreep()
+                    // this.game_state.board.buildCreep()
                     this.destroy()
                     // this.game_state.board.buildCreepNew()
                     // return

@@ -26,6 +26,16 @@ var globals = {
     straightDownA: 30,
     straightDownB: 31
   },
+  towers: [
+    {
+      name: 'yellow',
+      index: 44
+    },
+    {
+      name: 'red',
+      index: 45
+    }
+  ],
   fancyBrushes: [
     { 
       sprite: ['brownWall','brownWall','brownWall',

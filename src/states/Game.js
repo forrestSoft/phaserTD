@@ -16,6 +16,7 @@ import GLOBALS from '../config/globals'
 import {Board} from '../ui/board'
 import {Cursor, Brush} from '../ui/cursors'
 import {Palette} from '../ui/palette'
+import {TowerPalette} from '../ui/towerPalette'
 
 export default class extends base_level {
   init () {
@@ -62,7 +63,7 @@ export default class extends base_level {
     }
     this.prefabs = {}
     this.objects = {}
-    this.board = Board(null,{
+    this.board = Board({
       name: 'level1',
       mapData: this.level_data.map,
       groups: this.groups,
@@ -97,11 +98,7 @@ export default class extends base_level {
   create () {
     let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
 
-    this.board.buildLayers()
-    this.board.buildGroups()
-    this.board.buildCreep()
-    this.board.buildGoal()
-    this.board.buildSpawn()
+    this.board.buildForCreate()
   
     this.baseLayer = this.layers['background']
   
@@ -109,6 +106,7 @@ export default class extends base_level {
 
     this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
     this.palette2 = Palette({ y: 0, x: 240})
+    this.towerPalette = TowerPalette().build()
     this.cursor = Cursor({p:this})
     this.brush = Brush()
 
@@ -118,7 +116,7 @@ export default class extends base_level {
     this.groups.board.y = this.globalOffset.y
 
     GLOBALS.stars.get('creep').find_path_goal_spawn();
-    // game.time.events.repeat(Phaser.Timer.SECOND * 2, 0, this.board.buildCreep, this.board);
+    game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 7, this.board.buildCreep, this.board);
   }
 
   maskBoard (){
@@ -145,5 +143,12 @@ export default class extends base_level {
 
   update () {
     // console.log(game.inputMasks.board.input.pointerOver(),game.inputMasks.palette.input.pointerDown())
+  }
+
+  render(){
+    if(window.debugObject){
+      // game.debug.spriteBounds(window.debugObject);
+      // game.debug.spriteInfo(window.debugObject, true, true);
+    }
   }
 }

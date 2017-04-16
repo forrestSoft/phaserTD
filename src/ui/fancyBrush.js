@@ -6,7 +6,7 @@ import GLOBALS from '../config/globals'
 
 export const FancyBrush = {
 	brushSpriteLoop({sprite, vars, command}){
-		const res = [...Array(vars.pW*vars.pH)].map((_, i) => {
+		const res = [...Array(Math.ceil(vars.pW*vars.pH))].map((_, i) => {
 	    	let tY = Math.floor(i/vars.pW)
 	    	let y = tY * GLOBALS.tW
 	    	let tX = (i%vars.pW) 

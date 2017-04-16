@@ -85,6 +85,7 @@ export const Palette = Stampit()
 				return
 			}
 			game.currentBrush = brush
+			game.currentCursorType = 'wall'
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {

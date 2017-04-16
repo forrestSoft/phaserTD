@@ -61,6 +61,7 @@ export class highLightableGroup extends Phaser.Group {
             if(game.input.activePointer.isDown){
                 console.log('is down', this.name)
                 game.currentFancyBrush = this.name
+                game.currentCursorType = 'wall'
             }
         }else{
             this.marker.alpha = 0

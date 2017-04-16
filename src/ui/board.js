@@ -1,4 +1,4 @@
-import stampit from 'stampit'
+	import stampit from 'stampit'
 
 import GLOBALS from '../config/globals'
 
@@ -11,6 +11,13 @@ export var Board = stampit()
 		        this.map.addTilesetImage(tileset.name, map.tilesets[i]);
 		    }, this);
 		    return this.map
+		},
+		buildForCreate(){
+			this.buildLayers()
+		    this.buildGroups()
+		    this.buildCreep()
+		    this.buildGoal()
+		    this.buildSpawn()
 		},
 		buildLayers() {
 			this.map.layers.forEach((layer) => {
@@ -69,12 +76,7 @@ export var Board = stampit()
 	.refs({
 		name: 'level1'
 	})
-	.init(function (a, {args, instance, stamp}) {
-		let iArgs = args[1]
-		instance.level_data = game.cache.getJSON('level1')
-		instance.groups =iArgs.groups
-		instance.layers = iArgs.layers
-		instance.state = iArgs.state
-		instance.objects = iArgs.objects
+	.init(function ({groups, layers, state, objects}, {args, instance, stamp}) {
+		Object.assign(instance, {groups, layers, state, objects, level_data: game.cache.getJSON('level1')})
 	})
 
