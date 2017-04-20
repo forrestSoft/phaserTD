@@ -43,8 +43,8 @@ export const Palette = Stampit()
 		buildFancyBrushes(){
 			game.fancyBrushSprites = []
 			let brushGroup = game.add.group()
-		    const th = 16
-			const tw = 16
+		    const th = GLOBALS.tH
+			const tw = GLOBALS.tW
 
 			brushGroup.x = tw*(GLOBALS.width + 1)
 		    brushGroup.y = th
@@ -54,7 +54,9 @@ export const Palette = Stampit()
 					game: game, 
 					parent: brushGroup, 
 					name: `${i}`,
-					size: data.size
+					size: data.size,
+					isDownCallback: this.isDownCallBack,
+					context: this
 				})
 
 				let pW = data.size[0]
@@ -74,7 +76,12 @@ export const Palette = Stampit()
 				brushGroup.addChild(group)
 			})
 		},
-
+		isDownCallBack(brush){
+			this.changeBrushFancy(brush)
+		},
+		changeBrushFancy(brush){
+			GLOBALS.signals.updateBrush.dispatch('fancy', brush)
+		},
 		changeTile(sprite, pointer){
 			let index  = sprite._frame.index
 			//something about tilemap and sprite indexes being off by 1?
@@ -84,12 +91,12 @@ export const Palette = Stampit()
 			if(brush == 47){
 				return
 			}
-			game.currentBrush = brush
-			game.currentCursorType = 'wall'
+
+			GLOBALS.signals.updateBrush.dispatch(brush, 'wall')
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {
-		game.currentBrush = 25
+		game.currentBrush = 26
 		instance.brushes = args[0].brushes || Array.from(new Array(50), (x,i) => i+1)
 		instance.fancyBrush = args[0].fancyBrush || false
 		instance.xOffset = args[0].x || 0

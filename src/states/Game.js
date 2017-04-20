@@ -39,7 +39,9 @@ export default class extends base_level {
       },
 
       signals: {
-        creepPathReset: new Phaser.Signal()
+        creepPathReset: new Phaser.Signal(),
+        updateBrush: new Phaser.Signal(),
+        paintWithBrush: new Phaser.Signal()
       }
     }
     Object.assign(GLOBALS, tempGLOBALS)

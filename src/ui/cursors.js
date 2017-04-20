@@ -44,114 +44,169 @@ export const GroupManager = Stampit()
 		instance.attachObj = game
 	})
 
+export const CursorState = Stampit()
+	.methods({
+		setBrushType(type, i){
+			if(!this.modes.includes(type)){
+				console.warn('bad type', type)
+			}
+
+			this.brushType = type
+
+			if(i){
+				this.currentBrush = i
+			}
+		},
+		setPlacementValidity(valid){
+			this.validPlacement = valid
+		},
+		setSprite(sprite){
+			if(sprite){
+				this.sprite = sprite
+			}else{
+				this.sprite = null
+			}
+		},
+		getCursorType(){
+			return this.brushType
+		},
+		setPathFail(fail){
+			if(fail){
+				this.pathFail = true
+			}else{
+				this.pathFail = false
+			}
+			this.setSpriteTint()
+		},
+		setSpriteTint(){
+			if(!this.sprite){
+				return
+			}
+
+			if(this.validPlacement && !this.pathFail){
+				this.sprite.tint = 0xffffff
+			}else{
+				this.sprite.tint = 0xff0000
+			}
+		},
+		calculateCursorTile(x,y, marker){
+			//snap to grid
+			this.x = (Math.floor(x/ GLOBALS.tH)) * GLOBALS.tH
+			this.y = (Math.floor(y/GLOBALS.tW)) * GLOBALS.tW
+			this.tileX = (this.x/16) - (GLOBALS.globalOffset.x / GLOBALS.tW)
+			this.tileY = (this.y/16) - (GLOBALS.globalOffset.y / GLOBALS.tH)
+
+			if((this.previous.x === this.x && this.previous.y === this.y) && this.previous.x ){
+				return null
+			}else{
+				this.previous.x = this.x
+				this.previous.y = this.y
+				marker.x = this.x
+				marker.y = this.y
+				marker.alpha = 1
+			}
+
+			this.checkValidPlacement()
+			this.getSprite()
+			this.setSpriteTint()
+		},
+		getSprite(){
+			if(this.brushType != this.lastBrushType && this.sprite){
+				this.sprite.destroy()
+				delete this.sprite
+			}
+
+			console.log(this.brushType)
+			if(!!this.sprite){
+				this.sprite.x = this.x
+				this.sprite.y = this.y
+			}else{
+				switch (this.brushType){
+					case 'tower':
+						this.lastBrushType = 'tower'
+						this.sprite = game.add.sprite(this.x,this.y, 'ms', this.currentBrush)
+						break
+
+					case 'fancy':
+						this.sprite = game.add.sprite(this.x,this.y,game.fancyBrushSprites[this.currentBrush].generateTexture())
+						this.lastBrushType = 'fancy'
+						break
+
+					case 'simple':	
+						this.sprite = game.add.sprite(this.x,this.y, 'ms', this.currentBrush-1)
+						this.lastBrushType = 'basic'
+						break
+				}
+				this.sprite.alpha = .75
+			}
+		},
+		checkValidPlacement(){
+			let tileC = this.tileMap.getTile(this.tileX,this.tileY,'collision', true).index
+			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
+			this.validPlacement =  (GLOBALS.towerFoundation == tileC) || ![44,45].includes(tileT)
+		},
+		setOutOfBounds(marker){
+			if(this.sprite){
+				this.sprite.destroy()
+				delete this.sprite
+				this.lastBrushType = null
+			}
+			marker.alpha = 0
+		}
+	})
+	.init(function ({tileMap}, {args, instance, stamp}) {
+		instance.modes = ['basic', 'fancy', 'tower']
+		instance.previous = {x: 0, y: 0}
+		instance.brushType = 'wall'
+		instance.currentBrush = 26
+		instance.validPlacement = true
+		instance.sprite = undefined
+		instance.attachObj = game
+		instance.tileMap = tileMap
+		instance.spriteKey = 'ms'
+	})
+
 export const Cursor = Stampit()
 	.methods({
 		buildAndBind_cursor (){
 			this.marker = game.add.graphics();
 		    this.marker.lineStyle(2, 0xffffff, 1);
-		    this.marker.alpha = 0
+		    this.marker.alpha = 1
 		    this.marker.drawRect(0, 0, 16,16);
 
 		    game.input.pollRate = 2
+		    this.cursorState = CursorState({
+		    	tileMap: this.p.map
+		    })
 		    game.input.addMoveCallback(this.updateMarker, this);
+
+		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
 		},
 
 		updateMarker() {
 			let x,y
 
 			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
-				x = (Math.floor(parent.game.input.activePointer.worldX/16))*16
-				y = (Math.floor(parent.game.input.activePointer.worldY/16))*16
+				let x,y
+				x = game.input.activePointer.worldX
+				y = game.input.activePointer.worldY
 				
-				if(this.marker.x == x && this.marker.y == y){
+				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker)
+				
+				if(nextCursorPosition === null){
 					return
 				}
-				this.marker.x = x
-				this.marker.y = y
-				this.marker.alpha = 1
-				
-				let xN = (x)/16
-				let yN = (y)/16-1
 
-				let tileC = this.p.map.getTile(xN,yN,'collision', true).index
-				let tileT = this.p.map.getTile(xN,yN,'towers', true).index
-				if(GLOBALS.towerFoundation == tileC && ![44,45].includes(tileT) ){
-					game.canPlaceTower = true
-				}else{
-					game.canPlaceTower = false
-				}
-
-				if(!this.sprite){
-					switch (game.currentCursorType){
-						case 'tower':
-							console.log('tower', game.currentBrush)
-							this.lastBrushType = 'tower'
-							this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush)
-							break
-
-						case 'wall':
-							console.log('wall', game.currentBrush)
-							if(game.currentFancyBrush != undefined){
-								this.sprite = game.add.sprite(x,y,game.fancyBrushSprites[game.currentFancyBrush].generateTexture())
-							}else{
-								this.sprite = game.add.sprite(x,y, 'ms', game.currentBrush-1)
-							}
-
-							this.sprite.alpha = .75
-
-							this.lastBrushType = 'wall'
-							break
-					}
-				}else{
-					this.sprite.x = x
-					this.sprite.y = y
-
-					switch (game.currentCursorType){
-						case 'tower':
-							if(game.canPlaceTower){
-								this.sprite.tint = 0xffffff
-							}else{
-								this.sprite.tint = 0xff0000
-							}
-							break
-
-						case 'wall':
-							if(game.allowPaint){
-								this.sprite.tint = 0xffffff
-							}else{
-								this.sprite.tint = 0xff0000
-							}
-							break
-					}
-				}
-				// console.log('tds',!!this.sprite,(game.allowPaint || game.canPlaceTower))
-
-				
-				// if((game.allowPaint || game.canPlaceTower) && this.sprite){
-				// 	this.sprite.tint = 0xffffff
-				// }else if(this.sprite){
-				// 	this.sprite.tint = 0xff0000
-				// }
-
-				if(game.currentCursorType === 'wall'){
+				if(this.cursorState.getCursorType() === 'wall'){
 					this.position = {x:0,y:0}
-					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.test, this);
+					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.PathCalculated, this);
 				}				
 			}else{
-				this.marker.alpha = 0
-
-				if(this.sprite){
-					this.sprite.destroy()
-					delete this.sprite
-				}
+				this.cursorState.setOutOfBounds(this.marker)
 			}
 		},
-		test (path) {
-			if(path){
-				game.allowPaint = true
-			}else{
-				game.allowPaint = false
-			}
+		PathCalculated (path) {
+			this.cursorState.setPathFail(!path)
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {

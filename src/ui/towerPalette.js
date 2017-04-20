@@ -54,8 +54,7 @@ let base = Stampit()
 		},
 
 		setTower(sprite, pointer){
-			game.currentCursorType = 'tower'
-			game.currentBrush = sprite._frame.index
+			GLOBALS.signals.updateBrush.dispatch('tower', sprite._frame.index)
 		},
 
 		setCursor(sprite, pointer){
