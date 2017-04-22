@@ -11,6 +11,8 @@ export var Board = stampit()
 		        this.map.addTilesetImage(tileset.name, map.tilesets[i]);
 		    }, this);
 		    return this.map
+
+		    this.map.setLayer(1)
 		},
 		buildForCreate(){
 			this.buildLayers()
@@ -20,8 +22,11 @@ export var Board = stampit()
 		    this.buildSpawn()
 		},
 		buildLayers() {
+			game.tileMapLayers = {}
 			this.map.layers.forEach((layer) => {
+
 		      let layerObj = this.map.createLayer(layer.name);
+		      game.tileMapLayers[layer.name] = layerObj
 		      this.layers[layer.name] = layerObj
 		      this.groups.board.addChild(layerObj)
 		      this.layers[layer.name].fixedToCamera = false;

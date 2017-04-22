@@ -111,12 +111,15 @@ export const CursorState = Stampit()
 			this.setSpriteTint()
 		},
 		getSprite(){
-			if(this.brushType != this.lastBrushType && this.sprite){
-				this.sprite.destroy()
-				delete this.sprite
+			if(!this.brushType){
+				return
 			}
 
-			console.log(this.brushType)
+			if(this.brushType != this.lastBrushType && this.sprite){
+				this.sprite.destroy()
+				this.sprite = null
+			}
+
 			if(!!this.sprite){
 				this.sprite.x = this.x
 				this.sprite.y = this.y
@@ -130,6 +133,7 @@ export const CursorState = Stampit()
 					case 'fancy':
 						this.sprite = game.add.sprite(this.x,this.y,game.fancyBrushSprites[this.currentBrush].generateTexture())
 						this.lastBrushType = 'fancy'
+						game.currentFancyBrush = this.currentBrush
 						break
 
 					case 'simple':	
@@ -137,6 +141,7 @@ export const CursorState = Stampit()
 						this.lastBrushType = 'basic'
 						break
 				}
+
 				this.sprite.alpha = .75
 			}
 		},
@@ -148,7 +153,7 @@ export const CursorState = Stampit()
 		setOutOfBounds(marker){
 			if(this.sprite){
 				this.sprite.destroy()
-				delete this.sprite
+				this.sprite = null
 				this.lastBrushType = null
 			}
 			marker.alpha = 0
@@ -157,7 +162,7 @@ export const CursorState = Stampit()
 	.init(function ({tileMap}, {args, instance, stamp}) {
 		instance.modes = ['basic', 'fancy', 'tower']
 		instance.previous = {x: 0, y: 0}
-		instance.brushType = 'wall'
+		instance.brushType = 'simple'
 		instance.currentBrush = 26
 		instance.validPlacement = true
 		instance.sprite = undefined
@@ -175,12 +180,13 @@ export const Cursor = Stampit()
 		    this.marker.drawRect(0, 0, 16,16);
 
 		    game.input.pollRate = 2
-		    this.cursorState = CursorState({
+		    this.cursorState = CursorState.compose(Brush)({
 		    	tileMap: this.p.map
 		    })
 		    game.input.addMoveCallback(this.updateMarker, this);
 
 		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
+		    GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
 		},
 
 		updateMarker() {
@@ -197,7 +203,7 @@ export const Cursor = Stampit()
 					return
 				}
 
-				if(this.cursorState.getCursorType() === 'wall'){
+				if(['fancy', 'simple'].includes(this.cursorState.getCursorType())){
 					this.position = {x:0,y:0}
 					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.PathCalculated, this);
 				}				
@@ -205,7 +211,7 @@ export const Cursor = Stampit()
 				this.cursorState.setOutOfBounds(this.marker)
 			}
 		},
-		PathCalculated (path) {
+		PathCalculated(path) {
 			this.cursorState.setPathFail(!path)
 		}
 	})
@@ -213,36 +219,27 @@ export const Cursor = Stampit()
 		instance.p = p
 
 		this.buildAndBind_cursor()
-	  })
+	})
+
 	
 export const Brush = Stampit()
 	.methods({
-		  setTile (sprite, pointer){
-			let {x,y} = game.input.activePointer
-			let cursorTile = {
-				x: this.baseLayer.getTileX(x-this.globalOffset.x),
-				y: this.baseLayer.getTileY(y-this.globalOffset.y)
-			}
+		  paint(){
+			if(this.sprite){
+				let {x,y} = game.input.activePointer
+				let baseLayer = game.tileMapLayers['collision']
+				// debugger
+				let cursorTile = {
+					x: baseLayer.getTileX(x-GLOBALS.globalOffset.x),
+					y: baseLayer.getTileY(y-GLOBALS.globalOffset.y)
+				}
+				switch (this.brushType){
+					case 'tower':
+						this.lastBrushType = 'tower'
+						this.sprite = game.add.sprite(this.x,this.y, 'ms', this.currentBrush)
+						break
 
-			switch (game.currentCursorType){
-				case 'tower':
-					let tile = this.map.getTile(cursorTile.x,cursorTile.y,'collision', true)
-					console.log(tile.index , GLOBALS.towerFoundation)
-					if(tile.index == GLOBALS.towerFoundation){
-						game.canPlaceTower = true
-						console.log('tower click',cursorTile, this.map.getTile(cursorTile.x,cursorTile.y,'collision', true))
-						this.map.putTile(game.currentBrush+1, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'towers');
-					}else{
-						game.canPlaceTower = false
-					}
-					break
-
-				case 'wall':
-					if(!game.allowPaint){
-				  		return
-				  	}
-
-					if(game.currentFancyBrush != undefined){
+					case 'fancy':
 						let brushData = GLOBALS.fancyBrushes[game.currentFancyBrush]
 						
 
@@ -250,17 +247,19 @@ export const Brush = Stampit()
 							vars: {pW: brushData.size[0],pH: brushData.size[1]},
 							sprite: brushData.sprite,
 							command: ({x,y,tX,tY},sprite) => {
-								this.map.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
+								// debugger
+								this.tileMap.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
 							}
 						})
-						
-					}else{
-						this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
-					}
+						break
 
-					GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
-					GLOBALS.stars.get('creep').find_path_goal_spawn()
-					break
+					case 'simple':	
+						this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+						break
+				}
+
+				GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
+				GLOBALS.stars.get('creep').find_path_goal_spawn()
 			}
-	    }
+		}
 	})

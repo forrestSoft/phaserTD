@@ -134,8 +134,9 @@ export default class extends base_level {
   }
 
   onClick (point, event){
-    this.brush.setTile.apply(this, arguments)
-    this.move_player.apply(this,arguments)
+    // this.brush.setTile.apply(this, arguments)
+    // this.move_player.apply(this,arguments)
+    GLOBALS.signals.paintWithBrush.dispatch()
   }
   
   move_player () {
