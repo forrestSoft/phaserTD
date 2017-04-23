@@ -1,7 +1,6 @@
 import Phaser from 'phaser'
 import { centerGameObjects } from '../utils'
 import Level1 from '../config/level1config'
-import Palette from '../config/paletteConfig'
 
 export default class extends Phaser.State {
   init () {}
@@ -34,10 +33,9 @@ export default class extends Phaser.State {
             }
         }
     }
-    this.load.tilemap('palette', null, Palette, Phaser.Tilemap.TILED_JSON)
+
     this.load.tilemap('level1', null, Level1, Phaser.Tilemap.TILED_JSON)
     this.load.spritesheet('ms',"assets/images/open_tileset.png", 16,16)
-    // console.log('p', Palette)
   }
 
   create () { 

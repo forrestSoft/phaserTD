@@ -7,6 +7,56 @@ import {TowerManager} from '../prefabs/tower'
 
 import GLOBALS from '../config/globals'
 
+export const Cursor = Stampit()
+	.methods({
+		buildAndBind_cursor (){
+			this.marker = game.add.graphics();
+		    this.marker.lineStyle(2, 0xffffff, 1);
+		    this.marker.alpha = 1
+		    this.marker.drawRect(0, 0, 16,16);
+
+		    game.input.pollRate = 2
+		    this.cursorState = CursorState.compose(Brush)({
+		    	tileMap: this.p.map
+		    })
+		    game.input.addMoveCallback(this.updateMarker, this);
+
+		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
+		    GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
+		},
+
+		updateMarker() {
+			let x,y
+
+			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
+				let x,y
+				x = game.input.activePointer.worldX
+				y = game.input.activePointer.worldY
+				
+				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker)
+				
+				if(nextCursorPosition === null){
+					return
+				}
+
+				if(['fancy', 'simple'].includes(this.cursorState.getCursorType())){
+					this.position = {x:0,y:0}
+					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.PathCalculated, this);
+				}				
+			}else{
+				this.cursorState.setOutOfBounds(this.marker)
+			}
+		},
+		PathCalculated(path) {
+			this.cursorState.setPathFail(!path)
+		}
+	})
+	.init(function ({p}, {args, instance, stamp}) {
+		instance.p = p
+
+		this.buildAndBind_cursor()
+	})
+	
 export const MiniCursor = Stampit()
 	.methods({
 		buildCursor(){
@@ -176,57 +226,6 @@ export const CursorState = Stampit()
 		instance.spriteKey = 'ms'
 	})
 
-export const Cursor = Stampit()
-	.methods({
-		buildAndBind_cursor (){
-			this.marker = game.add.graphics();
-		    this.marker.lineStyle(2, 0xffffff, 1);
-		    this.marker.alpha = 1
-		    this.marker.drawRect(0, 0, 16,16);
-
-		    game.input.pollRate = 2
-		    this.cursorState = CursorState.compose(Brush)({
-		    	tileMap: this.p.map
-		    })
-		    game.input.addMoveCallback(this.updateMarker, this);
-
-		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
-		    GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
-		},
-
-		updateMarker() {
-			let x,y
-
-			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
-				let x,y
-				x = game.input.activePointer.worldX
-				y = game.input.activePointer.worldY
-				
-				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker)
-				
-				if(nextCursorPosition === null){
-					return
-				}
-
-				if(['fancy', 'simple'].includes(this.cursorState.getCursorType())){
-					this.position = {x:0,y:0}
-					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.PathCalculated, this);
-				}				
-			}else{
-				this.cursorState.setOutOfBounds(this.marker)
-			}
-		},
-		PathCalculated(path) {
-			this.cursorState.setPathFail(!path)
-		}
-	})
-	.init(function ({p}, {args, instance, stamp}) {
-		instance.p = p
-
-		this.buildAndBind_cursor()
-	})
-
-	
 export const Brush = Stampit()
 	.methods({
 		  paint(){

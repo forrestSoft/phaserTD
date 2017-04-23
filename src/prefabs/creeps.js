@@ -24,28 +24,18 @@ export const Manager = Stampit()
 export const CreepManager = Manager.compose(Builder)
 	.methods({
 		buildCreeps(){
-			// this.creeps = game.add.group()
-		 //    this.creeps.fixedToCamera = false;
-			// this.creeps.y = 64
-			// window.j = this.creeps
-			// debugger
-			// this.creeps.y = GLOBALS.globalOffset.y
-			// this.creeps.x = GLOBALS.globalOffset.x
-			// this.creeps.enableBody = true
-   // 			this.creeps.physicsBodyType = Phaser.Physics.ARCADE;
-			// game.physics.arcade.enable(this.creeps, Phaser.Physics.ARCADE);
+			this.creeps = game.add.group()
+		    this.creeps.fixedToCamera = false;
+			this.creeps.y = GLOBALS.globalOffset.y
+			this.creeps.x = GLOBALS.globalOffset.x
+			this.creeps.enableBody = true
+   			this.creeps.physicsBodyType = Phaser.Physics.ARCADE;
+			game.physics.arcade.enable(this.creeps, Phaser.Physics.ARCADE);
 			// this.creeps.classType = GLOBALS.prefab_classes.player
-			// console.log(this.data)
 		},
 		buildCreep(){
-			// debugger
 			let prefab = this.create_object(this.data,this.state)
-			this.group.add(prefab)
-			// prefab.enableBody = true;
-   // 			prefab.physicsBodyType = Phaser.Physics.ARCADE;
-   // 			game.physics.enable(prefab, Phaser.Physics.ARCADE);
-   			// console.log(prefab)
-			// this.creeps.add(prefab)
+			this.creeps.add(prefab)
 		},
 		getGroup(){
 			return this.creeps
@@ -55,5 +45,5 @@ export const CreepManager = Manager.compose(Builder)
 		console.log(arguments)
 		Object.assign(instance, {data, state, group})
 		this.buildCreeps()
-		// game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 25, this.buildCreep, this);
+		game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 25, this.buildCreep, this);
 	})

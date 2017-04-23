@@ -120,7 +120,7 @@ export default class extends base_level {
 
     GLOBALS.stars.get('creep').find_path_goal_spawn();
 
-    game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 7, this.board.buildCreep, this.board);
+    // game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 7, this.board.buildCreep, this.board);
   }
 
   maskBoard (){
@@ -152,7 +152,7 @@ export default class extends base_level {
       bullet.destroy()
     }
     
-    // game.physics.arcade.overlap(g[0], game.bullets, test, null, this);
+    game.physics.arcade.overlap(g[0], game.bullets, test, null, this);
   }
 
   render(){

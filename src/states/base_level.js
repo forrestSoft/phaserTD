@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
 import Mushroom from '../sprites/Mushroom'
-import Pathfinding from '../pathfinding/pathfinding'
 
 import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
