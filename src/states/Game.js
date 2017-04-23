@@ -11,6 +11,7 @@ import { buildBoundInputMask } from '../utils'
 
 import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
+import {CreepManager} from '../prefabs/creeps'
 
 import GLOBALS from '../config/globals'
 import {Board} from '../ui/board'
@@ -57,7 +58,7 @@ export default class extends base_level {
     
     // start physics system
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.game.physics.arcade.gravity
+    // this.game.physics.arcade.gravity
 
     this.layers = {}
     this.groups = {
@@ -118,6 +119,7 @@ export default class extends base_level {
     this.groups.board.y = this.globalOffset.y
 
     GLOBALS.stars.get('creep').find_path_goal_spawn();
+
     game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 7, this.board.buildCreep, this.board);
   }
 
@@ -145,13 +147,18 @@ export default class extends base_level {
   }
 
   update () {
-    // console.log(game.inputMasks.board.input.pointerOver(),game.inputMasks.palette.input.pointerDown())
+    let g = this.board.getCollisionObjects()
+    let test = function(player, bullet){
+      bullet.destroy()
+    }
+    
+    // game.physics.arcade.overlap(g[0], game.bullets, test, null, this);
   }
 
   render(){
     if(window.debugObject){
-      // game.debug.spriteBounds(window.debugObject);
-      // game.debug.spriteInfo(window.debugObject, true, true);
+      game.debug.spriteBounds(this.board.getCollisionObjects()[0]);
+      game.debug.spriteInfo(this.board.getCollisionObjects()[0], true, true);
     }
   }
 }

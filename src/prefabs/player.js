@@ -31,14 +31,14 @@ export default class extends Prefab {
         GLOBALS.signals.creepPathReset.add(this.reset,this)
     }
     reset(){
-        console.log('reset')
+        // console.log('reset')
         this.path = GLOBALS.stars.get_path('creep')
 
         if(this.path_step == -1){
             this.path_step = 0
         }else{
             this.path.some((point,i)=>{
-                    console.log('match',this.position.x < point.x , this.position.y < point.y)  
+                    // console.log('match',this.position.x < point.x , this.position.y < point.y)  
                 if(this.position.x < point.x && this.position.y < point.y){
                     this.path_step = i
                     return true

@@ -21,6 +21,9 @@ var globals = {
     row: 5
   },
   acceptableTiles: [-1,25,30,31,32],
+  creeps: {
+    pool: 10
+  },
   brushMap: {
     brownWall: 34,
     straightDownA: 30,

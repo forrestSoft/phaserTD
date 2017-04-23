@@ -1,4 +1,5 @@
-	import stampit from 'stampit'
+import stampit from 'stampit'
+import {CreepManager} from '../prefabs/creeps'
 
 import GLOBALS from '../config/globals'
 
@@ -17,14 +18,24 @@ export var Board = stampit()
 		buildForCreate(){
 			this.buildLayers()
 		    this.buildGroups()
-		    this.buildCreep()
+		    // this.buildCreep()
 		    this.buildGoal()
 		    this.buildSpawn()
+		    this.buildCreepManager()
+		},
+		getCollisionObjects(){
+			return [this.CreepManager.getGroup(), this.temp]
+		},
+		buildCreepManager(){
+			this.CreepManager = CreepManager({
+				state: this.state,
+				data: this.map.objects.objects[0],
+				group: this.groups.board
+			})
 		},
 		buildLayers() {
 			game.tileMapLayers = {}
 			this.map.layers.forEach((layer) => {
-
 		      let layerObj = this.map.createLayer(layer.name);
 		      game.tileMapLayers[layer.name] = layerObj
 		      this.layers[layer.name] = layerObj

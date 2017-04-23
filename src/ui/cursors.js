@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 
 import {Points} from '../utils'
 import {FancyBrush} from './fancyBrush'
+import {TowerManager} from '../prefabs/tower'
 
 import GLOBALS from '../config/globals'
 
@@ -82,8 +83,10 @@ export const CursorState = Stampit()
 			if(!this.sprite){
 				return
 			}
-
+			
 			if(this.validPlacement && !this.pathFail){
+				this.sprite.tint = 0xffffff
+			}else if(this.validPlacement && this.brushType == 'tower'){
 				this.sprite.tint = 0xffffff
 			}else{
 				this.sprite.tint = 0xff0000
@@ -148,7 +151,9 @@ export const CursorState = Stampit()
 		checkValidPlacement(){
 			let tileC = this.tileMap.getTile(this.tileX,this.tileY,'collision', true).index
 			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
-			this.validPlacement =  (GLOBALS.towerFoundation == tileC) || ![44,45].includes(tileT)
+			this.validPlacement =  (GLOBALS.towerFoundation == tileC && this.brushType == 'tower') || 
+									![44,45].includes(tileT) && this.brushType != 'tower'
+			// console.log((GLOBALS.towerFoundation , tileC))
 		},
 		setOutOfBounds(marker){
 			if(this.sprite){
@@ -228,7 +233,7 @@ export const Brush = Stampit()
 			if(this.sprite){
 				let {x,y} = game.input.activePointer
 				let baseLayer = game.tileMapLayers['collision']
-				// debugger
+				
 				let cursorTile = {
 					x: baseLayer.getTileX(x-GLOBALS.globalOffset.x),
 					y: baseLayer.getTileY(y-GLOBALS.globalOffset.y)
@@ -236,7 +241,11 @@ export const Brush = Stampit()
 				switch (this.brushType){
 					case 'tower':
 						this.lastBrushType = 'tower'
-						this.sprite = game.add.sprite(this.x,this.y, 'ms', this.currentBrush)
+
+						if(!this.towerManager){
+							this.towerManager = TowerManager()
+							this.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
+						}
 						break
 
 					case 'fancy':
@@ -247,19 +256,20 @@ export const Brush = Stampit()
 							vars: {pW: brushData.size[0],pH: brushData.size[1]},
 							sprite: brushData.sprite,
 							command: ({x,y,tX,tY},sprite) => {
-								// debugger
 								this.tileMap.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
 							}
 						})
+						GLOBALS.stars.get('creep').setGrid(this.tileMap.layers[1].data)
+						GLOBALS.stars.get('creep').find_path_goal_spawn()	
 						break
 
 					case 'simple':	
 						this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
+						GLOBALS.stars.get('creep').setGrid(this.tileMap.layers[1].data)
+						GLOBALS.stars.get('creep').find_path_goal_spawn()	
 						break
 				}
-
-				GLOBALS.stars.get('creep').setGrid(this.map.layers[1].data)
-				GLOBALS.stars.get('creep').find_path_goal_spawn()
+				
 			}
 		}
 	})

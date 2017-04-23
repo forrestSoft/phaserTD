@@ -101,7 +101,7 @@ data = {
 	                 "type":"player",
 	                 "visible":true,
 	                 "width":0,
-	                 "x":GLOBALS.entrance.columnPX,
+	                 "x":GLOBALS.entrance.columnPX + 8,
 	                 "y":GLOBALS.entrance.rowPX
 	                }],
 	         "opacity":1,
