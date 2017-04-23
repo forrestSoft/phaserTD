@@ -8,7 +8,6 @@ import GLOBALS from '../config/globals'
 export const Builder = Stampit()
 	.methods({
 		create_object (object) {
-			console.log('co', object.x, object.y)
 			let object_y, position, prefab;
 			// object_y = object_y//(object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);
 			position = {"x": object.x , "y": object.y};
@@ -42,7 +41,7 @@ export const CreepManager = Manager.compose(Builder)
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {
-		console.log(arguments)
+		// console.log(arguments)
 		Object.assign(instance, {data, state, group})
 		this.buildCreeps()
 		game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 25, this.buildCreep, this);

@@ -88,12 +88,10 @@ export const Pathfinder =  stampit()
 	        let target_coord = {x:GLOBALS.exit.columnPX, y:GLOBALS.exit.rowPX}
 	        this.find_path(origin_coord, target_coord, callback, context)
 	    },
-	    find_path_from_brush (origin, target, callback, context) {
+	    find_path_from_brush (origin, target, callback, context,x,y) {
 	        let grid = GLOBALS.currentCollisionLayer()
-	        let c = Object.assign({}, game.input.activePointer)
-	        c.x-= GLOBALS.globalOffset.x
-	        c.y-= GLOBALS.globalOffset.y
-
+	        let c = {x: x- GLOBALS.globalOffset.x, y: y-GLOBALS.globalOffset.y}
+	        
 	        if(game.currentFancyBrush != undefined){
 	        	let brush = GLOBALS.fancyBrushes[game.currentFancyBrush]
 
@@ -113,10 +111,12 @@ export const Pathfinder =  stampit()
 
 				    	// tile is outside of grid, invalid position
 				    	let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
+
 				    	//overlapping existing piece, invalid position
 				    	let overlapping = (!outsideOfGrid && grid[mappedY][mappedX].index !== -1)
-				    	// console.log('abc', (!outsideOfGrid && grid[mappedY][mappedX].index),outsideOfGrid , overlapping)
+
 				    	if(outsideOfGrid || overlapping){
+				    		console.log('early abort')
 				    		earlyAbort = true
 				    		return false
 				    	}
@@ -169,6 +169,7 @@ export const Pathfinder =  stampit()
 	        if(this.name === 'creep'){
 		        GLOBALS.signals.creepPathReset.dispatch()
 		    }
+		    // console.log(path_positions)
 	        console.timeEnd('astar time')
 	        if(!callback){
 	        	return

@@ -21,6 +21,7 @@ var globals = {
     row: 5
   },
   acceptableTiles: [-1,25,30,31,32],
+  unacceptableTiles: [30,31,34,44,45],
   creeps: {
     pool: 10
   },

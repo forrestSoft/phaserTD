@@ -38,10 +38,12 @@ export const Cursor = Stampit()
 				if(nextCursorPosition === null){
 					return
 				}
-
-				if(['fancy', 'simple'].includes(this.cursorState.getCursorType())){
+				
+				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
+				if(validCursorType && this.cursorState.validPlacement){
 					this.position = {x:0,y:0}
-					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.PathCalculated, this);
+					// console.log('nc',nextCursorPosition)
+					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y);
 				}				
 			}else{
 				this.cursorState.setOutOfBounds(this.marker)
@@ -143,17 +145,45 @@ export const CursorState = Stampit()
 			}
 		},
 		calculateCursorTile(x,y, marker){
-			//snap to grid
-			this.x = (Math.floor(x/ GLOBALS.tH)) * GLOBALS.tH
-			this.y = (Math.floor(y/GLOBALS.tW)) * GLOBALS.tW
-			this.tileX = (this.x/16) - (GLOBALS.globalOffset.x / GLOBALS.tW)
-			this.tileY = (this.y/16) - (GLOBALS.globalOffset.y / GLOBALS.tH)
 
-			if((this.previous.x === this.x && this.previous.y === this.y) && this.previous.x ){
+			let size = this.getBrushSize()
+			let  {tH, tW, globalOffset, height, width} = GLOBALS
+
+			//snap to grid
+			this.x = (Math.floor(x/ tH)) * tH
+			this.originalX = this.x
+			this.y = (Math.floor(y/tW)) * tW
+			this.originalY = this.y
+
+			let cutOffX = ((height + 1) * tH) - ((size[0]+1)*tH)
+			let cutOffY = ((width + 1) * tW) - ((size[0]+1)*tW)
+
+			if(cutOffX <= this.x){
+				this.x = height*tH - ((size[0]+1)*tH)
+			}else if(this.x == globalOffset.x){
+				this.x = tH + globalOffset.x
+			}
+
+			if(cutOffY <= this.y){
+				this.y = width*tW - ((size[1])*tW)
+			}else if(this.y == globalOffset.y){
+				this.y = tW + globalOffset.y
+			}
+
+			this.tileX = (this.x/16) - (globalOffset.x / tW)
+			this.tileY = (this.y/16) - (globalOffset.y / tH)
+			let compareX = (this.x+globalOffset.x)
+			let compareY = (this.y+globalOffset.y)
+			// debugger
+			// console.log(this.previous.x, compareX, this.originalX, this.previous.x == compareX , this.previous.y == compareY)
+			// console.log(this.previous.y, compareY, this.originalY)
+			if((this.previous.x == compareX && this.previous.y == compareY)){
+				this.previous.x == compareX
+				this.previous.y == compareY
 				return null
 			}else{
-				this.previous.x = this.x
-				this.previous.y = this.y
+				this.previous.x = compareX
+				this.previous.y = compareY
 				marker.x = this.x
 				marker.y = this.y
 				marker.alpha = 1
@@ -162,6 +192,8 @@ export const CursorState = Stampit()
 			this.checkValidPlacement()
 			this.getSprite()
 			this.setSpriteTint()
+
+			return {x: this.x, y: this.y, tileX: this.tileX, tileY: this.tileY}
 		},
 		getSprite(){
 			if(!this.brushType){
@@ -198,12 +230,21 @@ export const CursorState = Stampit()
 				this.sprite.alpha = .75
 			}
 		},
+		getBrushSize(){
+			if(this.brushType === 'fancy'){
+				return GLOBALS.fancyBrushes[this.currentBrush].size
+			}else{
+				return [1,1]
+			}
+		},
 		checkValidPlacement(){
+			// debugger
 			let tileC = this.tileMap.getTile(this.tileX,this.tileY,'collision', true).index
 			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
+
 			this.validPlacement =  (GLOBALS.towerFoundation == tileC && this.brushType == 'tower') || 
-									![44,45].includes(tileT) && this.brushType != 'tower'
-			// console.log((GLOBALS.towerFoundation , tileC))
+									!GLOBALS.unacceptableTiles.includes(tileC-1) && this.brushType != 'tower'
+			// console.log(GLOBALS.towerFoundation , tileC)
 		},
 		setOutOfBounds(marker){
 			if(this.sprite){
