@@ -1,6 +1,6 @@
 import stampit from 'stampit'
 import Phaser from 'phaser'
-
+import _ from 'underscore'
 import {Points} from '../utils'
 import {FancyBrush} from './fancyBrush'
 import {TowerManager} from '../prefabs/tower'
@@ -42,12 +42,16 @@ export const Cursor = Stampit()
 				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
 				if(validCursorType && this.cursorState.validPlacement){
 					this.position = {x:0,y:0}
-					// console.log('nc',nextCursorPosition)
-					GLOBALS.stars.get('cursor').find_path_from_brush(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y);
+					console.log('nc',nextCursorPosition)
+					this.findFunction(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y)
 				}				
 			}else{
 				this.cursorState.setOutOfBounds(this.marker)
 			}
+		},
+
+		_ff(){
+			this.findFunction = _.debounce(GLOBALS.stars.get('cursor').find_path_from_brush.bind(GLOBALS.stars.get('cursor')), 75)
 		},
 		PathCalculated(path) {
 			this.cursorState.setPathFail(!path)
@@ -55,7 +59,7 @@ export const Cursor = Stampit()
 	})
 	.init(function ({p}, {args, instance, stamp}) {
 		instance.p = p
-
+		this._ff()
 		this.buildAndBind_cursor()
 	})
 	
@@ -193,6 +197,10 @@ export const CursorState = Stampit()
 			this.getSprite()
 			this.setSpriteTint()
 
+			if(this.brushType == 'fancy'){
+				
+			}
+
 			return {x: this.x, y: this.y, tileX: this.tileX, tileY: this.tileY}
 		},
 		getSprite(){
@@ -275,8 +283,8 @@ export const Brush = Stampit()
 				let baseLayer = game.tileMapLayers['collision']
 				
 				let cursorTile = {
-					x: baseLayer.getTileX(x-GLOBALS.globalOffset.x),
-					y: baseLayer.getTileY(y-GLOBALS.globalOffset.y)
+					x: baseLayer.getTileX(this.x-GLOBALS.globalOffset.x),
+					y: baseLayer.getTileY(this.y-GLOBALS.globalOffset.y)
 				}
 				switch (this.brushType){
 					case 'tower':

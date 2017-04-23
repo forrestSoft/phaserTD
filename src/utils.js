@@ -62,7 +62,9 @@ export class highLightableGroup extends Phaser.Group {
             this.marker.alpha = 1
 
             if(game.input.activePointer.isDown){
+                this.marker.alpha = 0
                 this.isDownCallback.call(this.context,this.name)
+                // this.marker.alpha = 1
             }
         }else{
             this.marker.alpha = 0

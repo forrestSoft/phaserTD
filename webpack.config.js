@@ -9,6 +9,7 @@ var pixi = path.join(phaserModule, 'build/custom/pixi.js')
 var p2 = path.join(phaserModule, 'build/custom/p2.js')
 
 var stampit = path.join(__dirname, '/node_modules/stampit/dist/stampit.full.js')
+var underscore = path.join(__dirname, '/node_modules/underscore/underscore.js')
 
 var definePlugin = new webpack.DefinePlugin({
   __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'true'))
@@ -60,7 +61,8 @@ module.exports = {
       'phaser': phaser,
       'pixi': pixi,
       'p2': p2,
-      'stampit': stampit
+      'stampit': stampit,
+      'underscore': underscore
     }
   },
   stats: {
