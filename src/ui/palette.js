@@ -78,6 +78,7 @@ export const Palette = Stampit()
 		},
 		isDownCallBack(brush){
 			this.changeBrushFancy(brush)
+			// debugger
 		},
 		changeBrushFancy(brush){
 			GLOBALS.signals.updateBrush.dispatch('fancy', brush)

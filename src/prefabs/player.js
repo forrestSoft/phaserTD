@@ -94,20 +94,7 @@ export default class extends Prefab {
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
-                    // this.game_state.board.buildCreep()
                     this.destroy()
-                    // this.game_state.board.buildCreepNew()
-                    // return
-                    // this.path_step = 0;
-
-                    // // loop
-                    // this.body.velocity.x = 0;
-                    // this.body.velocity.y = 0;
-                    // // this.body.x = this.game_state.globalOffset.x;
-                    // // this.body.y = this.game_state.globalOffset.y;
-                    // this.x = 0;
-                    // this.y = 0;
-                    // this.move_to()
                 }
             }
         }

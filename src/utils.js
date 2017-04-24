@@ -1,3 +1,4 @@
+import _ from 'underscore'
 import GLOBALS from './config/globals'
 export const centerGameObjects = (objects) => {
   objects.forEach(function (object) {
@@ -55,6 +56,12 @@ export class highLightableGroup extends Phaser.Group {
 
         this.isDownCallback = isDownCallback
         this.context = context
+
+        this.callBack = _.debounce(this.isDownCallback.bind(this.context), 100)
+    }
+    toggleMarker(p){
+        console.log('toggle', p,this.marker.alpha)
+        this.marker.alpha = p
     }
     update(){
         if(game.input.hitTest(this, game.input.activePointer, new Phaser.Point())){
@@ -62,8 +69,8 @@ export class highLightableGroup extends Phaser.Group {
             this.marker.alpha = 1
 
             if(game.input.activePointer.isDown){
-                this.marker.alpha = 0
-                this.isDownCallback.call(this.context,this.name)
+                // this.marker.alpha = 0
+                this.callBack(this.name)
                 // this.marker.alpha = 1
             }
         }else{

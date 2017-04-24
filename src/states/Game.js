@@ -110,7 +110,7 @@ export default class extends base_level {
     this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
     this.palette2 = Palette({ y: 0, x: 240})
     this.towerPalette = TowerPalette().build()
-    this.cursor = Cursor({p:this})
+    this.cursor = Cursor({p:this, group: this.groups.board})
     this.brush = Brush()
 
     game.inputMasks.board.events.onInputDown.add(this.onClick, this);
@@ -156,9 +156,9 @@ export default class extends base_level {
   }
 
   render(){
-    if(window.debugObject){
-      game.debug.spriteBounds(this.board.getCollisionObjects()[0]);
-      game.debug.spriteInfo(this.board.getCollisionObjects()[0], true, true);
-    }
+    // if(window.debugObject){
+      // game.debug.spriteBounds(c);
+      // game.debug.spriteInfo(this.board.getCollisionObjects()[0], true, true);
+    // }
   }
 }

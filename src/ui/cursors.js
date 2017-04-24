@@ -10,19 +10,39 @@ import GLOBALS from '../config/globals'
 export const Cursor = Stampit()
 	.methods({
 		buildAndBind_cursor (){
-			this.marker = game.add.graphics();
-		    this.marker.lineStyle(2, 0xffffff, 1);
-		    this.marker.alpha = 1
-		    this.marker.drawRect(0, 0, 16,16);
+			this.container = game.make.group()
+			this.group.add(this.container)
+			this.marker = game.make.graphics();
+		    this.smallRect()
+		    this.container.add(this.marker)
+
+		    //fix me !!!
+		    this.container.y = -16
 
 		    game.input.pollRate = 2
 		    this.cursorState = CursorState.compose(Brush)({
-		    	tileMap: this.p.map
+		    	tileMap: this.p.map,
+		    	container: this.container
 		    })
 		    game.input.addMoveCallback(this.updateMarker, this);
 
 		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
 		    GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
+		},
+		smallRect(){
+			this.marker.clear()
+			this.marker.lineStyle(2, 0xffffff, 1);
+		    this.marker.alpha = 1
+			this.marker.drawRect(0,0,16,16)
+		},
+		largeRect(){
+			let size = GLOBALS.fancyBrushes[this.cursorState.currentBrush].size
+
+			this.marker.clear()
+			this.marker.lineStyle(2, 0xffffff, 1);
+		    this.marker.alpha = 1
+			this.marker.drawRect(0,0,size[0]*GLOBALS.tH,size[1]*GLOBALS.tW)
+			this.cursorState.sprite.moveDown()
 		},
 
 		updateMarker() {
@@ -32,17 +52,23 @@ export const Cursor = Stampit()
 				let x,y
 				x = game.input.activePointer.worldX
 				y = game.input.activePointer.worldY
-				
+
 				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker)
 				
 				if(nextCursorPosition === null){
 					return
 				}
+
+				if(this.cursorState.getCursorType() == 'fancy'){
+					this.largeRect()
+				}else{
+					this.smallRect()
+				}
 				
 				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
-				if(validCursorType && this.cursorState.validPlacement){
+				this.cursorState.checkValidPlacement()
+				if(validCursorType){
 					this.position = {x:0,y:0}
-					console.log('nc',nextCursorPosition)
 					this.findFunction(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y)
 				}				
 			}else{
@@ -55,51 +81,17 @@ export const Cursor = Stampit()
 		},
 		PathCalculated(path) {
 			this.cursorState.setPathFail(!path)
+			this.cursorState.checkValidPlacement()
+			this.cursorState.setSpriteTint()
 		}
 	})
-	.init(function ({p}, {args, instance, stamp}) {
+	.init(function ({p, group}, {args, instance, stamp}) {
 		instance.p = p
+		instance.group = group
 		this._ff()
 		this.buildAndBind_cursor()
 	})
-	
-export const MiniCursor = Stampit()
-	.methods({
-		buildCursor(){
-			this.marker = game.add.graphics();
-		    this.getGroup().addChild(this.marker)
-		},
-		updateCursor({x,y,width,height}){
-			this.marker.clear()
-			this.marker.lineStyle(2, 0xfffccf, 1);
-			this.marker.drawRect(x, y, height,width);
-		},
-		clearCursor(){
-			this.marker.clear()
-		}
-	})
-	.init(function ({}, {args, instance, stamp}) {
-		console.log('mini', args)
-		this.buildCursor()
 
-	})
-
-export const GroupManager = Stampit()
-	.methods({
-		getGroup(){
-			if(!this.group){
-				this.group = game.make.group()
-			}
-			return this.group
-		},
-		attach(){
-			game.stage.addChild(this.getGroup())
-		}
-	})
-	.init(function ({}, {args, instance, stamp}) {
-		console.log('gman', args)
-		instance.attachObj = game
-	})
 
 export const CursorState = Stampit()
 	.methods({
@@ -178,9 +170,7 @@ export const CursorState = Stampit()
 			this.tileY = (this.y/16) - (globalOffset.y / tH)
 			let compareX = (this.x+globalOffset.x)
 			let compareY = (this.y+globalOffset.y)
-			// debugger
-			// console.log(this.previous.x, compareX, this.originalX, this.previous.x == compareX , this.previous.y == compareY)
-			// console.log(this.previous.y, compareY, this.originalY)
+			
 			if((this.previous.x == compareX && this.previous.y == compareY)){
 				this.previous.x == compareX
 				this.previous.y == compareY
@@ -196,10 +186,6 @@ export const CursorState = Stampit()
 			this.checkValidPlacement()
 			this.getSprite()
 			this.setSpriteTint()
-
-			if(this.brushType == 'fancy'){
-				
-			}
 
 			return {x: this.x, y: this.y, tileX: this.tileX, tileY: this.tileY}
 		},
@@ -220,11 +206,14 @@ export const CursorState = Stampit()
 				switch (this.brushType){
 					case 'tower':
 						this.lastBrushType = 'tower'
-						this.sprite = game.add.sprite(this.x,this.y, 'ms', this.currentBrush)
+						this.sprite = game.make.sprite(this.x,this.y, 'ms', this.currentBrush)
+						this.container.add(this.sprite)
 						break
 
 					case 'fancy':
-						this.sprite = game.add.sprite(this.x,this.y,game.fancyBrushSprites[this.currentBrush].generateTexture())
+						this.sprite = game.make.sprite(this.x,this.y,game.fancyBrushSprites[this.currentBrush].generateTexture())
+						this.container.add(this.sprite)
+						
 						this.lastBrushType = 'fancy'
 						game.currentFancyBrush = this.currentBrush
 						break
@@ -246,13 +235,15 @@ export const CursorState = Stampit()
 			}
 		},
 		checkValidPlacement(){
-			// debugger
 			let tileC = this.tileMap.getTile(this.tileX,this.tileY,'collision', true).index
 			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
 
-			this.validPlacement =  (GLOBALS.towerFoundation == tileC && this.brushType == 'tower') || 
-									!GLOBALS.unacceptableTiles.includes(tileC-1) && this.brushType != 'tower'
-			// console.log(GLOBALS.towerFoundation , tileC)
+			let isTower = this.brushType == 'tower'
+			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
+			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
+
+			this.validPlacement =  (isTowerFoundation && isTower) || 
+								   (isTileAcceptable && !isTower && !this.pathFail)
 		},
 		setOutOfBounds(marker){
 			if(this.sprite){
@@ -261,9 +252,11 @@ export const CursorState = Stampit()
 				this.lastBrushType = null
 			}
 			marker.alpha = 0
+			this.previous = {x: -1, y: -1}
 		}
 	})
-	.init(function ({tileMap}, {args, instance, stamp}) {
+	.init(function ({tileMap, container}, {args, instance, stamp}) {
+		instance.container = container
 		instance.modes = ['basic', 'fancy', 'tower']
 		instance.previous = {x: 0, y: 0}
 		instance.brushType = 'simple'
@@ -273,11 +266,17 @@ export const CursorState = Stampit()
 		instance.attachObj = game
 		instance.tileMap = tileMap
 		instance.spriteKey = 'ms'
+
+		window.c = container
 	})
 
 export const Brush = Stampit()
 	.methods({
 		  paint(){
+		  	// this.checkValidPlacement()
+		  	if(!this.validPlacement){
+		  		return
+		  	}
 			if(this.sprite){
 				let {x,y} = game.input.activePointer
 				let baseLayer = game.tileMapLayers['collision']
@@ -298,7 +297,6 @@ export const Brush = Stampit()
 
 					case 'fancy':
 						let brushData = GLOBALS.fancyBrushes[game.currentFancyBrush]
-						
 
 						FancyBrush.brushSpriteLoop({
 							vars: {pW: brushData.size[0],pH: brushData.size[1]},
@@ -320,4 +318,43 @@ export const Brush = Stampit()
 				
 			}
 		}
+	})
+
+	
+export const MiniCursor = Stampit()
+	.methods({
+		buildCursor(){
+			this.marker = game.add.graphics();
+		    this.getGroup().addChild(this.marker)
+		},
+		updateCursor({x,y,width,height}){
+			this.marker.clear()
+			this.marker.lineStyle(2, 0xfffccf, 1);
+			this.marker.drawRect(x, y, height,width);
+		},
+		clearCursor(){
+			this.marker.clear()
+		}
+	})
+	.init(function ({}, {args, instance, stamp}) {
+		console.log('mini', args)
+		this.buildCursor()
+
+	})
+
+export const GroupManager = Stampit()
+	.methods({
+		getGroup(){
+			if(!this.group){
+				this.group = game.make.group()
+			}
+			return this.group
+		},
+		attach(){
+			game.stage.addChild(this.getGroup())
+		}
+	})
+	.init(function ({}, {args, instance, stamp}) {
+		console.log('gman', args)
+		instance.attachObj = game
 	})
