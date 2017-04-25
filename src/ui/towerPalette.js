@@ -10,7 +10,7 @@ let base = Stampit()
 	.methods({
 		build( ){
 			let group = this.getGroup() || game.add.group()
-		    let brushes = GLOBALS.towers
+		    let brushes = GLOBALS.towers.towers
 		    // let brushes = [28,32,33,34, 46,24]
 		    let tw,th,pW, l
 		    l = brushes.length

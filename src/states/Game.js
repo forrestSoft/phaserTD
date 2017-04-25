@@ -21,31 +21,7 @@ import {TowerPalette} from '../ui/towerPalette'
 
 export default class extends base_level {
   init () {
-    
-    const tempGLOBALS = {
-      currentCollisionLayer: function(){
-          let a  = []
-          this.board.map.layers[1].data.forEach( function (array,i) {
-            let subArray = []
-            array.forEach((cell,i) => {
-              subArray.push(Object.assign({},cell))
-            })
-            a.push(subArray)
-          })
-        return a
-      }.bind(this),
-
-      prefab_classes:  {
-        "player": Player
-      },
-
-      signals: {
-        creepPathReset: new Phaser.Signal(),
-        updateBrush: new Phaser.Signal(),
-        paintWithBrush: new Phaser.Signal()
-      }
-    }
-    Object.assign(GLOBALS, tempGLOBALS)
+    this.buildDynamicGlobals()
 
     this.level_data = this.cache.getJSON('level1');
     this.globalOffset = GLOBALS.globalOffset
@@ -120,7 +96,13 @@ export default class extends base_level {
 
     GLOBALS.stars.get('creep').find_path_goal_spawn();
 
+    this.life = 20
+    GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
+
     // game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 7, this.board.buildCreep, this.board);
+  }
+  loseLife(){
+    this.life --
   }
 
   maskBoard (){
@@ -151,8 +133,15 @@ export default class extends base_level {
     let test = function(player, bullet){
       bullet.destroy()
     }
-    
-    game.physics.arcade.overlap(g[0], game.bullets, test, null, this);
+    // console.log(game.bullets)
+    if(game.bullets){
+      game.physics.arcade.overlap(g[0], game.bullets.bullets, this.dispatchCollision, null, this);
+    }
+  }
+  dispatchCollision(player,bullet){
+    console.log('col')
+    bullet.destroy()
+    player.hit()
   }
 
   render(){
@@ -160,5 +149,34 @@ export default class extends base_level {
       // game.debug.spriteBounds(c);
       // game.debug.spriteInfo(this.board.getCollisionObjects()[0], true, true);
     // }
+    game.debug.text(this.life,10,10)
+  }
+
+  buildDynamicGlobals(){
+    const tempGLOBALS = {
+      currentCollisionLayer: function(){
+          let a  = []
+          this.board.map.layers[1].data.forEach( function (array,i) {
+            let subArray = []
+            array.forEach((cell,i) => {
+              subArray.push(Object.assign({},cell))
+            })
+            a.push(subArray)
+          })
+        return a
+      }.bind(this),
+
+      prefab_classes:  {
+        "player": Player
+      },
+
+      signals: {
+        creepPathReset: new Phaser.Signal(),
+        updateBrush: new Phaser.Signal(),
+        paintWithBrush: new Phaser.Signal(),
+        creepReachedGoal: new Phaser.Signal()
+      }
+    }
+    Object.assign(GLOBALS, tempGLOBALS)
   }
 }

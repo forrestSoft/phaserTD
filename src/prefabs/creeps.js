@@ -38,10 +38,13 @@ export const CreepManager = Manager.compose(Builder)
 		},
 		getGroup(){
 			return this.creeps
+		},
+		start(){
+			game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 25, this.buildCreep, this);
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {
 		Object.assign(instance, {data, state, group})
 		this.buildCreeps()
-		game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 25, this.buildCreep, this);
+		game.time.events.repeat(Phaser.Timer.SECOND * 4, 1, this.start, this);
 	})

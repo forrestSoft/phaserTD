@@ -205,6 +205,7 @@ export const CursorState = Stampit()
 			}else{
 				switch (this.brushType){
 					case 'tower':
+					console.log('t')
 						this.lastBrushType = 'tower'
 						this.sprite = game.make.sprite(this.x,this.y, 'ms', this.currentBrush)
 						this.container.add(this.sprite)
@@ -273,6 +274,7 @@ export const CursorState = Stampit()
 export const Brush = Stampit()
 	.methods({
 		  paint(){
+		  	console.log('paint')
 		  	// this.checkValidPlacement()
 		  	if(!this.validPlacement){
 		  		return
@@ -291,8 +293,9 @@ export const Brush = Stampit()
 
 						if(!this.towerManager){
 							this.towerManager = TowerManager()
-							this.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
 						}
+						
+						this.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
 						break
 
 					case 'fancy':

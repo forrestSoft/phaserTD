@@ -1,3 +1,6 @@
+import Towers from './globals-towers'
+import Brushes from './globals-brushes'
+
 var globals = {
   globalOffset: {
     x: 0,
@@ -25,87 +28,7 @@ var globals = {
   creeps: {
     pool: 10
   },
-  brushMap: {
-    brownWall: 34,
-    straightDownA: 30,
-    straightDownB: 31
-  },
-  towers: [
-    {
-      name: 'yellow',
-      index: 44
-    },
-    {
-      name: 'red',
-      index: 45
-    }
-  ],
-  towerFoundation: 35,
-  fancyBrushes: [
-    { 
-      sprite: ['brownWall','brownWall','brownWall',
-               'brownWall','straightDownB','straightDownA',
-               'brownWall','straightDownB' ,'brownWall'],
-      size: [3,3],
-      name: 'NS'
-    },
-    {
-      sprite: ['brownWall','brownWall','brownWall',
-               'straightDownB','straightDownB','straightDownA',
-               'brownWall','brownWall','brownWall'],
-      size: [3,3],
-      name: 'EW'
-    },
-    {
-      sprite: ['brownWall','brownWall','brownWall',
-               'straightDownA','straightDownB','brownWall',
-               'brownWall','straightDownB' ,'brownWall'],
-      size: [3,3],
-      name: 'NS'
-    },
-    {
-      sprite: ['brownWall','straightDownA','brownWall',
-               'brownWall','straightDownB','brownWall',
-               'brownWall','straightDownB' ,'brownWall'],
-      size: [3,3],
-      name: 'NS'
-    },
-    {
-      sprite: ['brownWall','straightDownB','brownWall',
-               'brownWall','straightDownB','straightDownA',
-               'brownWall','brownWall','brownWall'],
-      size: [3,3],
-      name: 'downRight90'
-    },
-    {
-      sprite: ['brownWall','straightDownA','brownWall',
-               'brownWall','straightDownB','brownWall',
-               'brownWall','straightDownB' ,'brownWall'],
-      size: [3,3],
-      name: 'NS'
-    },
-    {
-      sprite: ['brownWall','straightDownB','brownWall',
-               'brownWall','straightDownB','straightDownA',
-               'brownWall','brownWall','brownWall'],
-      size: [3,3],
-      name: 'downRight90'
-    },
-    {
-      sprite: ['brownWall','brownWall','brownWall',
-               'straightDownB','straightDownB','straightDownA',
-               'brownWall','brownWall','brownWall'],
-      size: [3,3],
-      name: 'EW'
-    },
-    {
-      sprite: ['brownWall','straightDownB','brownWall',
-               'straightDownA','straightDownB','brownWall',
-               'brownWall','brownWall','brownWall'],
-      size: [3,3],
-      name: 'upRight90'
-    }
-  ]
+  towerFoundation: 35
 }
 
 const tempGlobalsExit = {
@@ -124,5 +47,7 @@ const tempGlobalsEntrance = {
   columnPX: globals.entrance.column * globals.ty
 }
 Object.assign(globals.entrance, tempGlobalsEntrance)
+Object.assign(globals, Brushes)
+globals.towers = Towers
 
 export default globals

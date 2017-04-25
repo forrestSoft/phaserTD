@@ -29,6 +29,16 @@ export default class extends Prefab {
         
         game_state.signals.playerMove.add(this.move_to, this);
         GLOBALS.signals.creepPathReset.add(this.reset,this)
+
+        this.life = 2
+    }
+    hit(){
+        this.life --
+        console.log('hit',this.life)
+        if(this.life == 0){
+            console.log('dead')
+            this.kill()
+        }
     }
     reset(){
         // console.log('reset')
@@ -94,6 +104,7 @@ export default class extends Prefab {
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
+                    GLOBALS.signals.creepReachedGoal.dispatch()
                     this.destroy()
                 }
             }
