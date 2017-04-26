@@ -20,13 +20,16 @@ let base = Stampit()
 
 		    let g = game.make.graphics();
 		    g.beginFill(0x666666);
-		    g.drawRect(0, 0, 40,16);
+		    g.drawRect(0, 0, 16*Object.keys(brushes).length,16);
 		    group.addChild(g)
 
-		    const res = [...Array(l)].map((_, i) => {
-		    	let y = Math.floor(i/pW) * tw
-		    	let x = (i%pW)* th
-		    	let s = game.make.sprite(x,y, 'ms', brushes[i].index)
+		    const res = Object.keys(brushes).map((b, i) => {
+		    	let y = Math.floor(i/pW) * tw + (GLOBALS.tW/2)
+		    	let x = (i%pW)* th + (GLOBALS.tH/2)
+		    	let s = game.make.sprite(x,y, 'ms', brushes[b].index)
+		    	s.anchor.x = .5
+		    	s.anchor.y = .5
+		    	s.angle = brushes[b].displayAngle
 		    	s.inputEnabled = true
 		    	s.events.onInputDown.add(this.setTower,this)
 		    	s.events.onInputOver.add(this.setCursor,this)
@@ -60,7 +63,8 @@ let base = Stampit()
 		setCursor(sprite, pointer){
 			let {x,y} = sprite.position
 			let {width,height} = sprite.texture.frame
-			this.updateCursor({x,y,width,height})
+			console.log(x,y,width, height)
+			this.updateCursor({x:(x-GLOBALS.tW/2),y:y-(GLOBALS.tH/2),width,height})
 		}
 	})
 

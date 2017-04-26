@@ -22,7 +22,8 @@ export const Cursor = Stampit()
 		    game.input.pollRate = 2
 		    this.cursorState = CursorState.compose(Brush)({
 		    	tileMap: this.p.map,
-		    	container: this.container
+		    	container: this.container,
+		    	group: this.group
 		    })
 		    game.input.addMoveCallback(this.updateMarker, this);
 
@@ -199,15 +200,26 @@ export const CursorState = Stampit()
 				this.sprite = null
 			}
 
+			let spriteOffsetX = this.x
+			let spriteOffsetY = this.y
+
+			if(this.brushType == 'tower'){
+				spriteOffsetX += 8
+				spriteOffsetY += 8
+			}
+
+
 			if(!!this.sprite){
-				this.sprite.x = this.x
-				this.sprite.y = this.y
+				this.sprite.x = spriteOffsetX
+				this.sprite.y = spriteOffsetY
 			}else{
 				switch (this.brushType){
 					case 'tower':
-					console.log('t')
 						this.lastBrushType = 'tower'
-						this.sprite = game.make.sprite(this.x,this.y, 'ms', this.currentBrush)
+						this.sprite = game.make.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
+						this.sprite.anchor.x = 0.5
+						this.sprite.anchor.y = 0.5
+						this.sprite.angle = GLOBALS.towers.towers[this.currentBrush].displayAngle
 						this.container.add(this.sprite)
 						break
 

@@ -11,45 +11,47 @@ var Manager = Stampit()
 export const TowerManager = Manager.compose(Builder)
 	.methods({
 		addTower({x,y,brush}){
-			console.log('a', x,y,brush)
-			return (Tower({x:x,y:y,brush:brush}), this.group)
+			let tower =  Tower({x:x,y:y,brush:brush})
+			this.addBullets(tower.group)
+		},
+		addBullets(bullets){
+			this.bullets.push(bullets.bullets)
 		}	
 	})
 	.init(function ({}, {args, instance, stamp}) {
-		console.log(arguments)
-		// game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 25, this.buildCreep, this);
+		instance.bullets = []
+		game.bullets = instance.bullets
 	})
 
 export const Tower = Stampit()
 	.methods({
 		buildBullets(){
 			this.group = game.add.weapon(30, 'ms', 33, this.group)
-			game.bullets = this.group
-			// this.group.scale = {x:.5, y:.5}
+
+			// game.bullets = this.group
 			this.group.enableBody = true;
     		this.group.physicsBodyType = Phaser.Physics.ARCADE;
     		game.physics.enable(this.group, Phaser.Physics.ARCADE)
     		this.group.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
 
-    		//  The speed at which the bullet is fired
+    		
     		this.group.bulletSpeed = 120;
-
-    		//  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
     		this.group.fireRate = 1500;
     		this.group.x = this.x + 8
     		this.group.y = this.y + 8
-    		this.group.fireAngle = 0
+    		this.group.fireAngle = GLOBALS.towers.towers[this.brush].fireAngle
     		this.group.autofire = true
     		this.group.bulletKillDistance = 75
     		this.group.fire()
-    		console.log('asdf',this.group)
-    		// this.creeps = game.add.group(undefined, 'creeps', false, true, Phaser.Physics.ARCADE)
+
+    		return this
 		}
 	})
 	.init(function ({x,y,brush}, {args, instance, stamp}) {
-		console.log('tower',args,x,y,brush)
 		Object.assign(instance, {x,y,brush})
-		this.sprite = game.add.sprite(x,y, 'ms', brush)	
+		this.sprite = game.add.sprite(x+GLOBALS.tH/2,y+GLOBALS.tW/2, 'ms', brush)	
+		this.sprite.anchor.x = .5
+		this.sprite.anchor.y = .5
+		this.sprite.angle = GLOBALS.towers.towers[this.brush].displayAngle
 		this.buildBullets()	
-		// game.time.events.repeat(Phaser.Timer.SECOND * .5, 25, this.fire, this);
 	})

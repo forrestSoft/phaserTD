@@ -133,9 +133,9 @@ export default class extends base_level {
     let test = function(player, bullet){
       bullet.destroy()
     }
-    // console.log(game.bullets)
+    console.log(game.bullets)
     if(game.bullets){
-      game.physics.arcade.overlap(g[0], game.bullets.bullets, this.dispatchCollision, null, this);
+      game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
     }
   }
   dispatchCollision(player,bullet){
@@ -145,10 +145,10 @@ export default class extends base_level {
   }
 
   render(){
-    // if(window.debugObject){
-      // game.debug.spriteBounds(c);
+    if(window.pp){
+      // game.debug.spriteBounds(pp);
       // game.debug.spriteInfo(this.board.getCollisionObjects()[0], true, true);
-    // }
+    }
     game.debug.text(this.life,10,10)
   }
 
