@@ -37,6 +37,7 @@ export default class extends Phaser.State {
     this.load.tilemap('level1', null, Level1, Phaser.Tilemap.TILED_JSON)
     this.load.spritesheet('ms',"assets/images/open_tileset.png", 16,16)
     this.load.atlasXML('weapons', 'assets/images/weapons.png','assets/images/weapons.xml')
+    this.load.spritesheet('kaboom', 'assets/images/explosion.png', 64, 64, 23)
   }
 
   create () { 

@@ -130,16 +130,11 @@ export default class extends base_level {
 
   update () {
     let g = this.board.getCollisionObjects()
-    let test = function(player, bullet){
-      bullet.destroy()
-    }
-    console.log(game.bullets)
     if(game.bullets){
       game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
     }
   }
   dispatchCollision(player,bullet){
-    console.log('col')
     bullet.destroy()
     player.hit()
   }
@@ -178,5 +173,7 @@ export default class extends base_level {
       }
     }
     Object.assign(GLOBALS, tempGLOBALS)
+
+    window.GLOBALS = GLOBALS
   }
 }

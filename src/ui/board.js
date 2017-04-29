@@ -22,6 +22,7 @@ export var Board = stampit()
 		    this.buildGoal()
 		    this.buildSpawn()
 		    this.buildCreepManager()
+		    this.buildKaboomManager()
 		},
 		getCollisionObjects(){
 			return [this.CreepManager.getGroup(), this.temp]
@@ -32,6 +33,22 @@ export var Board = stampit()
 				data: this.map.objects.objects[0],
 				group: this.groups.board
 			})
+		},
+
+		buildKaboomManager(){
+			//  Explosion pool
+		    let explosions = game.make.group();
+
+		    for (var i = 0; i < 10; i++)
+		    {
+		        var explosionAnimation = explosions.create(0, 0, 'kaboom', [0], false);
+		        explosionAnimation.anchor.setTo(0.5, 0.5);
+		        explosionAnimation.animations.add('kaboom');
+		        explosionAnimation.scale.setTo(.25,.25)
+		    }
+
+		    this.groups.board.addChild(explosions)
+		    GLOBALS.kabooms = explosions
 		},
 		buildLayers() {
 			game.tileMapLayers = {}
