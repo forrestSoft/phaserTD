@@ -26,8 +26,11 @@ export const TowerManager = Manager.compose(Builder)
 export const Tower = Stampit()
 	.methods({
 		buildBullets(){
-			this.group = game.add.weapon(30, 'ms', 33, this.group)
-
+			this.group = game.add.weapon(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
+			this.group.bullets.forEach((b) => {
+			    b.scale.setTo(.25, .25);
+			    b.body.updateBounds();
+			}, this);
 			// game.bullets = this.group
 			this.group.enableBody = true;
     		this.group.physicsBodyType = Phaser.Physics.ARCADE;
@@ -36,6 +39,7 @@ export const Tower = Stampit()
 
     		
     		this.group.bulletSpeed = 120;
+    		this.group.bulletAngleOffset = GLOBALS.towers.towers[this.brush].bulletAngleOffset
     		this.group.fireRate = 1500;
     		this.group.x = this.x + 8
     		this.group.y = this.y + 8
