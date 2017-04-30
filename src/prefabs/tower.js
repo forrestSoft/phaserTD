@@ -142,7 +142,14 @@ export const Tower = Stampit()
 			this.sprite.anchor.x = .5
 			this.sprite.anchor.y = .5
 			this.sprite.angle = GLOBALS.towers.towers[this.brush].displayAngle
+			this.buildRangeIndicator()
 			this.buildBullets()	
+		},
+		buildRangeIndicator(){
+			this.rangeIndicator = game.add.graphics()
+			this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
+			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].range)
+			console.log('boo')
 		}
 	})
 	.init(function ({x,y,brush}, {args, instance, stamp}) {

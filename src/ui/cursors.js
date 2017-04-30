@@ -211,6 +211,12 @@ export const CursorState = Stampit()
 			if(!!this.sprite){
 				this.sprite.x = spriteOffsetX
 				this.sprite.y = spriteOffsetY
+				
+				if(!!this.rangeIndicator && this.brushType == 'tower'){
+					this.rangeIndicator.clear()
+					this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
+					this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.currentBrush].range)
+				}
 			}else{
 				switch (this.brushType){
 					case 'tower':
@@ -220,6 +226,11 @@ export const CursorState = Stampit()
 						this.sprite.anchor.y = 0.5
 						this.sprite.angle = GLOBALS.towers.towers[this.currentBrush].displayAngle
 						this.container.add(this.sprite)
+
+						this.rangeIndicator = game.make.graphics()
+						this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
+						this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.currentBrush].range)
+						this.container.add(this.rangeIndicator)
 						break
 
 					case 'fancy':
@@ -262,6 +273,10 @@ export const CursorState = Stampit()
 				this.sprite.destroy()
 				this.sprite = null
 				this.lastBrushType = null
+			}
+
+			if(this.rangeIndicator){
+				this.rangeIndicator.clear()
 			}
 			marker.alpha = 0
 			this.previous = {x: -1, y: -1}
