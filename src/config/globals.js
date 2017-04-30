@@ -1,5 +1,6 @@
 import Towers from './globals-towers'
 import Brushes from './globals-brushes'
+import Waves from './globals-waves'
 
 var globals = {
   globalOffset: {
@@ -49,5 +50,7 @@ const tempGlobalsEntrance = {
 Object.assign(globals.entrance, tempGlobalsEntrance)
 Object.assign(globals, Brushes)
 globals.towers = Towers
+
+globals.waves = Waves
 
 export default globals

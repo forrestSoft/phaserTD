@@ -30,11 +30,12 @@ export default class extends Prefab {
         game_state.signals.playerMove.add(this.move_to, this);
         GLOBALS.signals.creepPathReset.add(this.reset,this)
 
-        this.life = 2
+        this.life = 5
     }
     hit(){
+        console.log('hit')
         this.life --
-        
+
         if(this.life == 0){
             let explosionAnimation = GLOBALS.kabooms.getFirstExists(false);
             explosionAnimation.reset(this.x, this.y);
@@ -43,7 +44,6 @@ export default class extends Prefab {
         }
     }
     reset(){
-        // console.log('reset')
         this.path = GLOBALS.stars.get_path('creep')
 
         if(this.path_step == -1){
@@ -83,7 +83,8 @@ export default class extends Prefab {
                 velocity = new Phaser.Point(next_position.x - this.position.x,
                                        next_position.y - this.position.y);
                 velocity.normalize();
-
+                this.velocity = velocity
+                // console.log(this.velocity)
                 let s,n
                 n = ((Math.atan2(-velocity.y,-velocity.x)))
                 if(n < -3 || n > 3){

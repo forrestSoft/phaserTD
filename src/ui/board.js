@@ -1,5 +1,6 @@
 import stampit from 'stampit'
 import {CreepManager} from '../prefabs/creeps'
+import {TowerManager} from '../prefabs/tower'
 
 import GLOBALS from '../config/globals'
 
@@ -16,6 +17,7 @@ export var Board = stampit()
 		    this.map.setLayer(1)
 		},
 		buildForCreate(){
+			this.buildTowerManager()
 			this.buildLayers()
 		    this.buildGroups()
 		    // this.buildCreep()
@@ -26,6 +28,10 @@ export var Board = stampit()
 		},
 		getCollisionObjects(){
 			return [this.CreepManager.getGroup(), this.temp]
+		},
+		buildTowerManager(){
+			this.towerManager = TowerManager()
+			GLOBALS.towerManager = this.towerManager
 		},
 		buildCreepManager(){
 			this.CreepManager = CreepManager({

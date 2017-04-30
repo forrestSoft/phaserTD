@@ -8,7 +8,8 @@ var towers = {
 			displayAngle: 180,
 			fireAngle: 90,
 			bulletAngleOffset: 90,
-			index: 44
+			index: 44,
+			range: 50
 		},
 		45: {
 			name: 'red',
@@ -16,7 +17,8 @@ var towers = {
 			displayAngle: 0,
 			fireAngle: 270,
 			bulletAngleOffset: 90,
-			index: 45
+			index: 45,
+			range: 50
 
 		},
 		36: {
@@ -25,7 +27,8 @@ var towers = {
 			displayAngle: 0,
 			fireAngle: 180,
 			bulletAngleOffset: 	90,
-			index: 36
+			index: 36,
+			range: 50
 		},
 		26: {
 			name: 'red',
@@ -33,7 +36,8 @@ var towers = {
 			displayAngle: 0,
 			bulletAngleOffset: 90,
 			index: 26,
-			fireAngle: 0
+			fireAngle: 0,
+			range: 50
 		}
 	}
 }

@@ -23,14 +23,18 @@ export const Manager = Stampit()
 export const CreepManager = Manager.compose(Builder)
 	.methods({
 		buildCreeps(){
-			this.creeps = game.add.group()
+			this.creeps = game.make.group(null,'creeps')
 		    this.creeps.fixedToCamera = false;
-			this.creeps.y = GLOBALS.globalOffset.y
-			this.creeps.x = GLOBALS.globalOffset.x
+			// this.creeps.y = GLOBALS.globalOffset.y
+			// this.creeps.x = GLOBALS.globalOffset.x
 			this.creeps.enableBody = true
    			this.creeps.physicsBodyType = Phaser.Physics.ARCADE;
 			game.physics.arcade.enable(this.creeps, Phaser.Physics.ARCADE);
+			this.group.addChild(this.creeps)
+			// this.group.creeps = 5
 			// this.creeps.classType = GLOBALS.prefab_classes.player
+
+			GLOBALS.signals.waveStart.add(this.start, this)
 		},
 		buildCreep(){
 			let prefab = this.create_object(this.data,this.state)
@@ -40,11 +44,12 @@ export const CreepManager = Manager.compose(Builder)
 			return this.creeps
 		},
 		start(){
-			game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 25, this.buildCreep, this);
+			game.time.events.repeat(Phaser.Timer.SECOND * 5, 25, this.buildCreep, this);
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {
 		Object.assign(instance, {data, state, group})
-		this.buildCreeps()
-		game.time.events.repeat(Phaser.Timer.SECOND * 4, 1, this.start, this);
+		instance.buildCreeps()
+
+		// game.time.events.repeat(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, 1, this.start, this);
 	})

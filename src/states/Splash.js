@@ -38,6 +38,7 @@ export default class extends Phaser.State {
     this.load.spritesheet('ms',"assets/images/open_tileset.png", 16,16)
     this.load.atlasXML('weapons', 'assets/images/weapons.png','assets/images/weapons.xml')
     this.load.spritesheet('kaboom', 'assets/images/explosion.png', 64, 64, 23)
+    this.load.atlas('tank', 'assets/games/tanks/tanks.png', 'assets/games/tanks/tanks.json');
   }
 
   create () { 

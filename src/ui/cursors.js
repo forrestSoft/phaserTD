@@ -3,7 +3,6 @@ import Phaser from 'phaser'
 import _ from 'underscore'
 import {Points} from '../utils'
 import {FancyBrush} from './fancyBrush'
-import {TowerManager} from '../prefabs/tower'
 
 import GLOBALS from '../config/globals'
 
@@ -279,6 +278,7 @@ export const CursorState = Stampit()
 		instance.attachObj = game
 		instance.tileMap = tileMap
 		instance.spriteKey = 'ms'
+		instance.towerManager = GLOBALS.towerManager
 
 		window.c = container
 	})
@@ -303,11 +303,7 @@ export const Brush = Stampit()
 					case 'tower':
 						this.lastBrushType = 'tower'
 
-						if(!this.towerManager){
-							this.towerManager = TowerManager()
-						}
-						
-						this.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
+						GLOBALS.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
 						break
 
 					case 'fancy':

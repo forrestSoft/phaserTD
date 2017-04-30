@@ -38,7 +38,7 @@ export default class extends base_level {
 
     this.layers = {}
     this.groups = {
-      board: this.game.add.group()
+      board: this.game.add.group(undefined,'board')
     }
     this.prefabs = {}
     this.objects = {}
@@ -68,14 +68,21 @@ export default class extends base_level {
       }
     })
     GLOBALS.stars = stars
+    GLOBALS.boardGroup = this.groups.board
 
     this.signals = {
       playerMove: new Phaser.Signal()
     }
   }
-
+  start(){
+    GLOBALS.signals.waveStart.dispatch()
+  }
   create () {
     let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
+
+    GLOBALS.timers = {
+      firstWave: game.time.events.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
+    }
 
     this.board.buildForCreate()
   
@@ -135,7 +142,7 @@ export default class extends base_level {
     }
   }
   dispatchCollision(player,bullet){
-    bullet.destroy()
+    bullet.kill()
     player.hit()
   }
 
@@ -144,7 +151,8 @@ export default class extends base_level {
       // game.debug.spriteBounds(pp);
       // game.debug.spriteInfo(this.board.getCollisionObjects()[0], true, true);
     }
-    game.debug.text(this.life,10,10)
+    let text = `life: ${this.life} next wave: ${(GLOBALS.timers.firstWave.timer.duration / 1000).toFixed(0)}`
+    game.debug.text(text,2,12)
   }
 
   buildDynamicGlobals(){
@@ -169,7 +177,8 @@ export default class extends base_level {
         creepPathReset: new Phaser.Signal(),
         updateBrush: new Phaser.Signal(),
         paintWithBrush: new Phaser.Signal(),
-        creepReachedGoal: new Phaser.Signal()
+        creepReachedGoal: new Phaser.Signal(),
+        waveStart: new Phaser.Signal()
       }
     }
     Object.assign(GLOBALS, tempGLOBALS)
