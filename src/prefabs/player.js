@@ -13,7 +13,7 @@ export default class extends Prefab {
 
         this.game_state.game.physics.arcade.enable(this);
         // change the size and position of the collision box
-        this.body.setSize(12, 12, 0, 4);
+        this.body.setSize(10, 22, 8, 8);
         this.body.collideWorldBounds = true;
             
         // set anchor point to be the center of the collision box
@@ -30,7 +30,7 @@ export default class extends Prefab {
         game_state.signals.playerMove.add(this.move_to, this);
         GLOBALS.signals.creepPathReset.add(this.reset,this)
 
-        this.life = 50
+        this.life = 25
     }
     hit(){
         console.log('hit')

@@ -35,6 +35,8 @@ export const Tower = Stampit()
             this.weapon.bulletClass = Bullet;
             this.weapon.bounds = game.inputMasks.board._localBounds
             this.weapon.bulletBounds = game.inputMasks.board._localBounds
+            this.weapon.fireFrom.x = this.weapon.centerX
+            this.weapon.fireFrom.y = this.weapon.centery
             // this.weapon.onKill.add(()=>{console.log('kikk')})
         	this.weapon.createBullets(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
         	// return
@@ -97,15 +99,22 @@ export const Tower = Stampit()
 					let y = target.y
 					
 	    			angle = game.physics.arcade.angleToXY(this.sprite, x,y, false)
-	    			
-	    			this.sprite.rotation = angle
+	    			if(this.weapon.lastFire == this.weapon.fireInterval){
+		    			this.sprite.rotation = angle
+		    		}
 				}
 				
 				 if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 && this.weapon.lastFire == this.weapon.fireInterval){
 				 	var fA = this.firingSolution.call(this,target)
-				 	angle = game.physics.arcade.angleToXY(this.sprite, fA.x,fA.y+16, false)
+				 	if(fA != null){
+					 	angle = game.physics.arcade.angleToXY(this.sprite, fA.x,fA.y+16, false)
+					 	this.weapon.fire()
+				 	}else{
+				 		console.log('fail')
+				 	}
 					this.weapon.fireAngle = jMath.degrees(angle)
-					this.weapon.fire()
+					this.sprite.rotation = angle
+					
 					this.weapon.lastFire = 0
 				}
 				
