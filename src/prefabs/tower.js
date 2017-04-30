@@ -16,6 +16,7 @@ export const TowerManager = Manager.compose(Builder)
 		addTower({x,y,brush}){
 			let tower =  Tower({x:x,y:y,brush:brush, group:this.group})
 			this.addBullets(tower.weapon)
+			GLOBALS.signals.towerPlaced.dispatch()
 		},
 		addBullets(bullets){
 			this.bullets.push(bullets.bullets)

@@ -1,7 +1,7 @@
 
 
 var waves = {
-	beforeBegin: 10
+	beforeBegin: 5
 }
 
 export default waves

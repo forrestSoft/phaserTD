@@ -19,15 +19,18 @@ export const Cursor = Stampit()
 		    this.container.y = -16
 
 		    game.input.pollRate = 2
+		    console.log(1)
 		    this.cursorState = CursorState.compose(Brush)({
 		    	tileMap: this.p.map,
 		    	container: this.container,
-		    	group: this.group
+		    	group: this.group,
+		    	marker: this.marker
 		    })
-		    game.input.addMoveCallback(this.updateMarker, this);
+		    
 
 		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
 		    GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
+		    GLOBALS.signals.outOfGame.add(this.cursorState.hideCursor, this.cursorState)
 		},
 		smallRect(){
 			this.marker.clear()
@@ -49,6 +52,9 @@ export const Cursor = Stampit()
 			let x,y
 
 			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
+				if(!this.marker){
+					this.buildAndBind_cursor()
+				}
 				let x,y
 				x = game.input.activePointer.worldX
 				y = game.input.activePointer.worldY
@@ -71,7 +77,7 @@ export const Cursor = Stampit()
 					this.position = {x:0,y:0}
 					this.findFunction(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y)
 				}				
-			}else{
+			}else if(this.marker){
 				this.cursorState.setOutOfBounds(this.marker)
 			}
 		},
@@ -89,7 +95,9 @@ export const Cursor = Stampit()
 		instance.p = p
 		instance.group = group
 		this._ff()
-		this.buildAndBind_cursor()
+		game.input.addMoveCallback(this.updateMarker, this);
+
+		// this.buildAndBind_cursor()
 	})
 
 
@@ -118,6 +126,15 @@ export const CursorState = Stampit()
 		},
 		getCursorType(){
 			return this.brushType
+		},
+		hideCursor(){
+			if(this.sprite){
+				this.sprite.destroy()
+			}
+
+			if(this.marker){
+				this.marker.clear()
+			}
 		},
 		setPathFail(fail){
 			if(fail){
@@ -265,8 +282,8 @@ export const CursorState = Stampit()
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
 
-			this.validPlacement =  (isTowerFoundation && isTower) || 
-								   (isTileAcceptable && !isTower && !this.pathFail)
+			this.validPlacement = 	(isTowerFoundation && isTower && GLOBALS.player.gold >= 5) ||
+									(isTileAcceptable && !isTower && !this.pathFail)								   
 		},
 		setOutOfBounds(marker){
 			if(this.sprite){
@@ -282,7 +299,7 @@ export const CursorState = Stampit()
 			this.previous = {x: -1, y: -1}
 		}
 	})
-	.init(function ({tileMap, container}, {args, instance, stamp}) {
+	.init(function ({tileMap, container, marker}, {args, instance, stamp}) {
 		instance.container = container
 		instance.modes = ['basic', 'fancy', 'tower']
 		instance.previous = {x: 0, y: 0}
@@ -294,6 +311,7 @@ export const CursorState = Stampit()
 		instance.tileMap = tileMap
 		instance.spriteKey = 'ms'
 		instance.towerManager = GLOBALS.towerManager
+		instance.marker = marker
 
 		window.c = container
 	})
@@ -341,7 +359,7 @@ export const Brush = Stampit()
 						GLOBALS.stars.get('creep').find_path_goal_spawn()	
 						break
 				}
-				
+				this.checkValidPlacement()
 			}
 		}
 	})

@@ -30,7 +30,7 @@ export default class extends Prefab {
         game_state.signals.playerMove.add(this.move_to, this);
         GLOBALS.signals.creepPathReset.add(this.reset,this)
 
-        this.life = 25
+        this.life = 15
     }
     hit(){
         console.log('hit')

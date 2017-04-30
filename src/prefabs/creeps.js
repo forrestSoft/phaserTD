@@ -31,26 +31,55 @@ export const CreepManager = Manager.compose(Builder)
    			this.creeps.physicsBodyType = Phaser.Physics.ARCADE;
 			game.physics.arcade.enable(this.creeps, Phaser.Physics.ARCADE);
 			this.group.addChild(this.creeps)
-			// this.group.creeps = 5
-			// this.creeps.classType = GLOBALS.prefab_classes.player
 
 			GLOBALS.signals.waveStart.add(this.start, this)
 		},
-		buildCreep(){
+		buildCreep(num = 1){
+			if(num <= 0){
+				this.timer.add(Phaser.Timer.SECOND * this.nextCreep, this.creep, this)
+				return
+			}
+
 			let prefab = this.create_object(this.data,this.state)
 			this.creeps.add(prefab)
+
+
+			this.timer.add(Phaser.Timer.SECOND * Phaser.Math.random(.75, 1.1), this.buildCreep.bind(this, --num), this)
+			this.timer.start()
 		},
 		getGroup(){
 			return this.creeps
 		},
 		start(){
-			this.buildCreep()
-			game.time.events.repeat(Phaser.Timer.SECOND * 1.5, 25, this.buildCreep, this);
+			this.wave()
+		},
+		wave(){
+			this.creep()
+		},
+		creep(){
+			this.team ++
+			if(this.team % 3 == 0){
+				this.difficultyMin ++
+			}
+
+			if(this.team % 5 == 0){
+				this.difficultyMax ++
+			}
+
+			this.buildCreep(Math.floor(Phaser.Math.random(this.difficultyMin,this.difficultyMax)))
+			this.nextCreep = Phaser.Math.random(.5, 1.75)
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {
-		Object.assign(instance, {data, state, group})
+		Object.assign(instance, {data, state, group,
+			timer: game.time.create(false),
+			nextCreep: .1,
+			difficultyMin: 1,
+			difficultyMax: 3,
+			team: 0
+		})
 		instance.buildCreeps()
+		
 
 		// game.time.events.repeat(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, 1, this.start, this);
 	})

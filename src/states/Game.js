@@ -106,13 +106,19 @@ export default class extends base_level {
 
     GLOBALS.stars.get('creep').find_path_goal_spawn();
 
-    this.life = 20
+    // this.life = 20
     GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
-
-    // game.time.events.repeat(Phaser.Timer.SECOND * 2.5, 7, this.board.buildCreep, this.board);
+    GLOBALS.signals.towerPlaced.add(this.loseGold, this)
+    GLOBALS.signals.creepKilled.add(this.getGold, this)
   }
   loseLife(){
-    this.life --
+    GLOBALS.player.life --
+  }
+  loseGold(){
+    GLOBALS.player.gold -= 5
+  }
+  getGold(){
+    GLOBALS.player.gold += 1 
   }
 
   maskBoard (){
@@ -144,6 +150,10 @@ export default class extends base_level {
     if(game.bullets){
       game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
     }
+    // console.log(game.input.activePointer.withinGame)
+    if(!game.input.activePointer.withinGame){
+      GLOBALS.signals.outOfGame.dispatch()
+    }
   }
   dispatchCollision(player,bullet){
     bullet.kill()
@@ -151,24 +161,16 @@ export default class extends base_level {
   }
 
   render(){
-    
-    try{
-    // game.debug.body(this.groups.board.children[5].children[0])
-    // game.debug.spriteBounds(this.groups.board.children[5].children[0])
-    // let text2 = [dist.x,dist.y,] 
-    // game.debug.text(dist, 16,16)
-    // game.debug.pixel(dist.x, dist.y, 15)
-    // game.debug.pixel(dist.x2, dist.y2, 15)
-    // game.debug.spriteBounds(towers[0].sprite)
-    // game.debug.spriteInfo(towers[0].sprite, 16,16)
-  }catch(e){}
   try{
     // game.debug.spriteBounds(this.groups.board.children[5].children[0])
     // game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
     // game.debug.spriteBounds(towers[0].sprite)
     // game.debug.spriteInfo(towers[0].sprite, 16,16)
   }catch(e){}
-    let text = `life: ${this.life} next wave: ${(GLOBALS.timers.firstWave.duration / 1000).toFixed(0)}`
+    let life = GLOBALS.player.life
+    let gold = GLOBALS.player.gold
+    let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
+    let text = `life: ${life} next wave: ${duration} gold: ${gold}`
     game.debug.text(text,2,12)
   }
 
@@ -190,14 +192,15 @@ export default class extends base_level {
         "player": Player
       },
 
-      signals: {
-        creepPathReset: new Phaser.Signal(),
-        updateBrush: new Phaser.Signal(),
-        paintWithBrush: new Phaser.Signal(),
-        creepReachedGoal: new Phaser.Signal(),
-        waveStart: new Phaser.Signal()
-      }
+      signals: {}
     }
+
+    let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
+                       'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
+                       'creepKilled'].forEach((name,i)=>{
+                          tempGLOBALS.signals[name] = new Phaser.Signal()                  
+                       })      
+
     Object.assign(GLOBALS, tempGLOBALS)
 
     window.GLOBALS = GLOBALS

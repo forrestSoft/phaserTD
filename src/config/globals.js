@@ -1,6 +1,7 @@
 import Towers from './globals-towers'
 import Brushes from './globals-brushes'
 import Waves from './globals-waves'
+import Player from './globals-player'
 
 var globals = {
   globalOffset: {
@@ -52,5 +53,6 @@ Object.assign(globals, Brushes)
 globals.towers = Towers
 
 globals.waves = Waves
+globals.player = Player
 
 export default globals
