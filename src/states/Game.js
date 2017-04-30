@@ -84,11 +84,11 @@ export default class extends base_level {
       firstWave: game.time.events.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
     }
 
+    this.maskBoard()
     this.board.buildForCreate()
   
     this.baseLayer = this.layers['background']
   
-    this.maskBoard()
 
     this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
     this.palette2 = Palette({ y: 0, x: 240})
@@ -121,6 +121,7 @@ export default class extends base_level {
       objectToMask: this.groups.board,
       name: 'board'
     }
+    console.log('r',rect)
     buildBoundInputMask(rect)
   }
 
@@ -151,8 +152,28 @@ export default class extends base_level {
       // game.debug.spriteBounds(pp);
       // game.debug.spriteInfo(this.board.getCollisionObjects()[0], true, true);
     }
+    if(game && game.inputMasks && game.inputMasks.board){
+      // console.log(game.inputMasks.board._bounds)
+      // game.debug.spriteBounds(game.inputMasks.board)
+    }
+    try{
+    // game.debug.body(this.groups.board.children[5].children[0])
+    // game.debug.spriteBounds(this.groups.board.children[5].children[0])
+    // let text2 = [dist.x,dist.y,] 
+    // game.debug.text(dist, 16,16)
+    game.debug.pixel(dist.x, dist.y, 15)
+    game.debug.pixel(dist.x2, dist.y2, 15)
+    game.debug.spriteBounds(towers[0].sprite)
+    // game.debug.spriteInfo(towers[0].sprite, 16,16)
+  }catch(e){}
+  try{
+    game.debug.spriteBounds(this.groups.board.children[5].children[0])
+    // game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
+    // game.debug.spriteBounds(towers[0].sprite)
+    // game.debug.spriteInfo(towers[0].sprite, 16,16)
+  }catch(e){}
     let text = `life: ${this.life} next wave: ${(GLOBALS.timers.firstWave.timer.duration / 1000).toFixed(0)}`
-    game.debug.text(text,2,12)
+    // game.debug.text(text,2,12)
   }
 
   buildDynamicGlobals(){

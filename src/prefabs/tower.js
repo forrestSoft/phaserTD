@@ -30,10 +30,12 @@ export const TowerManager = Manager.compose(Builder)
 export const Tower = Stampit()
 	.methods({
 		buildBullets(){
-			console.log(Bullet.constructor, Phaser.Bullet)
 			// this.weapon = game.add.weapon(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group, Bullet)
 			this.weapon = game.plugins.add(Phaser.Weapon);
             this.weapon.bulletClass = Bullet;
+            this.weapon.bounds = game.inputMasks.board._localBounds
+            this.weapon.bulletBounds = game.inputMasks.board._localBounds
+            // this.weapon.onKill.add(()=>{console.log('kikk')})
         	this.weapon.createBullets(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
         	// return
 
@@ -51,7 +53,7 @@ export const Tower = Stampit()
     		this.weapon.bulletSpeed = 200;
     		this.weapon.bulletAngleOffset = GLOBALS.towers.towers[this.brush].bulletAngleOffset
     		this.weapon.fireRate = 150;
-    		this.weapon.fireInterval = 5
+    		this.weapon.fireInterval = 10
     		this.weapon.fireIntervalMod = 5
     		this.weapon.rangeModifier = -1000
     		this.weapon.lastFire = 0
@@ -59,7 +61,7 @@ export const Tower = Stampit()
     		this.weapon.y = this.y - 8
     		this.weapon.fireAngle = GLOBALS.towers.towers[this.brush].fireAngle
     		// this.weapon.autofire = true
-    		this.weapon.bulletKillDistance = GLOBALS.towers.towers[this.brush].range*2
+    		this.weapon.bulletKillDistance = GLOBALS.towers.towers[this.brush].range/2
     		// this.weapon.fire()
 
     		this.weapon.update = ()=>{
@@ -69,9 +71,17 @@ export const Tower = Stampit()
     			}
 
     			let angle
+    			let coords = {
+    				x:this.sprite.centerX, 
+					y: this.sprite.centerY,
+					x2:target.centerX, 
+					y2: target.centerY+16
+    			}
 
-				let dist = game.physics.arcade.distanceBetween(this.sprite,target)
-				if(dist > GLOBALS.towers.towers[this.brush].range){
+				let dist = game.physics.arcade.distanceBetween({x:coords.x, y: coords.y},{x:coords.x2, y: coords.y2})
+				window.dist = coords
+				game.debug.body(target)
+				if(dist > GLOBALS.towers.towers[this.brush].range/2){
 					return
 				}
 
@@ -94,7 +104,7 @@ export const Tower = Stampit()
 				 if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 && this.weapon.lastFire == this.weapon.fireInterval){
 				 	var fA = this.firingSolution.call(this,target)
 				 	angle = game.physics.arcade.angleToXY(this.sprite, fA.x,fA.y+16, false)
-					this.weapon.fireAngle = 90//jMath.degrees(angle)
+					this.weapon.fireAngle = jMath.degrees(angle)
 					this.weapon.fire()
 					this.weapon.lastFire = 0
 				}
@@ -118,7 +128,6 @@ export const Tower = Stampit()
 			this.rangeIndicator = game.add.graphics()
 			this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
 			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].range)
-			console.log('boo')
 		},
 		firingSolution(target){
 			let src, dst, vel
