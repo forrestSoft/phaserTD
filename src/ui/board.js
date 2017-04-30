@@ -30,7 +30,9 @@ export var Board = stampit()
 			return [this.CreepManager.getGroup(), this.temp]
 		},
 		buildTowerManager(){
-			this.towerManager = TowerManager()
+			this.towerManager = TowerManager({
+				group: this.groups.board
+			})
 			GLOBALS.towerManager = this.towerManager
 		},
 		buildCreepManager(){

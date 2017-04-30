@@ -78,3 +78,13 @@ export class highLightableGroup extends Phaser.Group {
         }
     }
 }
+
+export const jMath = {
+    radians: function(degrees) {
+      return degrees * Math.PI / 180;
+    },
+ 
+    degrees: function(radians) {
+      return radians * 180 / Math.PI;
+    }
+}

@@ -1,7 +1,10 @@
 import stampit from 'stampit'
 import Phaser from 'phaser'
 
+import Lead from '../engine/leading'
+import {jMath} from '../utils'
 import {Builder} from './creeps'
+import {Bullet} from './bullet'
 
 import GLOBALS from '../config/globals'
 
@@ -11,24 +14,31 @@ var Manager = Stampit()
 export const TowerManager = Manager.compose(Builder)
 	.methods({
 		addTower({x,y,brush}){
-			let tower =  Tower({x:x,y:y,brush:brush})
+			let tower =  Tower({x:x,y:y,brush:brush, group:this.group})
 			this.addBullets(tower.weapon)
 		},
 		addBullets(bullets){
 			this.bullets.push(bullets.bullets)
 		}	
 	})
-	.init(function ({}, {args, instance, stamp}) {
+	.init(function ({group}, {args, instance, stamp}) {
 		instance.bullets = []
 		game.bullets = instance.bullets
+		instance.group = group
 	})
 
 export const Tower = Stampit()
 	.methods({
 		buildBullets(){
-			this.weapon = game.add.weapon(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
+			console.log(Bullet.constructor, Phaser.Bullet)
+			// this.weapon = game.add.weapon(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group, Bullet)
+			this.weapon = game.plugins.add(Phaser.Weapon);
+            this.weapon.bulletClass = Bullet;
+        	this.weapon.createBullets(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
+        	// return
+
 			this.weapon.bullets.forEach((b) => {
-			    b.scale.setTo(.65, .65);
+			    b.scale.setTo(.25, .25);
 			    b.body.updateBounds();
 			}, this);
 			// game.bullets = this.group
@@ -46,27 +56,25 @@ export const Tower = Stampit()
     		this.weapon.rangeModifier = -1000
     		this.weapon.lastFire = 0
     		this.weapon.x = this.x + 8
-    		this.weapon.y = this.y + 8
+    		this.weapon.y = this.y - 8
     		this.weapon.fireAngle = GLOBALS.towers.towers[this.brush].fireAngle
     		// this.weapon.autofire = true
-    		this.weapon.bulletKillDistance = 75
+    		this.weapon.bulletKillDistance = GLOBALS.towers.towers[this.brush].range*2
     		// this.weapon.fire()
 
     		this.weapon.update = ()=>{
-    			let angle, angle2
-    			// console.log(GLOBALS.boardGroup.children[5].getClosestTo(this.sprite))
     			let target = GLOBALS.boardGroup.children[5].getClosestTo(this.sprite)
     			if(!target){
     				return
     			}
-// bullet_travel_time = length(target_pos - our_pos) / bullet_speed
 
-// position_to_aim_at = target_pos + ( normalise(target_direction) * bullet_travel_time )
+    			let angle
+
 				let dist = game.physics.arcade.distanceBetween(this.sprite,target)
-				// console.log(dist)
 				if(dist > GLOBALS.towers.towers[this.brush].range){
 					return
 				}
+
 				if(this.weapon.lastFire < this.weapon.fireInterval){
 					this.weapon.lastFire ++
 					if(this.weapon.lastFire%this.weapon.fireIntervalMod != 0 ){
@@ -74,63 +82,24 @@ export const Tower = Stampit()
 					}
 				}
 
-				// console.log(this.weapon.lastFire,this.weapon.fireIntervalMod,this.weapon.lastFire)
 				if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 ){
-					let travelTime = dist/this.weapon.bulletSpeed
-					let x = target.x// + (target.velocity.x / travelTime)
-					// x -= (GLOBALS.towers.towers[this.brush].range - dist) / this.weapon.rangeModifier
-					let y = target.y// + (target.velocity.y / travelTime)
-					// y -= (GLOBALS.towers.towers[this.brush].range - dist) / this.weapon.rangeModifier
-	    			angle = game.physics.arcade.angleToXY(this.sprite, x,y, true)
-	    			//angle2 = angle+(15/56)//(50-dist-20)*2/56//-  ((dist /56))// - dist) / this.weapon.rangeModifier)
+					let x = target.x
+					let y = target.y
+					
+	    			angle = game.physics.arcade.angleToXY(this.sprite, x,y, false)
 	    			
-	    			// if(dist > 45){
-	    			// 	angle2 = angle + (28/56)
-	    			// }else if(dist < 45 && dist > 40){
-	    			// 	angle2 = angle + (25/56)
-    				// }else if(dist < 40 && dist >35){
-	    			// 	angle2 = angle + (20/56)
-	    			// }else{
-	    			// 	angle2 = angle + (3/56)
-	    			// }
-	    			angle2 = angle//-(1.6-angle)
-	    			console.log(dist,angle*56, angle2*56)
-	    			// debugger
-	    			// console.log(angle*56,angle2*56,dist,(50-dist-20))// / this.weapon.rangeModifier)*56)
-	    			// console.log(angle)
-	    			this.sprite.rotation = angle2
-
-	    			// 30 -> 3
-	    			// 36 -> 23
-	    			// 49 -> 29 
-	    			// return
+	    			this.sprite.rotation = angle
 				}
-				
 				
 				 if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 && this.weapon.lastFire == this.weapon.fireInterval){
-					this.weapon.fireAngle = angle2*56
+				 	var fA = this.firingSolution.call(this,target)
+				 	angle = game.physics.arcade.angleToXY(this.sprite, fA.x,fA.y+16, false)
+					this.weapon.fireAngle = 90//jMath.degrees(angle)
 					this.weapon.fire()
-					// debugger
-					console.log(5)
 					this.weapon.lastFire = 0
 				}
-				// return
-				// console.log(dist, GLOBALS.towers.towers[this.brush].range)
-				// let travelTime = dist/15
-				// let x = target.x + (target.velocity.x / travelTime)
-				// let y = target.y + (target.velocity.y / travelTime)
-    // 			let angle = game.physics.arcade.angleToXY(this.sprite, x,y, true)
-    // 			this.sprite.rotation = angle
-    			// this.weapon.fireAngle = angle*56
-    			// console.log(x,y, target.velocity.normalize())
-    			// console.log(target.x, travelTime, target.velocity.x / travelTime)
-				// console.log('u', Phaser.Weapon.prototype)
-    			// this.stop = true
-				// debugger
-				// this.weapon.fire()
+				
 				// Phaser.Weapon.prototype.update.call(this.weapon)
-
-				// this.lastFire = 15
 			}
 
     		return this
@@ -150,9 +119,27 @@ export const Tower = Stampit()
 			this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
 			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].range)
 			console.log('boo')
+		},
+		firingSolution(target){
+			let src, dst, vel
+			dst = {
+				x:  target.x,
+				y:  target.y,
+				vx: target.velocity.x,
+				vy: target.velocity.y
+			}
+
+			src = {
+				x: this.sprite.x,
+				y:this.sprite.y
+			}
+
+			vel = 20
+
+			return Lead(src,dst,vel)
 		}
 	})
-	.init(function ({x,y,brush}, {args, instance, stamp}) {
-		Object.assign(instance, {x,y,brush})
+	.init(function ({x,y,brush, group}, {args, instance, stamp}) {
+		Object.assign(instance, {x,y,brush, group})
 		instance.buildTower()
 	})
