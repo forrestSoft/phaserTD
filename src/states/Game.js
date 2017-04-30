@@ -81,8 +81,11 @@ export default class extends base_level {
     let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
 
     GLOBALS.timers = {
-      firstWave: game.time.events.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
+      firstWave: game.time.create(false)
     }
+
+    GLOBALS.timers.firstWave.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
+    GLOBALS.timers.firstWave.start()
 
     this.maskBoard()
     this.board.buildForCreate()
@@ -165,7 +168,7 @@ export default class extends base_level {
     // game.debug.spriteBounds(towers[0].sprite)
     // game.debug.spriteInfo(towers[0].sprite, 16,16)
   }catch(e){}
-    let text = `life: ${this.life} next wave: ${(GLOBALS.timers.firstWave.timer.duration / 1000).toFixed(0)}`
+    let text = `life: ${this.life} next wave: ${(GLOBALS.timers.firstWave.duration / 1000).toFixed(0)}`
     game.debug.text(text,2,12)
   }
 

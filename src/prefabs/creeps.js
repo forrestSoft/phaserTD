@@ -44,7 +44,8 @@ export const CreepManager = Manager.compose(Builder)
 			return this.creeps
 		},
 		start(){
-			game.time.events.repeat(Phaser.Timer.SECOND * 1, 25, this.buildCreep, this);
+			this.buildCreep()
+			game.time.events.repeat(Phaser.Timer.SECOND * 1.5, 25, this.buildCreep, this);
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {
