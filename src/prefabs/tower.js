@@ -44,10 +44,10 @@ export const Tower = Stampit()
 	            fireFrom: { x: this.weapon.centerX, y: this.weapon.centerY },
 	            enableBody: true,
 	    		physicsBodyType: Phaser.Physics.ARCADE,
-	    		bulletSpeed: 75,
+	    		bulletSpeed: 75, //275
 	    		bulletAngleOffset: GLOBALS.towers.towers[this.brush].bulletAngleOffset,
 	    		fireRate: 150,
-	    		fireInterval: 15,
+	    		fireInterval: 15, //55
 	    		fireIntervalMod: 5,
 	    		rangeModifier: -1000,
 	    		bulletRotateToVelocity: true,
