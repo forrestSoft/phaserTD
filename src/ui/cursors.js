@@ -167,17 +167,17 @@ export const CursorState = Stampit()
 			this.y = (Math.floor(y/tW)) * tW
 			this.originalY = this.y
 
-			let cutOffX = ((height + 1) * tH) - ((size[0]+1)*tH)
-			let cutOffY = ((width + 1) * tW) - ((size[0]+1)*tW)
-
+			let cutOffY = ((height + 1) * tH) - ((size[0]+1)*tH)
+			let cutOffX = ((width + 1) * tW) - ((size[0]+1)*tW)
+			console.log(cutOffX, cutOffY)
 			if(cutOffX <= this.x){
-				this.x = height*tH - ((size[0]+1)*tH)
+				this.x = width*tH - ((size[0]+1)*tH)
 			}else if(this.x == globalOffset.x){
 				this.x = tH + globalOffset.x
 			}
 
 			if(cutOffY <= this.y){
-				this.y = width*tW - ((size[1])*tW)
+				this.y = height*tW - ((size[1])*tW)
 			}else if(this.y == globalOffset.y){
 				this.y = tW + globalOffset.y
 			}
