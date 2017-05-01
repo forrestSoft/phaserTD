@@ -97,15 +97,15 @@ export const Tower = Stampit()
 					}
 				}
 
-				if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 ){
-					let x = target.x
-					let y = target.y
+				// if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 ){
+				// 	let x = target.x
+				// 	let y = target.y
 					
-	    			angle = game.physics.arcade.angleToXY(this.sprite, x,y, false)
-	    			if(this.weapon.lastFire == this.weapon.fireInterval){
-		    			this.sprite.rotation = angle
-		    		}
-				}
+	   //  			angle = game.physics.arcade.angleToXY(this.sprite, x,y, false)
+	   //  			if(this.weapon.lastFire == this.weapon.fireInterval){
+		  //   			this.sprite.rotation = angle
+		  //   		}
+				// }
 				
 				 if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 && this.weapon.lastFire == this.weapon.fireInterval){
 				 	var fA = this.firingSolution.call(this,target)

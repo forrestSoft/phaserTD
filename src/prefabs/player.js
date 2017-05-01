@@ -35,12 +35,14 @@ export default class extends Prefab {
     hit(){
         console.log('hit')
         this.life --
-
+        // debugger
         if(this.life == 0){
             let explosionAnimation = GLOBALS.kabooms.getFirstExists(false);
             explosionAnimation.reset(this.x, this.y);
             explosionAnimation.play('kaboom', 30, false, true);
             this.kill()
+            // this.destroy()
+            GLOBALS.signals.creepKilled.dispatch()
         }
     }
     reset(){
