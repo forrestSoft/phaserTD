@@ -145,6 +145,12 @@ export const Tower = Stampit()
 			this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
 			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].range)
 		},
+		hideRange(){
+			this.rangeIndicator.alpha = 0
+		},
+		showRange(){
+			this.rangeIndicator.alpha = 1
+		},
 		firingSolution(target){
 			let src, dst, vel
 			dst = {

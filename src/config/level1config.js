@@ -20,14 +20,24 @@ let a = [...Array(boardHeight)].forEach((_,i)=>{
 		arrays[i][boardWidth-1] = 33
 	}
 
-	arrays[boardHeight-1][i] = 33
+	// arrays[boardHeight-1][i] = 33
 	arrays[i][0] = 33
 
-	if(i == GLOBALS.entrance.column){
-		arrays[0][i] = 0
-	}else{
-		arrays[0][i] = 33
-	}
+	
+})
+
+let b = [0, boardHeight-1].map((y,i)=>{
+	console.log(22,y,i)
+	// debugger
+	arrays[y].forEach((frame,x)=>{
+		// arrays[a][b]
+		console.log(33, frame,x)
+		if(x == GLOBALS.entrance.column && y == 0){
+			arrays[y][x] = 0
+		}else{
+			arrays[y][x] = 33
+		}
+	})
 })
 
 collisionArray = [].concat.apply([], arrays)
