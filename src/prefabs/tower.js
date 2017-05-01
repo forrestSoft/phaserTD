@@ -44,10 +44,10 @@ export const Tower = Stampit()
 	            fireFrom: { x: this.weapon.centerX, y: this.weapon.centerY },
 	            enableBody: true,
 	    		physicsBodyType: Phaser.Physics.ARCADE,
-	    		bulletSpeed: 70,
+	    		bulletSpeed: 75,
 	    		bulletAngleOffset: GLOBALS.towers.towers[this.brush].bulletAngleOffset,
 	    		fireRate: 150,
-	    		fireInterval: 75,
+	    		fireInterval: 15,
 	    		fireIntervalMod: 5,
 	    		rangeModifier: -1000,
 	    		bulletRotateToVelocity: true,
@@ -60,11 +60,14 @@ export const Tower = Stampit()
 			})
             
         	this.weapon.createBullets(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
-
-			this.weapon.bullets.forEach((b) => {
-			    b.scale.setTo(.2, .2);
-			    b.body.updateBounds();
-			    b.scale.setTo(.25, .25);
+        	// console.log(this.wea)
+			this.weapon.bullets.forEach((b,i) => {
+				// console.log(b,i)
+			    // b.scale.setTo(.2, .2)
+			    // b.body.updateBounds()
+			    b.scale.setTo(.25, .25)
+			    b.body.setSize(6, 4, 6, 18);
+			    b.data.name = i
 			}, this);
 
     		game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
@@ -96,28 +99,19 @@ export const Tower = Stampit()
 						return
 					}
 				}
-
-				// if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 ){
-				// 	let x = target.x
-				// 	let y = target.y
-					
-	   //  			angle = game.physics.arcade.angleToXY(this.sprite, x,y, false)
-	   //  			if(this.weapon.lastFire == this.weapon.fireInterval){
-		  //   			this.sprite.rotation = angle
-		  //   		}
-				// }
 				
-				 if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 && this.weapon.lastFire == this.weapon.fireInterval){
+				if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 && this.weapon.lastFire == this.weapon.fireInterval){
 				 	var fA = this.firingSolution.call(this,target)
 				 	if(fA != null){
 					 	angle = game.physics.arcade.angleToXY(this.sprite, fA.x,fA.y+16, false)
-					 	this.weapon.fire()
 				 	}else{
 				 		console.log('fail')
+				 		return
 				 	}
 					this.weapon.fireAngle = jMath.degrees(angle)
 					this.sprite.rotation = angle
-					
+				 	this.weapon.fire()
+
 					this.weapon.lastFire = 0
 				}
 			}
