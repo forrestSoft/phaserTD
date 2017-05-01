@@ -12,7 +12,7 @@ export const Cursor = Stampit()
 			this.container = game.make.group()
 			this.group.add(this.container)
 			this.marker = game.make.graphics();
-		    this.smallRect()
+		    // this.smallRect()
 		    this.container.add(this.marker)
 
 		    //fix me !!!
@@ -96,8 +96,7 @@ export const Cursor = Stampit()
 		instance.group = group
 		this._ff()
 		game.input.addMoveCallback(this.updateMarker, this);
-
-		// this.buildAndBind_cursor()
+		this.buildAndBind_cursor()
 	})
 
 
@@ -300,19 +299,21 @@ export const CursorState = Stampit()
 		}
 	})
 	.init(function ({tileMap, container, marker}, {args, instance, stamp}) {
-		instance.container = container
-		instance.modes = ['basic', 'fancy', 'tower']
-		instance.previous = {x: 0, y: 0}
-		instance.brushType = 'simple'
-		instance.currentBrush = 26
-		instance.validPlacement = true
-		instance.sprite = undefined
-		instance.attachObj = game
-		instance.tileMap = tileMap
-		instance.spriteKey = 'ms'
-		instance.towerManager = GLOBALS.towerManager
-		instance.marker = marker
-
+		Object.assign(instance, {
+			container: container,
+			modes: ['basic', 'fancy', 'tower'],
+			previous: {x: 0, y: 0},
+			brushType: 'simple',
+			currentBrush: 26,
+			validPlacement: true,
+			sprite: undefined,
+			attachObj: game,
+			tileMap: tileMap,
+			spriteKey: 'ms',
+			towerManager: GLOBALS.towerManager,
+			marker: marker
+		})
+		
 		window.c = container
 	})
 
@@ -320,7 +321,7 @@ export const Brush = Stampit()
 	.methods({
 		  paint(){
 		  	console.log('paint')
-		  	// this.checkValidPlacement()
+
 		  	if(!this.validPlacement){
 		  		return
 		  	}

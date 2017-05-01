@@ -150,7 +150,7 @@ export default class extends base_level {
     if(game.bullets){
       game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
     }
-    // console.log(game.input.activePointer.withinGame)
+    
     if(!game.input.activePointer.withinGame){
       GLOBALS.signals.outOfGame.dispatch()
     }

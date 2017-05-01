@@ -23,49 +23,51 @@ export const TowerManager = Manager.compose(Builder)
 		}	
 	})
 	.init(function ({group}, {args, instance, stamp}) {
-		instance.bullets = []
+		Object.assign(instance, {
+			group,
+			bullets: [],
+			towers: []
+		})
+
 		game.bullets = instance.bullets
-		instance.group = group
+		window.towers = instance.towers
 	})
 
 export const Tower = Stampit()
 	.methods({
 		buildBullets(){
-			// this.weapon = game.add.weapon(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group, Bullet)
 			this.weapon = game.plugins.add(Phaser.Weapon);
-            this.weapon.bulletClass = Bullet;
-            this.weapon.bounds = game.inputMasks.board._localBounds
-            this.weapon.bulletBounds = game.inputMasks.board._localBounds
-            this.weapon.fireFrom.x = this.weapon.centerX
-            this.weapon.fireFrom.y = this.weapon.centery
-            // this.weapon.onKill.add(()=>{console.log('kikk')})
+			Object.assign(this.weapon,{
+				bulletClass: Bullet,
+				bounds: game.inputMasks.board._localBounds,
+	            bulletBounds: game.inputMasks.board._localBounds,
+	            fireFrom: { x: this.weapon.centerX, y: this.weapon.centerY },
+	            enableBody: true,
+	    		physicsBodyType: Phaser.Physics.ARCADE,
+	    		bulletSpeed: 70,
+	    		bulletAngleOffset: GLOBALS.towers.towers[this.brush].bulletAngleOffset,
+	    		fireRate: 150,
+	    		fireInterval: 75,
+	    		fireIntervalMod: 5,
+	    		rangeModifier: -1000,
+	    		bulletRotateToVelocity: true,
+	    		lastFire: 0,
+	    		x: this.x + 8,
+	    		y: this.y - 8,
+	    		fireAngle: GLOBALS.towers.towers[this.brush].fireAngle,
+	    		bulletKillDistance: GLOBALS.towers.towers[this.brush].range/2,
+
+			})
+            
         	this.weapon.createBullets(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
-        	// return
 
 			this.weapon.bullets.forEach((b) => {
-			    b.scale.setTo(.25, .25);
+			    b.scale.setTo(.2, .2);
 			    b.body.updateBounds();
+			    b.scale.setTo(.25, .25);
 			}, this);
-			// game.bullets = this.group
-			this.weapon.enableBody = true;
-    		this.weapon.physicsBodyType = Phaser.Physics.ARCADE;
-    		game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
-    		this.weapon.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
 
-    		
-    		this.weapon.bulletSpeed = 200;
-    		this.weapon.bulletAngleOffset = GLOBALS.towers.towers[this.brush].bulletAngleOffset
-    		this.weapon.fireRate = 150;
-    		this.weapon.fireInterval = 10
-    		this.weapon.fireIntervalMod = 5
-    		this.weapon.rangeModifier = -1000
-    		this.weapon.lastFire = 0
-    		this.weapon.x = this.x + 8
-    		this.weapon.y = this.y - 8
-    		this.weapon.fireAngle = GLOBALS.towers.towers[this.brush].fireAngle
-    		// this.weapon.autofire = true
-    		this.weapon.bulletKillDistance = GLOBALS.towers.towers[this.brush].range/2
-    		// this.weapon.fire()
+    		game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
 
     		this.weapon.update = ()=>{
     			let target = GLOBALS.boardGroup.children[5].getClosestTo(this.sprite)
@@ -118,19 +120,23 @@ export const Tower = Stampit()
 					
 					this.weapon.lastFire = 0
 				}
-				
-				// Phaser.Weapon.prototype.update.call(this.weapon)
 			}
 
     		return this
 		},
 		buildTower(){
-			window.towers = []
 			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'ms', this.brush)	
 			towers.push(this)
-			this.sprite.anchor.x = .5
-			this.sprite.anchor.y = .5
-			this.sprite.angle = GLOBALS.towers.towers[this.brush].displayAngle
+
+			Object.assign(this.sprite, {
+				anchor: {x: .5, y: .5},
+				angle: GLOBALS.towers.towers[this.brush].displayAngle,
+				inputEnabled: true	
+			})
+			
+			this.sprite.events.onInputOver.add(this.showRange, this)
+			this.sprite.events.onInputOut.add(this.hideRange, this)
+
 			this.buildRangeIndicator()
 			this.buildBullets()	
 		},
