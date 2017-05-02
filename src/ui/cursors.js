@@ -231,7 +231,7 @@ export const CursorState = Stampit()
 				if(!!this.rangeIndicator && this.brushType == 'tower'){
 					this.rangeIndicator.clear()
 					this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
-					this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.currentBrush].range)
+					this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.currentBrush].rangeRadius*2)
 				}
 			}else{
 				switch (this.brushType){

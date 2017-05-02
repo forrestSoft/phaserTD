@@ -37,6 +37,9 @@ export const Tower = Stampit()
 	.methods({
 		buildBullets(){
 			this.weapon = game.plugins.add(Phaser.Weapon);
+
+			let dynamicParams = GLOBALS.towers.towers[this.brush]
+
 			Object.assign(this.weapon,{
 				bulletClass: Bullet,
 				bounds: game.inputMasks.board._localBounds,
@@ -45,8 +48,8 @@ export const Tower = Stampit()
 	            enableBody: true,
 	    		physicsBodyType: Phaser.Physics.ARCADE,
 	    		bulletSpeed: 75, //275
-	    		bulletAngleOffset: GLOBALS.towers.towers[this.brush].bulletAngleOffset,
-	    		fireRate: 150,
+	    		bulletAngleOffset: dynamicParams.bulletAngleOffset,
+	    		fireRate: dynamicParams.firingInterval,
 	    		fireInterval: 15, //55
 	    		fireIntervalMod: 5,
 	    		rangeModifier: -1000,
@@ -54,8 +57,8 @@ export const Tower = Stampit()
 	    		lastFire: 0,
 	    		x: this.x + 8,
 	    		y: this.y - 8,
-	    		fireAngle: GLOBALS.towers.towers[this.brush].fireAngle,
-	    		bulletKillDistance: GLOBALS.towers.towers[this.brush].range/2,
+	    		fireAngle: dynamicParams.fireAngle,
+	    		bulletKillDistance: dynamicParams.rangeRadius*2,
 
 			})
             
@@ -83,13 +86,13 @@ export const Tower = Stampit()
     				x:this.sprite.centerX, 
 					y: this.sprite.centerY,
 					x2:target.centerX, 
-					y2: target.centerY+16
+					y2: target.centerY
     			}
 
 				let dist = game.physics.arcade.distanceBetween({x:coords.x, y: coords.y},{x:coords.x2, y: coords.y2})
 				window.dist = coords
-				game.debug.body(target)
-				if(dist > GLOBALS.towers.towers[this.brush].range/2){
+
+				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius){
 					return
 				}
 
@@ -137,7 +140,7 @@ export const Tower = Stampit()
 		buildRangeIndicator(){
 			this.rangeIndicator = game.add.graphics()
 			this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
-			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].range)
+			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].rangeRadius*2)
 		},
 		hideRange(){
 			this.rangeIndicator.alpha = 0

@@ -31,7 +31,7 @@ let b = [0, boardHeight-1].map((y,i)=>{
 	// debugger
 	arrays[y].forEach((frame,x)=>{
 		// arrays[a][b]
-		console.log(33, frame,x)
+		// console.log(33, frame,x)
 		if(x == GLOBALS.entrance.column && y == 0){
 			arrays[y][x] = 0
 		}else{
@@ -48,7 +48,7 @@ goalsArray[0] = 44
 
 let towersArray = Array.from(new Array(boardSize), (x,i) => 0)
 
-let creepSpeed = 21
+let creepSpeed = 12
 var data
 data = { 
 	 "height":boardHeight,

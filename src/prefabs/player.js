@@ -13,7 +13,7 @@ export default class extends Prefab {
 
         this.game_state.game.physics.arcade.enable(this);
         // change the size and position of the collision box
-        this.body.setSize(4, 16, 10, 12);
+        this.body.setSize(6, 16, 10, 12);
         this.body.collideWorldBounds = true;
             
         // set anchor point to be the center of the collision box

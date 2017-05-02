@@ -161,12 +161,17 @@ export default class extends base_level {
   }
 
   render(){
-  try{
-    // game.debug.spriteBounds(this.groups.board.children[5].children[0])
-    // game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
-    // game.debug.spriteBounds(towers[0].sprite)
-    // game.debug.spriteInfo(towers[0].sprite, 16,16)
-  }catch(e){}
+    try{
+      // game.bullets[0].children.forEach((b,i)=>{
+      //   game.debug.body(game.bullets[0].children[i])
+      // })
+      // game.debug.spriteInfo(game.bullets[0].children[0])
+      game.debug.body(this.groups.board.children[5].children[0])
+      // game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
+      // game.debug.spriteBounds(towers[0].sprite)
+      // game.debug.spriteInfo(towers[0].sprite, 16,16)
+    }catch(e){}
+
     let life = GLOBALS.player.life
     let gold = GLOBALS.player.gold
     let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)

@@ -28,16 +28,19 @@ var towers = {
 			fireAngle: 180,
 			bulletAngleOffset: 	90,
 			index: 36,
-			range: 100
+			// range: 100
+			firingInterval: 1500,
+			rangeRadius:75
 		},
 		26: {
-			name: 'red',
-			type: 'PerpendicularFire',
+			name: 'gattling',
+			type: 'fast',
 			displayAngle: 0,
 			bulletAngleOffset: 90,
 			index: 26,
-			fireAngle: 0,
-			range: 100
+			// range: 75,
+			firingInterval: 150,
+			rangeRadius: 25 
 		}
 	}
 }
