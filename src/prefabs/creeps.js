@@ -44,7 +44,7 @@ export const CreepManager = Manager.compose(Builder)
 			this.creeps.add(prefab)
 
 
-			this.timer.add(Phaser.Timer.SECOND * Phaser.Math.random(1, 1.5), this.buildCreep.bind(this, --num), this)
+			this.timer.add(Phaser.Timer.SECOND * Phaser.Math.random(1.5, 2.5), this.buildCreep.bind(this, --num), this)
 			this.timer.start()
 		},
 		getGroup(){
@@ -67,7 +67,7 @@ export const CreepManager = Manager.compose(Builder)
 			}
 
 			this.buildCreep(Math.floor(Phaser.Math.random(this.difficultyMin,this.difficultyMax)))
-			this.nextCreep = Phaser.Math.random(.75, 1.5)
+			this.nextCreep = Phaser.Math.random(.75, 3.5)
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {

@@ -30,7 +30,9 @@ var towers = {
 			index: 36,
 			// range: 100
 			firingInterval: 1500,
-			rangeRadius:75
+			rangeRadius:75,
+			bulletSpeed: 120,
+			damageValue: 5
 		},
 		26: {
 			name: 'gattling',
@@ -39,8 +41,10 @@ var towers = {
 			bulletAngleOffset: 90,
 			index: 26,
 			// range: 75,
-			firingInterval: 150,
-			rangeRadius: 25 
+			firingInterval: 175,
+			rangeRadius: 25,
+			bulletSpeed: 75,
+			damageValue: 1
 		}
 	}
 }

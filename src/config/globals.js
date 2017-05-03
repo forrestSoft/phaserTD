@@ -8,7 +8,7 @@ var globals = {
     x: 0,
     y: 16
   },
-  height: 7,
+  height: 8,
   width: 11,
   tx: 16,
   ty: 16,

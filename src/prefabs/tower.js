@@ -47,10 +47,10 @@ export const Tower = Stampit()
 	            fireFrom: { x: this.weapon.centerX, y: this.weapon.centerY },
 	            enableBody: true,
 	    		physicsBodyType: Phaser.Physics.ARCADE,
-	    		bulletSpeed: 75, //275
+	    		bulletSpeed: dynamicParams.bulletSpeed,// 75, //275
 	    		bulletAngleOffset: dynamicParams.bulletAngleOffset,
 	    		fireRate: dynamicParams.firingInterval,
-	    		fireInterval: 15, //55
+	    		fireInterval: 5, //55
 	    		fireIntervalMod: 5,
 	    		rangeModifier: -1000,
 	    		bulletRotateToVelocity: true,
@@ -58,7 +58,8 @@ export const Tower = Stampit()
 	    		x: this.x + 8,
 	    		y: this.y - 8,
 	    		fireAngle: dynamicParams.fireAngle,
-	    		bulletKillDistance: dynamicParams.rangeRadius*2,
+	    		bulletKillDistance: dynamicParams.rangeRadius,
+	    		damageValue: dynamicParams.damage
 
 			})
             
@@ -71,6 +72,7 @@ export const Tower = Stampit()
 			    b.scale.setTo(.25, .25)
 			    b.body.setSize(6, 4, 6, 18);
 			    b.data.name = i
+			    b.damageValue = dynamicParams.damageValue
 			}, this);
 
     		game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
@@ -86,13 +88,13 @@ export const Tower = Stampit()
     				x:this.sprite.centerX, 
 					y: this.sprite.centerY,
 					x2:target.centerX, 
-					y2: target.centerY
+					y2: target.centerY + 16
     			}
 
 				let dist = game.physics.arcade.distanceBetween({x:coords.x, y: coords.y},{x:coords.x2, y: coords.y2})
 				window.dist = coords
-
-				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius){
+				// console.log('d',coords)
+				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius + 8){
 					return
 				}
 

@@ -237,7 +237,7 @@ export const CursorState = Stampit()
 				switch (this.brushType){
 					case 'tower':
 						this.lastBrushType = 'tower'
-						this.sprite = game.make.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
+						this.sprite = game.add.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
 						this.sprite.anchor.x = 0.5
 						this.sprite.anchor.y = 0.5
 						this.sprite.angle = GLOBALS.towers.towers[this.currentBrush].displayAngle

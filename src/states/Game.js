@@ -157,7 +157,7 @@ export default class extends base_level {
   }
   dispatchCollision(player,bullet){
     bullet.kill()
-    player.hit()
+    player.hit(bullet.damageValue)
   }
 
   render(){
