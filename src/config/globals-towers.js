@@ -28,10 +28,9 @@ var towers = {
 			fireAngle: 180,
 			bulletAngleOffset: 	90,
 			index: 36,
-			// range: 100
 			firingInterval: 1500,
 			rangeRadius:75,
-			bulletSpeed: 120,
+			bulletSpeed: 170,
 			damageValue: 5
 		},
 		26: {
@@ -40,11 +39,10 @@ var towers = {
 			displayAngle: 0,
 			bulletAngleOffset: 90,
 			index: 26,
-			// range: 75,
-			firingInterval: 175,
-			rangeRadius: 25,
-			bulletSpeed: 75,
-			damageValue: 1
+			firingInterval: 125,
+			rangeRadius: 35,
+			bulletSpeed: 125,
+			damageValue: .5
 		}
 	}
 }

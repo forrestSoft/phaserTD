@@ -30,7 +30,8 @@ export default class extends Prefab {
         game_state.signals.playerMove.add(this.move_to, this);
         GLOBALS.signals.creepPathReset.add(this.reset,this)
 
-        this.life = 10
+        this.life = properties.health
+        this.value = properties.gold
     }
     hit(damage = 1){
         console.log('hit')
@@ -42,7 +43,7 @@ export default class extends Prefab {
             explosionAnimation.play('kaboom', 30, false, true);
             this.kill()
             // this.destroy()
-            GLOBALS.signals.creepKilled.dispatch()
+            GLOBALS.signals.creepKilled.dispatch(this.gold)
         }
     }
     reset(){

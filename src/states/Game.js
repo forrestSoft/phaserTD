@@ -122,8 +122,8 @@ export default class extends base_level {
   loseGold(){
     GLOBALS.player.gold -= 5
   }
-  getGold(){
-    GLOBALS.player.gold += 1 
+  getGold(gold = 1){
+    GLOBALS.player.gold += gold
   }
 
   maskBoard (){
