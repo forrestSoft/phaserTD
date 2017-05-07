@@ -53,7 +53,6 @@ export default class extends Prefab {
             this.path_step = 0
         }else{
             this.path.some((point,i)=>{
-                    // console.log('match',this.position.x < point.x , this.position.y < point.y)  
                 if(this.position.x < point.x && this.position.y < point.y){
                     this.path_step = i
                     return true
@@ -74,7 +73,6 @@ export default class extends Prefab {
         }
 
         this.path = GLOBALS.stars.get_path('creep')
-        // debugger
 
         let next_position, velocity, tempPath;
         this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
@@ -128,14 +126,6 @@ export default class extends Prefab {
         this.calculateOffsetHack()
         // GLOBALS.stars.get('creep').find_path(this.position, target_position, this.move_through_path, this);
     }
-
-    // move_to_brush (target_position) {
-    //     this.game_state.pathfinding.find_path_from_brush(this.position, target_position, this.blah, this);
-    // }
-
-    // blah (){
-    //     console.log('blah',arguments)
-    // }
 
     calculateOffsetHack (){
         let x,y

@@ -66,9 +66,6 @@ export const Tower = Stampit()
         	this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
         	
 			this.weapon.bullets.forEach((b,i) => {
-				// console.log(b,i)
-			    // b.scale.setTo(.2, .2)
-			    // b.body.updateBounds()
 			    b.scale.setTo(.25, .25)
 			    b.body.setSize(6, 4, 6, 18);
 			    // b.body.syncBounds = true
@@ -76,13 +73,11 @@ export const Tower = Stampit()
 			    b.body.preUpdate = this.tappedPreUpdate.bind(b.body)
 			    b.data.name = i
 			    b.damageValue = dynamicParams.damageValue
-			    console.log(b.body)
 			}, this);
 
     		game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
 
     		this.weapon.update = ()=>{
-    			// debugger
     			let target = GLOBALS.groups.creeps.getClosestTo(this.sprite)
     			if(!target){
     				return
@@ -129,8 +124,7 @@ export const Tower = Stampit()
     		return this
 		},
 		buildTower(){
-			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'ms', this.brush)
-			// this.sprite.alpha = 0	
+			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'ms', this.brush)	
 			towers.push(this)
 
 			Object.assign(this.sprite, {
@@ -174,6 +168,7 @@ export const Tower = Stampit()
 
 			return Lead(src,dst,vel)
 		},
+		// over ride positioning based on world to based on sprite local + manual offset
 		tappedPreUpdate() {
 
 	        if (!this.enable || this.game.physics.arcade.isPaused)

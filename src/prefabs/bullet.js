@@ -2,15 +2,12 @@ import Phaser from 'phaser'
 
 var B = function (game, x, y, key, frame) {
 	Phaser.Bullet.call(this,game, x, y, key, frame);
-	// console.log(333)
 }
 
 B.prototype = Object.create(Phaser.Bullet.prototype);
 B.prototype.constructor = B;
 
 B.prototype.update = function(){
- //    this.body.x = this.x
- //    this.body.y = this.y - 16
 	// console.log('update', this.x, this.body.x,this.y, this.body.y)
 	if (!this.exists)
     {
