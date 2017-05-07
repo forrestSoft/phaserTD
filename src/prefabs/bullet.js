@@ -9,7 +9,9 @@ B.prototype = Object.create(Phaser.Bullet.prototype);
 B.prototype.constructor = B;
 
 B.prototype.update = function(){
-	// console.log('update', arguments)
+ //    this.body.x = this.x
+ //    this.body.y = this.y - 16
+	// console.log('update', this.x, this.body.x,this.y, this.body.y)
 	if (!this.exists)
     {
         return
@@ -26,5 +28,8 @@ B.prototype.update = function(){
         return
     }
 }
+
+    
+
 
 export  const Bullet = B

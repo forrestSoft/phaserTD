@@ -44,41 +44,46 @@ export const Tower = Stampit()
 				bulletClass: Bullet,
 				bounds: game.inputMasks.board._localBounds,
 	            bulletBounds: game.inputMasks.board._localBounds,
-	            fireFrom: { x: this.weapon.centerX, y: this.weapon.centerY },
+	            fireFrom: new Phaser.Rectangle({ x: this.sprite.centerX, y: this.sprite.centerY, width: 1, height:1 }),
 	            enableBody: true,
 	    		physicsBodyType: Phaser.Physics.ARCADE,
 	    		bulletSpeed: dynamicParams.bulletSpeed,// 75, //275
 	    		bulletAngleOffset: dynamicParams.bulletAngleOffset,
 	    		fireRate: dynamicParams.firingInterval,
-	    		fireInterval: 5, //55
-	    		fireIntervalMod: 5,
+	    		fireInterval: 1, //55
+	    		fireIntervalMod: 1,
 	    		rangeModifier: -1000,
 	    		bulletRotateToVelocity: true,
 	    		lastFire: 0,
-	    		x: this.x + 8,
-	    		y: this.y - 8,
+	    		// x: this.x + 8,
+	    		// y: this.y - 8,
 	    		fireAngle: dynamicParams.fireAngle,
 	    		bulletKillDistance: dynamicParams.rangeRadius,
 	    		damageValue: dynamicParams.damage
 
 			})
             
-        	this.weapon.createBullets(30, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
-        	// console.log(this.wea)
+        	this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
+        	
 			this.weapon.bullets.forEach((b,i) => {
 				// console.log(b,i)
 			    // b.scale.setTo(.2, .2)
 			    // b.body.updateBounds()
 			    b.scale.setTo(.25, .25)
 			    b.body.setSize(6, 4, 6, 18);
+			    // b.body.syncBounds = true
+			    b.body.updateBounds();
+			    b.body.preUpdate = this.tappedPreUpdate.bind(b.body)
 			    b.data.name = i
 			    b.damageValue = dynamicParams.damageValue
+			    console.log(b.body)
 			}, this);
 
     		game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
 
     		this.weapon.update = ()=>{
-    			let target = GLOBALS.boardGroup.children[5].getClosestTo(this.sprite)
+    			// debugger
+    			let target = GLOBALS.groups.creeps.getClosestTo(this.sprite)
     			if(!target){
     				return
     			}
@@ -88,12 +93,11 @@ export const Tower = Stampit()
     				x:this.sprite.centerX, 
 					y: this.sprite.centerY,
 					x2:target.centerX, 
-					y2: target.centerY + 16
+					y2: target.centerY //+ 16
     			}
 
 				let dist = game.physics.arcade.distanceBetween({x:coords.x, y: coords.y},{x:coords.x2, y: coords.y2})
-				window.dist = coords
-				// console.log('d',coords)
+
 				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius + 8){
 					return
 				}
@@ -115,16 +119,18 @@ export const Tower = Stampit()
 				 	}
 					this.weapon.fireAngle = jMath.degrees(angle)
 					this.sprite.rotation = angle
-				 	this.weapon.fire()
+				 	this.weapon.fire({x:this.sprite.centerX, y:this.sprite.centerY-16}, null,null,0, 0)
 
 					this.weapon.lastFire = 0
 				}
+				
 			}
 
     		return this
 		},
 		buildTower(){
-			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'ms', this.brush)	
+			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'ms', this.brush)
+			// this.sprite.alpha = 0	
 			towers.push(this)
 
 			Object.assign(this.sprite, {
@@ -167,9 +173,96 @@ export const Tower = Stampit()
 			vel = 20
 
 			return Lead(src,dst,vel)
-		}
+		},
+		tappedPreUpdate() {
+
+	        if (!this.enable || this.game.physics.arcade.isPaused)
+	        {
+	            return;
+	        }
+
+	        this.dirty = true;
+
+	        //  Store and reset collision flags
+	        this.wasTouching.none = this.touching.none;
+	        this.wasTouching.up = this.touching.up;
+	        this.wasTouching.down = this.touching.down;
+	        this.wasTouching.left = this.touching.left;
+	        this.wasTouching.right = this.touching.right;
+
+	        this.touching.none = true;
+	        this.touching.up = false;
+	        this.touching.down = false;
+	        this.touching.left = false;
+	        this.touching.right = false;
+
+	        this.blocked.up = false;
+	        this.blocked.down = false;
+	        this.blocked.left = false;
+	        this.blocked.right = false;
+
+	        this.overlapR = 0;
+	        this.overlapX = 0;
+	        this.overlapY = 0;
+
+	        this.embedded = false;
+
+	        this.updateBounds();
+	
+	        this.position.x = (this.sprite.x - (this.sprite.anchor.x * this.sprite.width)) + this.sprite.scale.x * this.offset.x;
+	        this.position.x -= this.sprite.scale.x < 0 ? this.width : 0;
+
+	        this.position.y = (this.sprite.y - (this.sprite.anchor.y * this.sprite.height)) + this.sprite.scale.y * this.offset.y;
+	        this.position.y -= this.sprite.scale.y < 0 ? this.height : 0;
+	        this.position.y += 16
+	        this.rotation = this.sprite.angle;
+
+	        this.preRotation = this.rotation;
+
+	        if (this._reset || this.sprite.fresh)
+	        {
+	            this.prev.x = this.position.x;
+	            this.prev.y = this.position.y;
+	        }
+
+	        if (this.moves)
+	        {
+	            this.game.physics.arcade.updateMotion(this);
+
+	            this.newVelocity.set(this.velocity.x * this.game.time.physicsElapsed, this.velocity.y * this.game.time.physicsElapsed);
+
+	            this.position.x += this.newVelocity.x;
+	            this.position.y += this.newVelocity.y;
+	
+	            if (this.position.x !== this.prev.x || this.position.y !== this.prev.y)
+	            {
+	                this.angle = Math.atan2(this.velocity.y, this.velocity.x);
+	            }
+
+	            this.speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+
+	            //  Now the State update will throw collision checks at the Body
+	            //  And finally we'll integrate the new position back to the Sprite in postUpdate
+
+	            if (this.collideWorldBounds)
+	            {
+	                if (this.checkWorldBounds() && this.onWorldBounds)
+	                {
+	                    this.onWorldBounds.dispatch(this.sprite, this.blocked.up, this.blocked.down, this.blocked.left, this.blocked.right);
+	                }
+	            }
+	        }
+	
+	        this._dx = this.deltaX();
+	        this._dy = this.deltaY();
+
+	        this._reset = false;
+
+	    }
 	})
 	.init(function ({x,y,brush, group}, {args, instance, stamp}) {
 		Object.assign(instance, {x,y,brush, group})
 		instance.buildTower()
 	})
+
+	
