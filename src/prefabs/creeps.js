@@ -24,6 +24,7 @@ export const CreepManager = Manager.compose(Builder)
 	.methods({
 		buildCreeps(){
 			this.creeps = game.make.group(null,'creeps')
+			GLOBALS.groups.creeps = this.creeps
 		    this.creeps.fixedToCamera = false;
 			// this.creeps.y = GLOBALS.globalOffset.y
 			// this.creeps.x = GLOBALS.globalOffset.x

@@ -40,6 +40,11 @@ export default class extends base_level {
     this.groups = {
       board: this.game.add.group(undefined,'board')
     }
+
+    GLOBALS.groups = this.groups
+
+    // this.groups.board.ignoreChildInput = true
+    // this.groups.board.inputEnableChildren = true
     this.prefabs = {}
     this.objects = {}
     this.board = Board({
@@ -150,6 +155,8 @@ export default class extends base_level {
     if(game.bullets){
       game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
     }
+
+    GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
     
     if(!game.input.activePointer.withinGame){
       GLOBALS.signals.outOfGame.dispatch()

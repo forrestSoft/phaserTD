@@ -2,6 +2,7 @@ import Towers from './globals-towers'
 import Brushes from './globals-brushes'
 import Waves from './globals-waves'
 import Player from './globals-player'
+import Creeps from './globals-creeps'
 
 var globals = {
   globalOffset: {
@@ -54,5 +55,6 @@ globals.towers = Towers
 
 globals.waves = Waves
 globals.player = Player
+globals.creeps = Creeps
 
 export default globals
