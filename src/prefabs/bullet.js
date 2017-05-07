@@ -26,7 +26,4 @@ B.prototype.update = function(){
     }
 }
 
-    
-
-
 export  const Bullet = B

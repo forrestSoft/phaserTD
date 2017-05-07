@@ -162,17 +162,26 @@ export default class extends base_level {
     }
   }
   dispatchCollision(player,bullet){
+    // debugger
     bullet.kill()
+    bullet.body.x = 0
+    bullet.body.y = 0
     player.hit(bullet.damageValue)
   }
 
   render(){
     try{
-      // game.bullets[0].children.forEach((b,i)=>{
-      //   game.debug.body(game.bullets[0].children[i])
-      // })
+      game.bullets[0].children.forEach((b,i)=>{
+        game.debug.body(game.bullets[0].children[i])
+        // game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
+      })
+    }catch(e){}
+    try{
+      GLOBALS.groups.creeps.children.forEach((b,i)=>{
+        // game.debug.body(GLOBALS.groups.creeps.children[i])  
+      })
       // game.debug.spriteInfo(game.bullets[0].children[0])
-      game.debug.body(this.groups.board.children[5].children[0])
+      
       // game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
       // game.debug.spriteBounds(towers[0].sprite)
       // game.debug.spriteInfo(towers[0].sprite, 16,16)
@@ -183,6 +192,7 @@ export default class extends base_level {
     let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
     let text = `life: ${life} next wave: ${duration} gold: ${gold}`
     game.debug.text(text,2,12)
+    // this.game.time.advancedTiming = true;  this.game.debug.text(this.game.time.fps || '--', 2, 14, "#ffffff");
   }
 
   buildDynamicGlobals(){
