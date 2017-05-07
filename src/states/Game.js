@@ -171,13 +171,13 @@ export default class extends base_level {
   render(){
     try{
       game.bullets[0].children.forEach((b,i)=>{
-        game.debug.body(game.bullets[0].children[i])
+        // game.debug.body(game.bullets[0].children[i])
         // game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
       })
     }catch(e){}
     try{
       GLOBALS.groups.creeps.children.forEach((b,i)=>{
-        game.debug.body(GLOBALS.groups.creeps.children[i])  
+        // game.debug.body(GLOBALS.groups.creeps.children[i])  
       })
       // game.debug.spriteInfo(game.bullets[0].children[0])
       
@@ -191,7 +191,7 @@ export default class extends base_level {
     let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
     let text = `life: ${life} t-: ${duration} gold: ${gold}`
     game.debug.text(text,2,12)
-    // this.game.time.advancedTiming = true;  this.game.debug.text(this.game.time.fps || '--', 2, 14, "#ffffff");
+    this.game.time.advancedTiming = true;  this.game.debug.text(this.game.time.fps || '--', 2, 180, "#000000");
   }
 
   buildDynamicGlobals(){

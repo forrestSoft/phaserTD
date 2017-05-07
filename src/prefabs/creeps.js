@@ -51,7 +51,7 @@ export const CreepManager = Manager.compose(Builder)
 			this.creeps.sendToBack(prefab)
 
 
-			this.timer.add(Phaser.Timer.SECOND * Phaser.Math.random(.75, 1.5), this.buildCreep.bind(this, --num), this)
+			this.timer.add(Phaser.Timer.SECOND * Phaser.Math.random(.5, .75), this.buildCreep.bind(this, --num), this)
 			this.timer.start()
 		},
 		getGroup(){
@@ -65,25 +65,25 @@ export const CreepManager = Manager.compose(Builder)
 		},
 		creep(){
 			this.team ++
-			if(this.team % 3 == 0){
+			if(this.team % 2 == 0){
 				this.difficultyMin += 3
 			}
 
-			if(this.team % 5 == 0){
-				this.difficultyMax += 2
+			if(this.team % 4 == 0){
+				this.difficultyMax += 5
 			}
 
 			this.buildCreep(Math.floor(Phaser.Math.random(this.difficultyMin,this.difficultyMax)))
-			this.nextCreep = Phaser.Math.random(.75, 2.5)
-			this.nextCreepType = Phaser.Math.between(0,1)
+			this.nextCreep = Phaser.Math.random(.5, 1.5)
+			this.nextCreepType = Phaser.Math.between(0,2)
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {
 		Object.assign(instance, {data, state, group,
 			timer: game.time.create(false),
 			nextCreep: .1,
-			difficultyMin: 1,
-			difficultyMax: 3,
+			difficultyMin: 2,
+			difficultyMax: 4,
 			team: 0,
 			nextCreepType: 0
 		})
