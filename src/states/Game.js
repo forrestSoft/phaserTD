@@ -155,23 +155,62 @@ export default class extends base_level {
       game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
     }
 
+    if(window.killSplash && window.splash){
+        splash.destroy()
+        
+    }
+
+    if(window.splash){
+    // debugger
+    t.groups.creeps.forEach((c,i)=>{
+      // console.log(c,i)
+        game.physics.arcade.overlap(c,window.splash, this.dispatchCollision2, null, this)
+      })
+      window.killSplash = true
+    }
     GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
     
     if(!game.input.activePointer.withinGame){
       GLOBALS.signals.outOfGame.dispatch()
     }
   }
-  dispatchCollision(player,bullet){
+  dispatchCollision(objA,objB){
+    let player, bullet
+    // debugger
+    if(objA.key == 'weapons'){
+      bullet = objA
+      player = objB
+    }else{
+      bullet = objB
+      player = objA
+    }
+    if(bullet.type == 45){
+    
+      let splash = game.add.sprite(bullet.x-16, bullet.y,'ms', 12)
+      splash.alpha = 0
+      splash.damageValue = bullet.damageValue
+      
+      window.splash = splash
+      window.killSplash = false
+      game.physics.arcade.enable(splash)
+      splash.body.syncBounds = true
+      let g = this.board.getCollisionObjects()
+    }
     bullet.kill()
     bullet.body.x = 0
     bullet.body.y = 0
     player.hit(bullet.damageValue)
   }
 
+  dispatchCollision2(creep,splash){
+    console.log(3)
+    creep.hit(splash.damageValue)
+  }
+
   render(){
     try{
       game.bullets[0].children.forEach((b,i)=>{
-        // game.debug.body(game.bullets[0].children[i])
+        game.debug.body(game.bullets[0].children[i])
         // game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
       })
     }catch(e){}
@@ -185,7 +224,9 @@ export default class extends base_level {
       // game.debug.spriteBounds(towers[0].sprite)
       // game.debug.spriteInfo(towers[0].sprite, 16,16)
     }catch(e){}
-
+    try{
+      game.debug.body(window.splash)
+    }catch(e){}
     let life = GLOBALS.player.life
     let gold = GLOBALS.player.gold
     let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)

@@ -2,27 +2,31 @@
 
 var towers = {
 	towers: {
-		44: {
-			name: 'yellow',
-			type: 'PerpendicularFire',
-			displayAngle: 180,
-			fireAngle: 90,
-			bulletAngleOffset: 90,
-			index: 44,
-			range: 100
-		},
+		// 44: {
+		// 	name: 'yellow',
+		// 	type: 'PerpendicularFire',
+		// 	displayAngle: 180,
+		// 	fireAngle: 90,
+		// 	bulletAngleOffset: 90,
+		// 	index: 44,
+		// 	range: 100
+		// },
 		45: {
-			name: 'red',
-			type: 'PerpendicularFire',
+			name: 'cannon',
+			type: 'splash',
 			displayAngle: 0,
-			fireAngle: 270,
-			bulletAngleOffset: 90,
+			fireAngle: 180,
+			bulletAngleOffset: 	90,
 			index: 45,
-			range: 100
+			firingInterval: 500,
+			rangeRadius:50,
+			bulletSpeed: 150,
+			damageValue: 5,
+			cost: 5
 
 		},
 		36: {
-			name: 'yellow',
+			name: 'sniper',
 			type: 'PerpendicularFire',
 			displayAngle: 0,
 			fireAngle: 180,
