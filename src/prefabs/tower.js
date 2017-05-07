@@ -14,9 +14,10 @@ var Manager = Stampit()
 export const TowerManager = Manager.compose(Builder)
 	.methods({
 		addTower({x,y,brush}){
+			let cost = GLOBALS.towers.towers[brush].cost
 			let tower =  Tower({x:x,y:y,brush:brush, group:this.group})
 			this.addBullets(tower.weapon)
-			GLOBALS.signals.towerPlaced.dispatch(GLOBALS.towers.towers[brush].cost)
+			GLOBALS.signals.towerPlaced.dispatch(cost)
 		},
 		addBullets(bullets){
 			this.bullets.push(bullets.bullets)

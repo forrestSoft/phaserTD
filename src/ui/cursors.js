@@ -280,8 +280,12 @@ export const CursorState = Stampit()
 			let isTower = this.brushType == 'tower'
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
+			let hasEnoughMoney 
+			if(isTower){
+				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost < GLOBALS.player.gold
+			}
 
-			this.validPlacement = 	(isTowerFoundation && isTower && GLOBALS.player.gold >= 5) ||
+			this.validPlacement = 	(isTowerFoundation && isTower && hasEnoughMoney) ||
 									(isTileAcceptable && !isTower && !this.pathFail)								   
 		},
 		setOutOfBounds(marker){

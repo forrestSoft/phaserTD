@@ -30,7 +30,7 @@ var towers = {
 			index: 36,
 			firingInterval: 1500,
 			rangeRadius:75,
-			bulletSpeed: 200,
+			bulletSpeed: 250,
 			damageValue: 5,
 			cost: 25
 		},
