@@ -16,7 +16,7 @@ export const TowerManager = Manager.compose(Builder)
 		addTower({x,y,brush}){
 			let tower =  Tower({x:x,y:y,brush:brush, group:this.group})
 			this.addBullets(tower.weapon)
-			GLOBALS.signals.towerPlaced.dispatch()
+			GLOBALS.signals.towerPlaced.dispatch(GLOBALS.towers.towers[brush].cost)
 		},
 		addBullets(bullets){
 			this.bullets.push(bullets.bullets)
@@ -50,15 +50,15 @@ export const Tower = Stampit()
 	    		bulletSpeed: dynamicParams.bulletSpeed,// 75, //275
 	    		bulletAngleOffset: dynamicParams.bulletAngleOffset,
 	    		fireRate: dynamicParams.firingInterval,
-	    		fireInterval: 1, //55
-	    		fireIntervalMod: 1,
+	    		fireInterval: 5, //55
+	    		fireIntervalMod: 5,
 	    		rangeModifier: -1000,
 	    		bulletRotateToVelocity: true,
 	    		lastFire: 0,
-	    		// x: this.x + 8,
-	    		// y: this.y - 8,
+	    		x: this.x + 8,
+	    		y: this.y - 8,
 	    		fireAngle: dynamicParams.fireAngle,
-	    		bulletKillDistance: dynamicParams.rangeRadius,
+	    		bulletKillDistance: dynamicParams.rangeRadius+8,
 	    		damageValue: dynamicParams.damage
 
 			})
@@ -88,11 +88,10 @@ export const Tower = Stampit()
     				x:this.sprite.centerX, 
 					y: this.sprite.centerY,
 					x2:target.centerX, 
-					y2: target.centerY //+ 16
+					y2: target.centerY + 16
     			}
 
 				let dist = game.physics.arcade.distanceBetween({x:coords.x, y: coords.y},{x:coords.x2, y: coords.y2})
-
 				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius + 8){
 					return
 				}

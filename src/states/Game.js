@@ -119,8 +119,8 @@ export default class extends base_level {
   loseLife(){
     GLOBALS.player.life --
   }
-  loseGold(){
-    GLOBALS.player.gold -= 5
+  loseGold(cost = 5){
+    GLOBALS.player.gold -= cost
   }
   getGold(gold = 1){
     GLOBALS.player.gold += gold
@@ -162,7 +162,6 @@ export default class extends base_level {
     }
   }
   dispatchCollision(player,bullet){
-    // debugger
     bullet.kill()
     bullet.body.x = 0
     bullet.body.y = 0
@@ -178,7 +177,7 @@ export default class extends base_level {
     }catch(e){}
     try{
       GLOBALS.groups.creeps.children.forEach((b,i)=>{
-        // game.debug.body(GLOBALS.groups.creeps.children[i])  
+        game.debug.body(GLOBALS.groups.creeps.children[i])  
       })
       // game.debug.spriteInfo(game.bullets[0].children[0])
       
@@ -190,7 +189,7 @@ export default class extends base_level {
     let life = GLOBALS.player.life
     let gold = GLOBALS.player.gold
     let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
-    let text = `life: ${life} next wave: ${duration} gold: ${gold}`
+    let text = `life: ${life} t-: ${duration} gold: ${gold}`
     game.debug.text(text,2,12)
     // this.game.time.advancedTiming = true;  this.game.debug.text(this.game.time.fps || '--', 2, 14, "#ffffff");
   }
