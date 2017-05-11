@@ -27,7 +27,6 @@ export default class extends Prefab {
         this.animations.add('walkSouth', [6,7,8], 10, true)
         this.animations.add('walkWest', [9,10,11], 10, true)
         
-        game_state.signals.playerMove.add(this.move_to, this);
         GLOBALS.signals.creepPathReset.add(this.reset,this)
 
         this.life = properties.health
@@ -46,22 +45,7 @@ export default class extends Prefab {
             GLOBALS.signals.creepKilled.dispatch(this.gold)
         }
     }
-    reset(){
-        this.path = GLOBALS.stars.get_path('creep')
-
-        if(this.path_step == -1){
-            this.path_step = 0
-        }else{
-            this.path.some((point,i)=>{
-                if(this.position.x < point.x && this.position.y < point.y){
-                    this.path_step = i
-                    return true
-                }else{
-                    return false
-                }
-            })
-        }
-    }
+    
 
     update () {
         if(!GLOBALS.stars.get('creep').hasPath){
@@ -121,23 +105,29 @@ export default class extends Prefab {
         return distance < 1;
     }
 
-    move_to (target_position) {
-        // console.log(tiles'player position',this.position)
-        this.calculateOffsetHack()
-        // GLOBALS.stars.get('creep').find_path(this.position, target_position, this.move_through_path, this);
-    }
-
-    calculateOffsetHack (){
-        let x,y
-        this.offsetPosition = ({x, y} =  this.position)
-    }
-
     move_through_path (path) {
         if (path !== null) {
             this.path = path;
             this.path_step = 0;
         } else {
             this.path = [];
+        }
+    }
+
+    reset(){
+        this.path = GLOBALS.stars.get_path('creep')
+
+        if(this.path_step == -1){
+            this.path_step = 0
+        }else{
+            this.path.some((point,i)=>{
+                if(this.position.x < point.x && this.position.y < point.y){
+                    this.path_step = i
+                    return true
+                }else{
+                    return false
+                }
+            })
         }
     }
 }
