@@ -21,6 +21,7 @@ import {TowerPalette} from '../ui/towerPalette'
 
 export default class extends base_level {
   init () {
+    console.time('boot')
     this.buildDynamicGlobals()
 
     this.level_data = this.cache.getJSON('level1');
@@ -42,7 +43,7 @@ export default class extends base_level {
     }
 
     GLOBALS.groups = this.groups
-
+    GLOBALS.splashes = []
     // this.groups.board.ignoreChildInput = true
     // this.groups.board.inputEnableChildren = true
     this.prefabs = {}
@@ -72,6 +73,7 @@ export default class extends base_level {
         tileDimensions: tileDimensions
       }
     })
+
     GLOBALS.stars = stars
     GLOBALS.boardGroup = this.groups.board
 
@@ -115,6 +117,7 @@ export default class extends base_level {
     GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
     GLOBALS.signals.towerPlaced.add(this.loseGold, this)
     GLOBALS.signals.creepKilled.add(this.getGold, this)
+    console.timeEnd('boot')
   }
   loseLife(){
     GLOBALS.player.life --
@@ -155,25 +158,20 @@ export default class extends base_level {
       game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
     }
 
-    if(window.killSplash && window.splash){
-        splash.destroy()
-        
-    }
+    game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, null, this)
 
-    if(window.splash){
-    // debugger
-    t.groups.creeps.forEach((c,i)=>{
-      // console.log(c,i)
-        game.physics.arcade.overlap(c,window.splash, this.dispatchCollision2, null, this)
-      })
-      window.killSplash = true
-    }
+    GLOBALS.splashes.forEach((a,i)=>{
+      GLOBALS.splashes[i].destroy()
+      GLOBALS.splashes.splice(i,1)
+    })
+
     GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
     
     if(!game.input.activePointer.withinGame){
       GLOBALS.signals.outOfGame.dispatch()
     }
   }
+
   dispatchCollision(objA,objB){
     let player, bullet
     // debugger
@@ -185,16 +183,21 @@ export default class extends base_level {
       player = objA
     }
     if(bullet.type == 45){
-    
       let splash = game.add.sprite(bullet.x-16, bullet.y,'ms', 12)
-      splash.alpha = 0
+      splash.alpha = .5
       splash.damageValue = bullet.damageValue
-      
-      window.splash = splash
-      window.killSplash = false
       game.physics.arcade.enable(splash)
       splash.body.syncBounds = true
-      let g = this.board.getCollisionObjects()
+      GLOBALS.splashes.push(splash)
+
+      let boom = game.add.sprite(bullet.x, bullet.y, 'kaboom', 0, GLOBALS.groups.board);
+      boom.anchor.setTo(0.5, 0.5);
+      boom.scale.setTo(.5,.5)
+      boom.alpha = .75
+      boom.tint = 0xffa500
+      boom.animations.add('kaboom')
+      boom.play('kaboom', 30, false, true);
+
     }
     bullet.kill()
     bullet.body.x = 0
@@ -202,8 +205,8 @@ export default class extends base_level {
     player.hit(bullet.damageValue)
   }
 
-  dispatchCollision2(creep,splash){
-    console.log(3)
+  dispatchCollision2(splash, creep){
+
     creep.hit(splash.damageValue)
   }
 
@@ -232,7 +235,8 @@ export default class extends base_level {
     let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
     let text = `life: ${life} t-: ${duration} gold: ${gold}`
     game.debug.text(text,2,12)
-    this.game.time.advancedTiming = true;  this.game.debug.text(this.game.time.fps || '--', 2, 180, "#000000");
+    this.game.time.advancedTiming = true
+    this.game.debug.text(this.game.time.fps || '--', 2, 180, "#000000")
   }
 
   buildDynamicGlobals(){

@@ -18,8 +18,8 @@ var towers = {
 			fireAngle: 180,
 			bulletAngleOffset: 	90,
 			index: 45,
-			firingInterval: 500,
-			rangeRadius:50,
+			firingInterval: 1500,
+			rangeRadius: 40,
 			bulletSpeed: 150,
 			damageValue: 5,
 			cost: 5

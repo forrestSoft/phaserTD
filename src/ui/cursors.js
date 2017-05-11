@@ -11,15 +11,14 @@ export const Cursor = Stampit()
 		buildAndBind_cursor (){
 			this.container = game.make.group()
 			this.group.add(this.container)
-			this.marker = game.make.graphics();
-		    // this.smallRect()
+			this.marker = game.make.graphics()
+
 		    this.container.add(this.marker)
 
 		    //fix me !!!
 		    this.container.y = -16
 
-		    game.input.pollRate = 2
-		    console.log(1)
+		    // game.input.pollRate = 2
 		    this.cursorState = CursorState.compose(Brush)({
 		    	tileMap: this.p.map,
 		    	container: this.container,
