@@ -24,7 +24,9 @@ W.prototype.update = function(){
 	if(this.target){
 		let tooFar = getTargetDistance() > GLOBALS.towers.towers[this.brush].rangeRadius + 4
 		let dead = this.target.life <= 0
-		if(tooFar || dead){
+		let outOfBounds = this.target._exists == false
+
+		if(tooFar || dead || outOfBounds){
 			this.target = GLOBALS.groups.creeps.getClosestTo(this.sprite)
 		}
 	}else{
