@@ -1,12 +1,10 @@
-
-
 var towers = {
 	towers: {
 		45: {
 			name: 'cannon',
 			type: 'splash',
 			tint: '0xff0000',
-			bulletAngleOffset: 	90,
+			bulletAngleOffset: 90,
 			index: 45,
 			firingInterval: 1500,
 			rangeRadius: 40,
@@ -18,7 +16,7 @@ var towers = {
 			name: 'sniper',
 			type: 'PerpendicularFire',
 			tint: '0x00ff00',
-			bulletAngleOffset: 	90,
+			bulletAngleOffset: 90,
 			index: 36,
 			firingInterval: 1500,
 			rangeRadius:75,

@@ -20,254 +20,254 @@ import {Palette} from '../ui/palette'
 import {TowerPalette} from '../ui/towerPalette'
 
 export default class extends base_level {
-  init () {
-    console.time('boot')
-    this.buildDynamicGlobals()
+	init () {
+		console.time('boot')
+		this.buildDynamicGlobals()
 
-    this.level_data = this.cache.getJSON('level1');
-    this.globalOffset = GLOBALS.globalOffset
+		this.level_data = this.cache.getJSON('level1');
+		this.globalOffset = GLOBALS.globalOffset
 
-    let tileset_index, tileDimensions, map;
-    this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-    this.scale.setUserScale(2,2)
-    // this.scale.pageAlignHorizontally = true;
-    // this.scale.pageAlignVertically = true;
-    
-    // start physics system
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    // this.game.physics.arcade.gravity
+		let tileset_index, tileDimensions, map;
+		this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+		this.scale.setUserScale(2,2)
+		// this.scale.pageAlignHorizontally = true;
+		// this.scale.pageAlignVertically = true;
+		
+		// start physics system
+		this.game.physics.startSystem(Phaser.Physics.ARCADE);
+		// this.game.physics.arcade.gravity
 
-    this.layers = {}
-    this.groups = {
-      board: this.game.add.group(undefined,'board')
-    }
+		this.layers = {}
+		this.groups = {
+			board: this.game.add.group(undefined,'board')
+		}
 
-    GLOBALS.groups = this.groups
-    GLOBALS.splashes = []
-    // this.groups.board.ignoreChildInput = true
-    this.groups.board.inputEnableChildren = true
-    this.prefabs = {}
-    this.objects = {}
-    this.board = Board({
-      name: 'level1',
-      mapData: this.level_data.map,
-      groups: this.groups,
-      layers:this.layers,
-      state: this,
-      objects: this.objects
-    })
-    this.map = this.board.buildMap()
+		GLOBALS.groups = this.groups
+		GLOBALS.splashes = []
+		// this.groups.board.ignoreChildInput = true
+		this.groups.board.inputEnableChildren = true
+		this.prefabs = {}
+		this.objects = {}
+		this.board = Board({
+			name: 'level1',
+			mapData: this.level_data.map,
+			groups: this.groups,
+			layers:this.layers,
+			state: this,
+			objects: this.objects
+		})
+		this.map = this.board.buildMap()
 
-    // initialize pathfinding
-    tileDimensions = new Phaser.Point(this.board.map.tileWidth, this.board.map.tileHeight);
-    const stars = Pathfinders()
-    stars.add({
-      creep: {
-        grid: this.board.map.layers[1].data,
-        acceptableTiles: GLOBALS.acceptableTiles, 
-        tileDimensions: tileDimensions
-      },
-      cursor: {
-        grid: GLOBALS.currentCollisionLayer(),
-        acceptableTiles: GLOBALS.acceptableTiles, 
-        tileDimensions: tileDimensions
-      }
-    })
+		// initialize pathfinding
+		tileDimensions = new Phaser.Point(this.board.map.tileWidth, this.board.map.tileHeight)
+		const stars = Pathfinders()
+		stars.add({
+			creep: {
+				grid: this.board.map.layers[1].data,
+				acceptableTiles: GLOBALS.acceptableTiles, 
+				tileDimensions: tileDimensions
+			},
+			cursor: {
+				grid: GLOBALS.currentCollisionLayer(),
+				acceptableTiles: GLOBALS.acceptableTiles, 
+				tileDimensions: tileDimensions
+			}
+		})
 
-    GLOBALS.stars = stars
-    GLOBALS.boardGroup = this.groups.board
+		GLOBALS.stars = stars
+		GLOBALS.boardGroup = this.groups.board
 
-    this.signals = {
-      playerMove: new Phaser.Signal()
-    }
-  }
-  start(){
-    GLOBALS.signals.waveStart.dispatch()
-  }
-  create () {
-    let group_name, object_layer, collision_tiles, tile_dimensions, layerObj;
+		this.signals = {
+			playerMove: new Phaser.Signal()
+		}
+	}
+	start(){
+		GLOBALS.signals.waveStart.dispatch()
+	}
+	create () {
+		let group_name, object_layer, collision_tiles, tile_dimensions, layerObj
 
-    GLOBALS.timers = {
-      firstWave: game.time.create(false)
-    }
+		GLOBALS.timers = {
+			firstWave: game.time.create(false)
+		}
 
-    GLOBALS.timers.firstWave.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
-    GLOBALS.timers.firstWave.start()
+		GLOBALS.timers.firstWave.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
+		GLOBALS.timers.firstWave.start()
 
-    this.maskBoard()
-    this.board.buildForCreate()
-  
-    this.baseLayer = this.layers['background']
-  
+		this.maskBoard()
+		this.board.buildForCreate()
 
-    this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
-    // this.palette2 = Palette({ y: 0, x: 240})
-    this.towerPalette = TowerPalette().build()
-    this.cursor = Cursor({p:this, group: this.groups.board})
-    this.brush = Brush()
+		this.baseLayer = this.layers['background']
 
-    game.inputMasks.board.events.onInputDown.add(this.onClick, this);
 
-    window.g = this.game
-    window.t = this
-    this.groups.board.y = this.globalOffset.y
+		this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
+		// this.palette2 = Palette({ y: 0, x: 240})
+		this.towerPalette = TowerPalette().build()
+		this.cursor = Cursor({p:this, group: this.groups.board})
+		this.brush = Brush()
 
-    GLOBALS.stars.get('creep').find_path_goal_spawn();
+		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
 
-    // this.life = 20
-    GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
-    GLOBALS.signals.towerPlaced.add(this.loseGold, this)
-    GLOBALS.signals.creepKilled.add(this.getGold, this)
-    console.timeEnd('boot')
-  }
-  loseLife(){
-    GLOBALS.player.life --
-  }
-  loseGold(cost = 5){
-    GLOBALS.player.gold -= cost
-  }
-  getGold(gold = 1){
-    GLOBALS.player.gold += gold
-  }
+		window.g = this.game
+		window.t = this
+		this.groups.board.y = this.globalOffset.y
 
-  maskBoard (){
-    let rect = {
-      x: 0,
-      y:16,
-      width: GLOBALS.height * GLOBALS.tx,
-      height: GLOBALS.width * GLOBALS.ty,
-      objectToMask: this.groups.board,
-      name: 'board'
-    }
-    let mask = buildBoundInputMask(rect)
-    mask.parent.sendToBack(mask)
-  }
+		GLOBALS.stars.get('creep').find_path_goal_spawn();
 
-  onClick (point, event){
-    // this.brush.setTile.apply(this, arguments)
-    // this.move_player.apply(this,arguments)
-    GLOBALS.signals.paintWithBrush.dispatch()
-  }
-  
-  move_player () {
-    // console.log('mp', this.getPointFrom('mouse'))
-    // this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
-  }
+		// this.life = 20
+		GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
+		GLOBALS.signals.towerPlaced.add(this.loseGold, this)
+		GLOBALS.signals.creepKilled.add(this.getGold, this)
+		console.timeEnd('boot')
+	}
+	loseLife(){
+		GLOBALS.player.life --
+	}
+	loseGold(cost = 5){
+		GLOBALS.player.gold -= cost
+	}
+	getGold(gold = 1){
+		GLOBALS.player.gold += gold
+	}
 
-  update () {
-    let g = this.board.getCollisionObjects()
-    if(game.bullets){
-      game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this);
-    }
+	maskBoard (){
+		let rect = {
+			x: 0,
+			y:16,
+			width: GLOBALS.height * GLOBALS.tx,
+			height: GLOBALS.width * GLOBALS.ty,
+			objectToMask: this.groups.board,
+			name: 'board'
+		}
+		let mask = buildBoundInputMask(rect)
+		mask.parent.sendToBack(mask)
+	}
 
-    game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, null, this)
+	onClick (point, event){
+		// this.brush.setTile.apply(this, arguments)
+		// this.move_player.apply(this,arguments)
+		GLOBALS.signals.paintWithBrush.dispatch()
+	}
+	
+	move_player () {
+		// console.log('mp', this.getPointFrom('mouse'))
+		// this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
+	}
 
-    GLOBALS.splashes.forEach((a,i)=>{
-      GLOBALS.splashes[i].destroy()
-      GLOBALS.splashes.splice(i,1)
-    })
+	update () {
+		let g = this.board.getCollisionObjects()
+		if(game.bullets){
+			game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this)
+		}
 
-    GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
-    
-    if(!game.input.activePointer.withinGame){
-      GLOBALS.signals.outOfGame.dispatch()
-    }
-  }
+		game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, null, this)
 
-  dispatchCollision(objA,objB){
-    let player, bullet
-    if(objA.key == 'weapons'){
-      bullet = objA
-      player = objB
-    }else{
-      bullet = objB
-      player = objA
-    }
-    if(bullet.type == 45){
-      let splash = game.add.sprite(bullet.x-16, bullet.y,'ms', 12)
-      splash.alpha = .5
-      splash.damageValue = bullet.damageValue
-      game.physics.arcade.enable(splash)
-      splash.body.syncBounds = true
-      GLOBALS.splashes.push(splash)
+		GLOBALS.splashes.forEach((a,i)=>{
+			GLOBALS.splashes[i].destroy()
+			GLOBALS.splashes.splice(i,1)
+		})
 
-      let boom = game.add.sprite(bullet.x, bullet.y, 'kaboom', 0, GLOBALS.groups.board);
-      boom.anchor.setTo(0.5, 0.5);
-      boom.scale.setTo(.5,.5)
-      boom.alpha = .75
-      boom.tint = 0xffa500
-      boom.animations.add('kaboom')
-      boom.play('kaboom', 30, false, true);
+		GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
 
-    }
-    bullet.kill()
-    bullet.body.x = 0
-    bullet.body.y = 0
-    player.hit(bullet.damageValue)
-  }
+		if(!game.input.activePointer.withinGame){
+			GLOBALS.signals.outOfGame.dispatch()
+		}
+	}
 
-  dispatchCollision2(splash, creep){
-    creep.hit(splash.damageValue)
-  }
+	dispatchCollision(objA,objB){
+		let player, bullet
+		if(objA.key == 'weapons'){
+			bullet = objA
+			player = objB
+		}else{
+			bullet = objB
+			player = objA
+		}
+		if(bullet.type == 45){
+			let splash = game.add.sprite(bullet.x-16, bullet.y,'ms', 12)
+			splash.alpha = .5
+			splash.damageValue = bullet.damageValue
+			game.physics.arcade.enable(splash)
+			splash.body.syncBounds = true
+			GLOBALS.splashes.push(splash)
 
-  render(){
-    try{
-      game.bullets[0].children.forEach((b,i)=>{
-        // game.debug.body(game.bullets[0].children[i])
-        // game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
-      })
-    }catch(e){}
-    try{
-      GLOBALS.groups.creeps.children.forEach((b,i)=>{
-        // game.debug.body(GLOBALS.groups.creeps.children[i])  
-      })
-      // game.debug.spriteInfo(game.bullets[0].children[0])
-      
-      // game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
-      // game.debug.spriteBounds(towers[0].sprite)
-      // game.debug.spriteInfo(towers[0].sprite, 16,16)
-    }catch(e){}
-    try{
-      game.debug.body(window.splash)
-    }catch(e){}
-    let life = GLOBALS.player.life
-    let gold = GLOBALS.player.gold
-    let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
-    let text = `life: ${life} t-: ${duration} gold: ${gold}`
-    game.debug.text(text,2,12)
-    this.game.time.advancedTiming = true
-    this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
-  }
+			let boom = game.add.sprite(bullet.x, bullet.y, 'kaboom', 0, GLOBALS.groups.board);
+			boom.anchor.setTo(0.5, 0.5);
+			boom.scale.setTo(.5,.5)
+			boom.alpha = .75
+			boom.tint = 0xffa500
+			boom.animations.add('kaboom')
+			boom.play('kaboom', 30, false, true);
 
-  buildDynamicGlobals(){
-    const tempGLOBALS = {
-      currentCollisionLayer: function(){
-          let a  = []
-          this.board.map.layers[1].data.forEach( function (array,i) {
-            let subArray = []
-            array.forEach((cell,i) => {
-              subArray.push(Object.assign({},cell))
-            })
-            a.push(subArray)
-          })
-        return a
-      }.bind(this),
+		}
+		bullet.kill()
+		bullet.body.x = 0
+		bullet.body.y = 0
+		player.hit(bullet.damageValue)
+	}
 
-      prefab_classes:  {
-        "player": Player
-      },
+	dispatchCollision2(splash, creep){
+		creep.hit(splash.damageValue)
+	}
 
-      signals: {}
-    }
+	render(){
+		try{
+			game.bullets[0].children.forEach((b,i)=>{
+				// game.debug.body(game.bullets[0].children[i])
+				// game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
+			})
+		}catch(e){}
+		try{
+			GLOBALS.groups.creeps.children.forEach((b,i)=>{
+				// game.debug.body(GLOBALS.groups.creeps.children[i])  
+			})
+			// game.debug.spriteInfo(game.bullets[0].children[0])
+			
+			// game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
+			// game.debug.spriteBounds(towers[0].sprite)
+			// game.debug.spriteInfo(towers[0].sprite, 16,16)
+		}catch(e){}
+		try{
+			game.debug.body(window.splash)
+		}catch(e){}
+		let life = GLOBALS.player.life
+		let gold = GLOBALS.player.gold
+		let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
+		let text = `life: ${life} t-: ${duration} gold: ${gold}`
+		game.debug.text(text,2,12)
+		this.game.time.advancedTiming = true
+		this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
+	}
 
-    let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
-                       'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
-                       'creepKilled'].forEach((name,i)=>{
-                          tempGLOBALS.signals[name] = new Phaser.Signal()                  
-                       })      
+	buildDynamicGlobals(){
+		const tempGLOBALS = {
+			currentCollisionLayer: function(){
+					let a  = []
+					this.board.map.layers[1].data.forEach( function (array,i) {
+						let subArray = []
+						array.forEach((cell,i) => {
+							subArray.push(Object.assign({},cell))
+						})
+						a.push(subArray)
+					})
+				return a
+			}.bind(this),
 
-    Object.assign(GLOBALS, tempGLOBALS)
+			prefab_classes:  {
+				"player": Player
+			},
 
-    window.GLOBALS = GLOBALS
-  }
+			signals: {}
+		}
+
+		let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
+											 'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
+											 'creepKilled'].forEach((name,i)=>{
+													tempGLOBALS.signals[name] = new Phaser.Signal()                  
+											 })      
+
+		Object.assign(GLOBALS, tempGLOBALS)
+
+		window.GLOBALS = GLOBALS
+	}
 }

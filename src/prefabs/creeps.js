@@ -79,7 +79,7 @@ export const CreepManager = Manager.compose(Builder)
 			}	
 		},
 		setNextCreepType(){
-			this.nextCreepType = Phaser.Math.between(0,2)	
+			this.nextCreepType = Phaser.Math.between(0,2)
 		},
 		nextWaveInterval(){
 			let i = Phaser.Math.random(1.25, 1.75)

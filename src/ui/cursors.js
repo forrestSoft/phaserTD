@@ -222,7 +222,6 @@ export const CursorState = Stampit()
 				spriteOffsetY += 8
 			}
 
-
 			if(!!this.sprite){
 				this.sprite.x = spriteOffsetX
 				this.sprite.y = spriteOffsetY
@@ -238,15 +237,15 @@ export const CursorState = Stampit()
 						this.lastBrushType = 'tower'
 						// this.sprite = game.add.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
 						this.sprite = new TowerSprite({
-				    		x: spriteOffsetX,
-				    		y: spriteOffsetY, 
-				    		key:'tank',
-				    		frame:'turret',
-				    		type: this.currentBrush,
-				    		offset:{ 
-				    			x:-16, y:0
-				    		}
-				    	})
+							x: spriteOffsetX,
+							y: spriteOffsetY, 
+							key:'tank',
+							frame:'turret',
+							type: this.currentBrush,
+							offset:{ 
+								x:-16, y:0
+							}
+						})
 						this.sprite.anchor.x = 0.5
 						this.sprite.anchor.y = 0.5
 						this.sprite.angle = GLOBALS.towers.towers[this.currentBrush].displayAngle
@@ -296,7 +295,7 @@ export const CursorState = Stampit()
 			}
 
 			this.validPlacement = 	(isTowerFoundation && isTower && hasEnoughMoney) ||
-									(isTileAcceptable && !isTower && !this.pathFail)								   
+									(isTileAcceptable && !isTower && !this.pathFail)
 		},
 		setOutOfBounds(marker){
 			if(this.sprite){
@@ -363,13 +362,13 @@ export const Brush = Stampit()
 							}
 						})
 						GLOBALS.stars.get('creep').setGrid(this.tileMap.layers[1].data)
-						GLOBALS.stars.get('creep').find_path_goal_spawn()	
+						GLOBALS.stars.get('creep').find_path_goal_spawn()
 						break
 
-					case 'simple':	
+					case 'simple':
 						this.map.putTile(game.currentBrush, this.baseLayer.getTileX(x-this.globalOffset.x),this.baseLayer.getTileY(y-this.globalOffset.y) , 'collision');
 						GLOBALS.stars.get('creep').setGrid(this.tileMap.layers[1].data)
-						GLOBALS.stars.get('creep').find_path_goal_spawn()	
+						GLOBALS.stars.get('creep').find_path_goal_spawn()
 						break
 				}
 				this.checkValidPlacement()

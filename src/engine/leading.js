@@ -20,7 +20,7 @@ export default function (src, dst, v) {
   // Get quadratic equation components
   var a = tvx*tvx + tvy*tvy - v*v;
   var b = 2 * (tvx * tx + tvy * ty);
-  var c = tx*tx + ty*ty;    
+  var c = tx*tx + ty*ty;
 
   // Solve quadratic
   var ts = quad(a, b, c); // See quad(), below
@@ -30,7 +30,7 @@ export default function (src, dst, v) {
   if (ts) {
     var t0 = ts[0], t1 = ts[1];
     var t = Math.min(t0, t1);
-    if (t < 0) t = Math.max(t0, t1);    
+    if (t < 0) t = Math.max(t0, t1);
     if (t > 0) {
       sol = {
         x: dst.x + dst.vx*t,

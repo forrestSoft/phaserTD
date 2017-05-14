@@ -9,11 +9,11 @@ var creeps = [
 		"name":"player",
 		"properties":
 		{
-		 group: "players",
-		 texture: "female02_rouge_spritesheet",
-		 walking_speed: 12,
-		 gold: 1,
-		 health: 12
+			group: "players",
+			texture: "female02_rouge_spritesheet",
+			walking_speed: 12,
+			gold: 1,
+			health: 12
 		},
 		"type":"player",
 		"visible":true,
@@ -29,11 +29,11 @@ var creeps = [
 		"name":"player",
 		"properties":
 		{
-		 "group":"players",
-		 "texture":"male_fighter_spritesheet",
-		 "walking_speed": 24,
-		 gold: 1,
-		 health: 8
+			"group":"players",
+			"texture":"male_fighter_spritesheet",
+			"walking_speed": 24,
+			gold: 1,
+			health: 8
 		},
 		"type":"player",
 		"visible":true,
@@ -49,11 +49,11 @@ var creeps = [
 		"name":"player",
 		"properties":
 		{
-		 "group":"players",
-		 "texture":"female02_mage_spritesheet",
-		 "walking_speed": 10,
-		 gold: 3,
-		 health: 22
+			"group":"players",
+			"texture":"female02_mage_spritesheet",
+			"walking_speed": 10,
+			gold: 3,
+			health: 22
 		},
 		"type":"player",
 		"visible":true,
