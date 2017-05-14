@@ -1,12 +1,55 @@
 {
     "assets": {
-        "map_tileset": {"type": "image", "source": "assets/images/open_tileset.png"},
-        "male_fighter_spritesheet": {"type": "spritesheet", "source": "assets/images/characters/fighter_m.png", "frame_width": 24, "frame_height": 32}
-        
-       
+        "map_tileset": {
+            "type": "image", 
+            "source": "assets/images/open_tileset.png"
+        },
+        "male_fighter_spritesheet": {
+            "type": "spritesheet", 
+            "source": "assets/images/characters/fighter_m.png", 
+            "frame_width": 24, 
+            "frame_height": 32
+        },
+        "female02_mage_spritesheet": {
+            "type": "spritesheet", 
+            "source": "assets/images/characters/mage_f.png", 
+            "frame_width": 24, 
+            "frame_height": 32
+        },
+        "female02_rouge_spritesheet": {
+            "type": "spritesheet", 
+            "source": "assets/images/characters/ranger_f.png", 
+            "frame_width": 24, 
+            "frame_height": 32
+        },
+        "ms": {
+            "type": "spritesheet",
+            "source": "assets/images/open_tileset.png",
+            "frame_width": 16,
+            "frame_height": 16
+        },
+        "kaboom": {
+            "type": "spritesheet",
+            "source": "assets/images/explosion.png",
+            "frame_width": 64,
+            "frame_height": 64,
+            "frames": 23
+        },
+        "weapons": {
+            "type": "atlasXML", 
+            "source": "assets/images/characters/ranger_f.png", 
+            "image": "assets/images/weapons.png", 
+            "xml": "assets/images/weapons.xml"
+        },
+        "tank": {
+            "type": "atlas",
+            "source": "assets/images/characters/ranger_f.png", 
+            "image": "assets/games/tanks/tank.png", 
+            "json": "assets/games/tanks/tank.json"
+        }
     },
     "groups": [
-        "players"        
+        "players"
     ],
     "map": {
         "assetKey": "level_tilemap",
