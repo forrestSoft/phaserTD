@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 import _ from 'underscore'
 import {Points} from '../utils'
 import {FancyBrush} from './fancyBrush'
+import TowerSprite from '../prefabs/towerSprite'
 
 import GLOBALS from '../config/globals'
 
@@ -235,7 +236,17 @@ export const CursorState = Stampit()
 				switch (this.brushType){
 					case 'tower':
 						this.lastBrushType = 'tower'
-						this.sprite = game.add.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
+						// this.sprite = game.add.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
+						this.sprite = new TowerSprite({
+				    		x: spriteOffsetX,
+				    		y: spriteOffsetY, 
+				    		key:'tank',
+				    		frame:'turret',
+				    		type: this.currentBrush,
+				    		offset:{ 
+				    			x:-16, y:0
+				    		}
+				    	})
 						this.sprite.anchor.x = 0.5
 						this.sprite.anchor.y = 0.5
 						this.sprite.angle = GLOBALS.towers.towers[this.currentBrush].displayAngle

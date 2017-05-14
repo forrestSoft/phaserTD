@@ -5,6 +5,7 @@ import Lead from '../engine/leading'
 import {jMath} from '../utils'
 import {Builder} from './creeps'
 import {Bullet} from './bullet'
+import TowerSprite from './towerSprite'
 
 import GLOBALS from '../config/globals'
 
@@ -13,9 +14,9 @@ var Manager = Stampit()
 
 export const TowerManager = Manager.compose(Builder)
 	.methods({
-		addTower({x,y,brush}){
+		addTower({x,y,brush,tint}){
 			let cost = GLOBALS.towers.towers[brush].cost
-			let tower =  Tower({x:x,y:y,brush:brush, group:this.group})
+			let tower =  Tower({x:x,y:y,brush:brush,tint:tint,group:this.group})
 			this.addBullets(tower.weapon)
 			GLOBALS.signals.towerPlaced.dispatch(cost)
 		},
@@ -53,15 +54,13 @@ export const Tower = Stampit()
 	    		fireRate: dynamicParams.firingInterval,
 	    		fireInterval: 5, //55
 	    		fireIntervalMod: 5,
-	    		rangeModifier: -1000,
 	    		bulletRotateToVelocity: true,
 	    		lastFire: 0,
-	    		x: this.x + 8,
-	    		y: this.y - 8,
+	    		x: this.x,
+	    		y: this.y,
 	    		fireAngle: dynamicParams.fireAngle,
 	    		bulletKillDistance: dynamicParams.rangeRadius+8,
 	    		damageValue: dynamicParams.damage
-
 			})
             
         	this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
@@ -87,14 +86,14 @@ export const Tower = Stampit()
 
     			let angle
     			let coords = {
-    				x:this.sprite.centerX, 
-					y: this.sprite.centerY,
-					x2:target.centerX, 
-					y2: target.centerY + 16
+    				x:  this.sprite.centerX, 
+					y:  this.sprite.centerY,
+					x2: target.centerX, 
+					y2: target.centerY
     			}
-
 				let dist = game.physics.arcade.distanceBetween({x:coords.x, y: coords.y},{x:coords.x2, y: coords.y2})
-				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius + 8){
+console.log(dist,coords)
+				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius + 4){
 					return
 				}
 
@@ -108,14 +107,14 @@ export const Tower = Stampit()
 				if(this.weapon.lastFire % this.weapon.fireIntervalMod == 0 && this.weapon.lastFire == this.weapon.fireInterval){
 				 	var fA = this.firingSolution.call(this,target)
 				 	if(fA != null){
-					 	angle = game.physics.arcade.angleToXY(this.sprite, fA.x,fA.y+16, false)
+					 	angle = game.physics.arcade.angleToXY(this.sprite, fA.x,fA.y, false)
 				 	}else{
 				 		console.log('fail')
 				 		return
 				 	}
 					this.weapon.fireAngle = jMath.degrees(angle)
 					this.sprite.rotation = angle
-				 	this.weapon.fire({x:this.sprite.centerX, y:this.sprite.centerY-16}, null,null,0, 0)
+				 	this.weapon.fire({x:this.sprite.centerX, y:this.sprite.centerY}, null,null,0, 0)
 
 					this.weapon.lastFire = 0
 				}	
@@ -124,7 +123,17 @@ export const Tower = Stampit()
     		return this
 		},
 		buildTower(){
-			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'tank', 'turret')
+			// this.sprite = TowerSprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'tank', 'turret')
+			this.sprite = new TowerSprite({
+	    		x: this.x+(GLOBALS.tH/2) - GLOBALS.globalOffset.x,
+	    		y: this.y+(GLOBALS.tW/2) - GLOBALS.globalOffset.y, 
+	    		key:'tank',
+	    		frame:'turret',
+	    		type: this.brush,
+	    		offset:{ 
+	    			x:-16, y:0
+	    		}
+	    	})
 			towers.push(this)
 
 			Object.assign(this.sprite, {
@@ -132,8 +141,8 @@ export const Tower = Stampit()
 				// angle: GLOBALS.towers.towers[this.brush].displayAngle,
 				inputEnabled: true	
 			})
-			this.sprite.scale.setTo(.275,.45)
-			this.addColorDot()
+
+			this.group.addChild(this.sprite)
 			
 			this.sprite.events.onInputOver.add(this.showRange, this)
 			this.sprite.events.onInputOut.add(this.hideRange, this)
@@ -141,16 +150,11 @@ export const Tower = Stampit()
 			this.buildRangeIndicator()
 			this.buildBullets()	
 		},
-		addColorDot(){
-			let dot = game.make.graphics()
-			dot.lineStyle(2, GLOBALS.towers.towers[this.brush].tint, 1)
-			dot.drawCircle(-16,0,4)
-			this.sprite.addChild(dot)
-		},
 		buildRangeIndicator(){
-			this.rangeIndicator = game.add.graphics()
+			this.rangeIndicator = game.make.graphics()
 			this.rangeIndicator.lineStyle(2, 0x00ffff, 1)
 			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].rangeRadius*2)
+			this.group.addChild(this.rangeIndicator)
 		},
 		hideRange(){
 			this.rangeIndicator.alpha = 0
@@ -178,7 +182,6 @@ export const Tower = Stampit()
 		},
 		// over ride positioning based on world to based on sprite local + manual offset
 		tappedPreUpdate() {
-
 	        if (!this.enable || this.game.physics.arcade.isPaused)
 	        {
 	            return;
@@ -259,12 +262,11 @@ export const Tower = Stampit()
 	        this._dx = this.deltaX();
 	        this._dy = this.deltaY();
 
-	        this._reset = false;
-
+	        this._reset = false
 	    }
 	})
-	.init(function ({x,y,brush, group}, {args, instance, stamp}) {
-		Object.assign(instance, {x,y,brush, group})
+	.init(function ({x,y,brush,tint,group}, {args, instance, stamp}) {
+		Object.assign(instance, {x,y,brush,tint,group})
 		instance.buildTower()
 	})
 

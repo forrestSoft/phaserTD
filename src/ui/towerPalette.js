@@ -4,6 +4,7 @@ import stampit from 'stampit'
 import { buildBoundInputMask, highLightableGroup } from '../utils'
 import {FancyBrush} from './fancyBrush'
 import {MiniCursor, GroupManager} from './cursors'
+import TowerSprite from '../prefabs/towerSprite'
 import GLOBALS from '../config/globals'
 
 let base = Stampit()
@@ -26,9 +27,16 @@ let base = Stampit()
 		    const res = Object.keys(brushes).map((b, i) => {
 		    	let y = Math.floor(i/pW) * tw + (GLOBALS.tW/2)
 		    	let x = (i%pW)* th + (GLOBALS.tH/2)
-		    	let s = game.make.sprite(x,y, 'ms', brushes[b].index)
-		    	s.anchor.x = .5
-		    	s.anchor.y = .5
+		    	// let s = game.make.sprite(x,y, 'ms', brushes[b].index)
+		    	let s = new TowerSprite({
+		    		x,y, 
+		    		key:'tank',
+		    		frame:'turret',
+		    		type:b,
+		    		offset:{ 
+		    			x:-10, y:0
+		    		}
+		    	})
 		    	s.angle = brushes[b].displayAngle
 		    	s.inputEnabled = true
 		    	s.events.onInputDown.add(this.setTower,this)
@@ -57,13 +65,13 @@ let base = Stampit()
 		},
 
 		setTower(sprite, pointer){
-			GLOBALS.signals.updateBrush.dispatch('tower', sprite._frame.index)
+			GLOBALS.signals.updateBrush.dispatch('tower', sprite.data.type)
 		},
 
 		setCursor(sprite, pointer){
 			let {x,y} = sprite.position
-			let {width,height} = sprite.texture.frame
-			console.log(x,y,width, height)
+			let {tW:width,tH:height} = GLOBALS
+			// console.log(x,y,width, height)
 			this.updateCursor({x:(x-GLOBALS.tW/2),y:y-(GLOBALS.tH/2),width,height})
 		}
 	})
