@@ -11,7 +11,7 @@ var creeps = [
 		{
 		 group: "players",
 		 texture: "female02_rouge_spritesheet",
-		 walking_speed: 10,
+		 walking_speed: 12,
 		 gold: 1,
 		 health: 12
 		},
@@ -51,7 +51,7 @@ var creeps = [
 		{
 		 "group":"players",
 		 "texture":"female02_mage_spritesheet",
-		 "walking_speed": 8,
+		 "walking_speed": 10,
 		 gold: 3,
 		 health: 22
 		},

@@ -35,7 +35,7 @@ export const CreepManager = Manager.compose(Builder)
 		},
 		buildCreep(num = 1){
 			if(num <= 0){
-				this.timer.add(Phaser.Timer.SECOND * this.nextCreep, this.creep, this)
+				this.timer.add(Phaser.Timer.SECOND * this.nextWaveInterval(), this.wave, this)
 				return
 			}
 
@@ -48,8 +48,7 @@ export const CreepManager = Manager.compose(Builder)
 			this.creeps.add(prefab)
 			this.creeps.sendToBack(prefab)
 
-
-			this.timer.add(Phaser.Timer.SECOND * Phaser.Math.random(.5, .75), this.buildCreep.bind(this, --num), this)
+			this.timer.add(Phaser.Timer.SECOND * this.nextCreepInterval(), this.buildCreep.bind(this, --num), this)
 			this.timer.start()
 		},
 		getGroup(){
@@ -60,21 +59,42 @@ export const CreepManager = Manager.compose(Builder)
 			// this.buildCreep(1)
 		},
 		wave(){
-			this.creep()
-		},
-		creep(){
+			console.group('wave')
+
 			this.team ++
-			if(this.team % 2 == 0){
-				this.difficultyMin += 2
-			}
+			console.log('Team:', this.team)
+			this.checkDifficulty()
+			this.setNextCreepType()
 
+			this.buildCreep(this.nextWaveSize())
+			console.groupEnd('wave')
+		},
+		checkDifficulty(){
 			if(this.team % 4 == 0){
-				this.difficultyMax += 3
+				this.difficultyMin += Phaser.Math.between(1,2)
 			}
 
-			this.buildCreep(Math.floor(Phaser.Math.random(this.difficultyMin,this.difficultyMax)))
-			this.nextCreep = Phaser.Math.random(.5, 1.5)
-			this.nextCreepType = Phaser.Math.between(0,2)
+			if(this.team % 8 == 0){
+				this.difficultyMax += Phaser.Math.between(2,3)
+			}	
+		},
+		setNextCreepType(){
+			this.nextCreepType = Phaser.Math.between(0,2)	
+		},
+		nextWaveInterval(){
+			let i = Phaser.Math.random(1.25, 1.75)
+			console.log('next wave interval:', i) 
+			return i
+		},
+		nextCreepInterval(){
+			let i = Phaser.Math.random(.65, .85)
+			// console.log('next creep interval:', i)
+			return i
+		},
+		nextWaveSize(){
+			let i = Phaser.Math.between(this.difficultyMin,this.difficultyMax)
+			console.log('next wave size:', i)
+			return i
 		}
 	})
 	.init(function ({data, state, group}, {args, instance, stamp}) {
