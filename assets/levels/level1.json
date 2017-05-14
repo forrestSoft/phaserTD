@@ -37,15 +37,13 @@
         },
         "weapons": {
             "type": "atlasXML", 
-            "source": "assets/images/characters/ranger_f.png", 
             "image": "assets/images/weapons.png", 
             "xml": "assets/images/weapons.xml"
         },
         "tank": {
             "type": "atlas",
-            "source": "assets/images/characters/ranger_f.png", 
-            "image": "assets/games/tanks/tank.png", 
-            "json": "assets/games/tanks/tank.json"
+            "image": "assets/images/tank.png", 
+            "json": "assets/images/tank.json"
         }
     },
     "groups": [

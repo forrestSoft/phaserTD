@@ -26,7 +26,6 @@ export const Cursor = Stampit()
 		    	marker: this.marker
 		    })
 		    
-
 		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
 		    GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
 		    GLOBALS.signals.outOfGame.add(this.cursorState.hideCursor, this.cursorState)

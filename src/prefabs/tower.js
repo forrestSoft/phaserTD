@@ -45,7 +45,7 @@ export const Tower = Stampit()
 				bulletClass: Bullet,
 				bounds: game.inputMasks.board._localBounds,
 	            bulletBounds: game.inputMasks.board._localBounds,
-	            fireFrom: new Phaser.Rectangle({ x: this.sprite.centerX, y: this.sprite.centerY, width: 1, height:1 }),
+	            fireFrom: new Phaser.Rectangle({ x: this.sprite.centerX-12, y: this.sprite.centerY, width: 1, height:1 }),
 	            enableBody: true,
 	    		physicsBodyType: Phaser.Physics.ARCADE,
 	    		bulletSpeed: dynamicParams.bulletSpeed,// 75, //275
@@ -118,21 +118,22 @@ export const Tower = Stampit()
 				 	this.weapon.fire({x:this.sprite.centerX, y:this.sprite.centerY-16}, null,null,0, 0)
 
 					this.weapon.lastFire = 0
-				}
-				
+				}	
 			}
 
     		return this
 		},
 		buildTower(){
-			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'ms', this.brush)	
+			this.sprite = game.add.sprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'tank', 'turret')
 			towers.push(this)
 
 			Object.assign(this.sprite, {
-				anchor: {x: .5, y: .5},
-				angle: GLOBALS.towers.towers[this.brush].displayAngle,
+				anchor: {x: .6, y: .5},
+				// angle: GLOBALS.towers.towers[this.brush].displayAngle,
 				inputEnabled: true	
 			})
+			this.sprite.scale.setTo(.275,.45)
+			this.addColorDot()
 			
 			this.sprite.events.onInputOver.add(this.showRange, this)
 			this.sprite.events.onInputOut.add(this.hideRange, this)
@@ -140,9 +141,15 @@ export const Tower = Stampit()
 			this.buildRangeIndicator()
 			this.buildBullets()	
 		},
+		addColorDot(){
+			let dot = game.make.graphics()
+			dot.lineStyle(2, GLOBALS.towers.towers[this.brush].tint, 1)
+			dot.drawCircle(-16,0,4)
+			this.sprite.addChild(dot)
+		},
 		buildRangeIndicator(){
 			this.rangeIndicator = game.add.graphics()
-			this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
+			this.rangeIndicator.lineStyle(2, 0x00ffff, 1)
 			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].rangeRadius*2)
 		},
 		hideRange(){
