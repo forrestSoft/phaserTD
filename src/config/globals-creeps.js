@@ -62,4 +62,3 @@ var creeps = [
 ]
 
 export default creeps
-// GLOBALS.prefab_classes[object.type](this.state, object.name, position, object.properties);

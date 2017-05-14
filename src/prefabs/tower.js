@@ -58,7 +58,7 @@ export const Tower = Stampit()
 	    		lastFire: 0,
 	    		x: this.x,
 	    		y: this.y,
-	    		fireAngle: dynamicParams.fireAngle,
+	    		// fireAngle: dynamicParams.fireAngle,
 	    		bulletKillDistance: dynamicParams.rangeRadius+8,
 	    		damageValue: dynamicParams.damage
 			})

@@ -327,8 +327,6 @@ export const CursorState = Stampit()
 			towerManager: GLOBALS.towerManager,
 			marker: marker
 		})
-		
-		window.c = container
 	})
 
 export const Brush = Stampit()

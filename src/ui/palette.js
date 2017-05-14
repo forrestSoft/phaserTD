@@ -43,6 +43,7 @@ export const Palette = Stampit()
 		buildFancyBrushes(){
 			game.fancyBrushSprites = []
 			let brushGroup = game.add.group()
+			brushGroup.scale.setTo(.5,.5)
 		    const th = GLOBALS.tH
 			const tw = GLOBALS.tW
 

@@ -26,8 +26,6 @@ export const CreepManager = Manager.compose(Builder)
 			this.creeps = game.make.group(null,'creeps')
 			GLOBALS.groups.creeps = this.creeps
 		    this.creeps.fixedToCamera = false;
-			// this.creeps.y = GLOBALS.globalOffset.y
-			// this.creeps.x = GLOBALS.globalOffset.x
 			this.creeps.enableBody = true
    			this.creeps.physicsBodyType = Phaser.Physics.ARCADE;
 			game.physics.arcade.enable(this.creeps, Phaser.Physics.ARCADE);
@@ -59,6 +57,7 @@ export const CreepManager = Manager.compose(Builder)
 		},
 		start(){
 			this.wave()
+			// this.buildCreep(1)
 		},
 		wave(){
 			this.creep()
@@ -66,11 +65,11 @@ export const CreepManager = Manager.compose(Builder)
 		creep(){
 			this.team ++
 			if(this.team % 2 == 0){
-				this.difficultyMin += 3
+				this.difficultyMin += 2
 			}
 
 			if(this.team % 4 == 0){
-				this.difficultyMax += 5
+				this.difficultyMax += 3
 			}
 
 			this.buildCreep(Math.floor(Phaser.Math.random(this.difficultyMin,this.difficultyMax)))
@@ -82,13 +81,12 @@ export const CreepManager = Manager.compose(Builder)
 		Object.assign(instance, {data, state, group,
 			timer: game.time.create(false),
 			nextCreep: .1,
-			difficultyMin: 2,
-			difficultyMax: 4,
+			difficultyMin: 1,
+			difficultyMax: 3,
 			team: 0,
 			nextCreepType: 0
 		})
 		instance.buildCreeps()
 		
-
 		// game.time.events.repeat(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, 1, this.start, this);
 	})

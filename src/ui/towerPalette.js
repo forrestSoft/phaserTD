@@ -50,7 +50,7 @@ let base = Stampit()
 
 		    group.sendToBack(g)
 		    group.x = tw*11+16
-		    group.y = th*11
+		    group.y = th*6
 
 		    this.attach()
 

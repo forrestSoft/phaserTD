@@ -9,7 +9,7 @@ var globals = {
     x: 0,
     y: 16
   },
-  height: 8,
+  height: 12,
   width: 11,
   tx: 16,
   ty: 16,
@@ -24,7 +24,7 @@ var globals = {
     column: 2
   },
   exit: {
-    row: 5
+    row: 9
   },
   acceptableTiles: [-1,25,30,31,32],
   unacceptableTiles: [30,31,34,44,45],

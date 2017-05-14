@@ -101,12 +101,13 @@ export default class extends base_level {
   
 
     this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
-    this.palette2 = Palette({ y: 0, x: 240})
+    // this.palette2 = Palette({ y: 0, x: 240})
     this.towerPalette = TowerPalette().build()
     this.cursor = Cursor({p:this, group: this.groups.board})
     this.brush = Brush()
 
     game.inputMasks.board.events.onInputDown.add(this.onClick, this);
+
     window.g = this.game
     window.t = this
     this.groups.board.y = this.globalOffset.y
@@ -206,14 +207,13 @@ export default class extends base_level {
   }
 
   dispatchCollision2(splash, creep){
-
     creep.hit(splash.damageValue)
   }
 
   render(){
     try{
       game.bullets[0].children.forEach((b,i)=>{
-        game.debug.body(game.bullets[0].children[i])
+        // game.debug.body(game.bullets[0].children[i])
         // game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
       })
     }catch(e){}
@@ -236,7 +236,7 @@ export default class extends base_level {
     let text = `life: ${life} t-: ${duration} gold: ${gold}`
     game.debug.text(text,2,12)
     this.game.time.advancedTiming = true
-    this.game.debug.text(this.game.time.fps || '--', 2, 180, "#000000")
+    this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
   }
 
   buildDynamicGlobals(){
