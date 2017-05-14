@@ -45,7 +45,7 @@ export default class extends base_level {
     GLOBALS.groups = this.groups
     GLOBALS.splashes = []
     // this.groups.board.ignoreChildInput = true
-    // this.groups.board.inputEnableChildren = true
+    this.groups.board.inputEnableChildren = true
     this.prefabs = {}
     this.objects = {}
     this.board = Board({
@@ -138,7 +138,8 @@ export default class extends base_level {
       objectToMask: this.groups.board,
       name: 'board'
     }
-    buildBoundInputMask(rect)
+    let mask = buildBoundInputMask(rect)
+    mask.parent.sendToBack(mask)
   }
 
   onClick (point, event){
@@ -174,7 +175,6 @@ export default class extends base_level {
 
   dispatchCollision(objA,objB){
     let player, bullet
-    // debugger
     if(objA.key == 'weapons'){
       bullet = objA
       player = objB

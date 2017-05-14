@@ -92,7 +92,6 @@ export const Tower = Stampit()
 					y2: target.centerY
     			}
 				let dist = game.physics.arcade.distanceBetween({x:coords.x, y: coords.y},{x:coords.x2, y: coords.y2})
-console.log(dist,coords)
 				if(dist > GLOBALS.towers.towers[this.brush].rangeRadius + 4){
 					return
 				}
@@ -138,12 +137,11 @@ console.log(dist,coords)
 
 			Object.assign(this.sprite, {
 				anchor: {x: .6, y: .5},
-				// angle: GLOBALS.towers.towers[this.brush].displayAngle,
 				inputEnabled: true	
 			})
 
 			this.group.addChild(this.sprite)
-			
+
 			this.sprite.events.onInputOver.add(this.showRange, this)
 			this.sprite.events.onInputOut.add(this.hideRange, this)
 

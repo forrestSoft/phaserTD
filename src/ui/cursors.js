@@ -290,6 +290,7 @@ export const CursorState = Stampit()
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
 			let hasEnoughMoney 
+
 			if(isTower){
 				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost < GLOBALS.player.gold
 			}

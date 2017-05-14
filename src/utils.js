@@ -19,6 +19,7 @@ export const buildBoundInputMask = ({x,y,height,width, objectToMask, name}) => {
     objectToMask.mask = mask
 
     game.inputMasks[name] = mask
+    return mask
 }
 
 export const Points = {
