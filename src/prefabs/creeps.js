@@ -25,9 +25,9 @@ export const CreepManager = Manager.compose(Builder)
 		buildCreeps(){
 			this.creeps = game.make.group(null,'creeps')
 			GLOBALS.groups.creeps = this.creeps
-		    this.creeps.fixedToCamera = false;
+			this.creeps.fixedToCamera = false;
 			this.creeps.enableBody = true
-   			this.creeps.physicsBodyType = Phaser.Physics.ARCADE;
+			this.creeps.physicsBodyType = Phaser.Physics.ARCADE;
 			game.physics.arcade.enable(this.creeps, Phaser.Physics.ARCADE);
 			this.group.addChild(this.creeps)
 

@@ -97,13 +97,13 @@ export const Palette = Stampit()
 			GLOBALS.signals.updateBrush.dispatch(brush, 'wall')
 		}
 	})
-	.init(function ({p}, {args, instance, stamp}) {
+	.init(function ({p,brushes,fancyBrush, xOffset,yOffset,gridWiggle}, {args, instance, stamp}) {
+		Object.assign(instance,{
+			brushes, fancyBrush, 
+			xOffset, yOffset,
+			gridWiggle: gridWiggle || 5
+		})
 		game.currentBrush = 26
-		instance.brushes = args[0].brushes || Array.from(new Array(50), (x,i) => i+1)
-		instance.fancyBrush = args[0].fancyBrush || false
-		instance.xOffset = args[0].x || 0
-		instance.yOffset = args[0].y || 0
-		instance.gridWiggle = args[0].gridWiggle || 5
 
 		if(instance.fancyBrush){
 			this.buildFancyBrushes()

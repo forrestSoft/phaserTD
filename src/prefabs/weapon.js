@@ -46,7 +46,7 @@ W.prototype.update = function(){
 			return
 		}
 	}
-	
+
 	if(this.lastFire % this.fireIntervalMod == 0 && this.lastFire == this.fireInterval){
 		var fA = this.firingSolution.call(this,this.target)
 		if(fA != null){
