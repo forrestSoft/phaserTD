@@ -26,15 +26,20 @@ export default class extends Prefab {
         this.animations.add('walkEast', [3,4,5], 10, true)
         this.animations.add('walkSouth', [6,7,8], 10, true)
         this.animations.add('walkWest', [9,10,11], 10, true)
+
+        this.buildHealthBar()
         
         GLOBALS.signals.creepPathReset.add(this.reset,this)
 
         this.life = properties.health
+        this.fullLife = properties.health
         this.value = properties.gold
     }
+
     hit(damage = 1){
         console.log('hit')
         this.life -= damage
+        this.updateHealthMeter()
 
         if(this.life <= 0){
             let explosionAnimation = GLOBALS.kabooms.getFirstExists(false);
@@ -45,7 +50,6 @@ export default class extends Prefab {
             GLOBALS.signals.creepKilled.dispatch(this.gold)
         }
     }
-    
 
     update () {
         if(!GLOBALS.stars.get('creep').hasPath){
@@ -129,5 +133,26 @@ export default class extends Prefab {
                 }
             })
         }
+    }
+
+    updateHealthMeter(){
+        this.healthMeter.width = 8*((this.fullLife-this.life)/this.fullLife)
+    }
+
+    buildHealthBar(){
+        this.healthBar = game.make.graphics()
+        this.healthBar.beginFill(0x3399ff)
+        this.healthBar.drawRect(0,0,10,4)
+
+        this.healthMeter = game.make.graphics()
+        this.healthMeter.beginFill(0xff0000)
+        this.healthMeter.drawRect(0,0,10,4)
+        this.healthMeter.width = 0
+
+        this.healthBar.addChild(this.healthMeter)
+        this.addChild(this.healthBar)
+
+        this.healthBar.x = -5
+        this.healthBar.y = -17
     }
 }
