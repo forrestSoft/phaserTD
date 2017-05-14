@@ -79,6 +79,8 @@ export const Tower = Stampit()
 			}, this)
 
 			game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
+
+			this.group.bringToTop(this.sprite)
 		},
 		buildTower(){
 			// this.sprite = TowerSprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'tank', 'turret')
