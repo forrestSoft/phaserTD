@@ -10,6 +10,13 @@ W.prototype = Object.create(Phaser.Weapon.prototype);
 W.prototype.constructor = W;
 
 W.prototype.update = function(){
+	if(this.lastFire < this.fireInterval){
+		this.lastFire ++
+		if(this.lastFire%this.fireIntervalMod != 0 ){
+			return
+		}
+	}
+
 	let getTargetDistance = () => {
 		let coords = {
 			x:  this.x, 
@@ -22,11 +29,18 @@ W.prototype.update = function(){
 	}
 
 	if(this.target){
-		let tooFar = getTargetDistance() > GLOBALS.towers.towers[this.brush].rangeRadius + 4
 		let dead = this.target.life <= 0
+		if(dead){
+			this.target = GLOBALS.groups.creeps.getClosestTo(this.sprite)
+		}
+
+		if(!this.target){
+			return
+		}
+		let tooFar = getTargetDistance() > GLOBALS.towers.towers[this.brush].rangeRadius + 4
 		let outOfBounds = this.target._exists == false
 
-		if(tooFar || dead || outOfBounds){
+		if(tooFar || outOfBounds){
 			this.target = GLOBALS.groups.creeps.getClosestTo(this.sprite)
 		}
 	}else{
@@ -42,12 +56,7 @@ W.prototype.update = function(){
 	}
 
 	let angle
-	if(this.lastFire < this.fireInterval){
-		this.lastFire ++
-		if(this.lastFire%this.fireIntervalMod != 0 ){
-			return
-		}
-	}
+	
 
 	if(this.lastFire % this.fireIntervalMod == 0 && this.lastFire == this.fireInterval){
 		var fA = this.firingSolution.call(this,this.target)
@@ -80,7 +89,7 @@ W.prototype.firingSolution = function(target){
 			y:this.sprite.y
 		}
 
-		vel = 20
+		vel = 10
 
 		return Lead(src,dst,vel)
 	}
