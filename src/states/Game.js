@@ -153,7 +153,16 @@ export default class extends base_level {
 		// console.log('mp', this.getPointFrom('mouse'))
 		// this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
 	}
-	processCallBack(creep, bullet){
+	processCallBack(a, b){
+		let bullet, creep
+		if(a.weapon){
+			bullet = a
+			creeep = b
+		}else{
+			bullet = b
+			creep = a
+		}
+
 		return (bullet.weapon.target == creep)
 	}
 
@@ -163,11 +172,20 @@ export default class extends base_level {
 			game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, this.processCallBack, this)
 		}
 
-		game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, this.processCallBack, this)
-
+		GLOBALS.splashes.forEach((a)=>{
+			game.physics.arcade.overlap(g[0],a.sprite, this.dispatchCollision2, null, this)
+		})
+		// game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, null, this)
+		game.time.slowMotion = 1.5
 		GLOBALS.splashes.forEach((a,i)=>{
-			GLOBALS.splashes[i].destroy()
-			GLOBALS.splashes.splice(i,1)
+			// console.log(a)
+			if(a.frame > 1){
+				GLOBALS.splashes[i].sprite.destroy()
+				GLOBALS.splashes.splice(i,1)
+				return
+			}
+
+			a.frame++
 		})
 
 		GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
@@ -187,22 +205,30 @@ export default class extends base_level {
 			player = objA
 		}
 		if(bullet.type == 45){
-			let splash = game.add.sprite(bullet.x-16, bullet.y,'ms', 12)
-			splash.alpha = .5
-			splash.damageValue = bullet.damageValue
-			game.physics.arcade.enable(splash)
-			splash.body.syncBounds = true
+			let splash = {
+				sprite: game.make.sprite(bullet.centerX, bullet.centerY-6,'ms', 32),
+				frame: 0
+			}
+			splash.sprite.anchor.setTo(0.5, 0.5)
+			splash.sprite.scale.setTo(1,1)
+			// splash.alpha = 1
+			splash.sprite.damageValue = bullet.damageValue
+			game.physics.arcade.enable(splash.sprite)
+			splash.sprite.body.syncBounds = true
+			GLOBALS.groups.board.addChild(splash.sprite)
 			GLOBALS.splashes.push(splash)
+			window.splash = splash
 
-			let boom = game.add.sprite(bullet.x, bullet.y, 'kaboom', 0, GLOBALS.groups.board);
+			let boom = game.make.sprite(player.centerX, player.centerY, 'kaboom', 0, GLOBALS.groups.board);
 			boom.anchor.setTo(0.5, 0.5);
 			boom.scale.setTo(.5,.5)
-			boom.alpha = .75
+			boom.alpha = .5
 			boom.tint = 0xffa500
 			boom.animations.add('kaboom')
+			GLOBALS.groups.board.addChild(boom)
 			boom.play('kaboom', 30, false, true);
-
 		}
+		// debugger
 		bullet.kill()
 		bullet.body.x = 0
 		bullet.body.y = 0
@@ -231,7 +257,7 @@ export default class extends base_level {
 			// game.debug.spriteInfo(towers[0].sprite, 16,16)
 		}catch(e){}
 		try{
-			game.debug.body(window.splash)
+			game.debug.body(window.splash, 'ff0000')
 		}catch(e){}
 		let life = GLOBALS.player.life
 		let gold = GLOBALS.player.gold

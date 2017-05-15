@@ -59,15 +59,15 @@ export const CreepManager = Manager.compose(Builder)
 			// this.buildCreep(1)
 		},
 		wave(){
-			console.group('wave')
+			// console.group('wave')
 
 			this.team ++
-			console.log('Team:', this.team)
+			// console.log('Team:', this.team)
 			this.checkDifficulty()
 			this.setNextCreepType()
 
 			this.buildCreep(this.nextWaveSize())
-			console.groupEnd('wave')
+			// console.groupEnd('wave')
 		},
 		checkDifficulty(){
 			if(this.team % 4 == 0){
@@ -83,7 +83,7 @@ export const CreepManager = Manager.compose(Builder)
 		},
 		nextWaveInterval(){
 			let i = Phaser.Math.random(1.25, 1.75)
-			console.log('next wave interval:', i) 
+			// console.log('next wave interval:', i) 
 			return i
 		},
 		nextCreepInterval(){
@@ -93,7 +93,7 @@ export const CreepManager = Manager.compose(Builder)
 		},
 		nextWaveSize(){
 			let i = Phaser.Math.between(this.difficultyMin,this.difficultyMax)
-			console.log('next wave size:', i)
+			// console.log('next wave size:', i)
 			return i
 		}
 	})
