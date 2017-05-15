@@ -21,7 +21,7 @@ var towers = {
 			firingInterval: 1500,
 			rangeRadius:75,
 			bulletSpeed: 250,
-			damageValue: 5,
+			damageValue: 15,
 			cost: 25
 		},
 		26: {
@@ -30,11 +30,12 @@ var towers = {
 			tint: '0x0000ff',
 			bulletAngleOffset: 90,
 			index: 26,
-			firingInterval: 125,
+			firingInterval: 15,
 			rangeRadius: 25,
-			bulletSpeed: 125,
+			bulletSpeed: 275,
 			damageValue: 1,
-			cost: 10
+			cost: 10,
+			scale: [.1,.1]
 		}
 	}
 }

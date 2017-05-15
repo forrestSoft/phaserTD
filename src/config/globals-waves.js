@@ -1,5 +1,5 @@
 var waves = {
-	beforeBegin: 3
+	beforeBegin: 6
 }
 
 export default waves

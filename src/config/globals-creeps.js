@@ -13,7 +13,7 @@ var creeps = [
 			texture: "female02_rouge_spritesheet",
 			walking_speed: 12,
 			gold: 1,
-			health: 12
+			health: 20
 		},
 		"type":"player",
 		"visible":true,
@@ -33,7 +33,7 @@ var creeps = [
 			"texture":"male_fighter_spritesheet",
 			"walking_speed": 24,
 			gold: 1,
-			health: 8
+			health: 14
 		},
 		"type":"player",
 		"visible":true,
@@ -53,7 +53,7 @@ var creeps = [
 			"texture":"female02_mage_spritesheet",
 			"walking_speed": 10,
 			gold: 3,
-			health: 22
+			health: 30
 		},
 		"type":"player",
 		"visible":true,

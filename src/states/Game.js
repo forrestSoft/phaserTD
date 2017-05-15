@@ -211,7 +211,7 @@ export default class extends base_level {
 			}
 			splash.sprite.anchor.setTo(0.5, 0.5)
 			splash.sprite.scale.setTo(1,1)
-			// splash.alpha = 1
+			splash.alpha = 0
 			splash.sprite.damageValue = bullet.damageValue
 			game.physics.arcade.enable(splash.sprite)
 			splash.sprite.body.syncBounds = true

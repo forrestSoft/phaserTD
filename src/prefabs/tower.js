@@ -46,7 +46,7 @@ export const Tower = Stampit()
 				bulletClass: Bullet,
 				bounds: game.inputMasks.board._localBounds,
 				bulletBounds: game.inputMasks.board._localBounds,
-				fireFrom: new Phaser.Rectangle({ x: this.sprite.centerX-12, y: this.sprite.centerY, width: 1, height:1 }),
+				// fireFrom: new Phaser.Rectangle({ x: this.sprite.centerX-400, y: this.sprite.centerY, width: 1, height:1 }),
 				enableBody: true,
 				physicsBodyType: Phaser.Physics.ARCADE,
 				bulletSpeed: dynamicParams.bulletSpeed,// 75, //275
@@ -61,14 +61,16 @@ export const Tower = Stampit()
 				sprite: this.sprite,
 				brush: this.brush,
 				// fireAngle: dynamicParams.fireAngle,
-				bulletKillDistance: dynamicParams.rangeRadius+8,
+				bulletKillDistance: dynamicParams.rangeRadius+28,
 				damageValue: dynamicParams.damage
 			})
 			
 			this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
 			
 			this.weapon.bullets.forEach((b,i) => {
-				b.scale.setTo(.25, .25)
+				let scaleX = dynamicParams.scale && dynamicParams.scale[0] || .25
+				let scaleY = dynamicParams.scale && dynamicParams.scale[1] || .25
+				b.scale.setTo(scaleX,scaleY)
 				b.body.setSize(6, 4, 6, 18);
 				// b.body.syncBounds = true
 				b.body.updateBounds();
@@ -78,6 +80,8 @@ export const Tower = Stampit()
 				b.type = dynamicParams.index
 				b.weapon = this.weapon
 			}, this)
+			// debugger
+			this.weapon.fireFrom.setTo(this.sprite.centerX, this.sprite.centerY)
 
 			game.physics.enable(this.weapon, Phaser.Physics.ARCADE)
 
