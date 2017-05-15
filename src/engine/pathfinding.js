@@ -100,7 +100,7 @@ export const Pathfinder =  stampit()
 				const tw = 16
 				let pW = brush.size[0]
 				let pH = brush.size[1]
-
+				
 				FancyBrush.brushLoopFromSprite({
 					vars: {pH,pW},
 					sprite: brush.sprite,
@@ -167,7 +167,6 @@ export const Pathfinder =  stampit()
 	        }
 	        this.path = path_positions
 		    
-	        console.timeEnd('astar time')
 	        if(!callback){
 	        	return
 	        }

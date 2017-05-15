@@ -76,6 +76,7 @@ export const Tower = Stampit()
 				b.data.name = i
 				b.damageValue = dynamicParams.damageValue
 				b.type = dynamicParams.index
+				b.weapon = this.weapon
 			}, this)
 
 			game.physics.enable(this.weapon, Phaser.Physics.ARCADE)

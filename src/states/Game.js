@@ -148,19 +148,22 @@ export default class extends base_level {
 		// this.move_player.apply(this,arguments)
 		GLOBALS.signals.paintWithBrush.dispatch()
 	}
-	
+
 	move_player () {
 		// console.log('mp', this.getPointFrom('mouse'))
 		// this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
+	}
+	processCallBack(creep, bullet){
+		return (bullet.weapon.target == creep)
 	}
 
 	update () {
 		let g = this.board.getCollisionObjects()
 		if(game.bullets){
-			game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, null, this)
+			game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, this.processCallBack, this)
 		}
 
-		game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, null, this)
+		game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, this.processCallBack, this)
 
 		GLOBALS.splashes.forEach((a,i)=>{
 			GLOBALS.splashes[i].destroy()
