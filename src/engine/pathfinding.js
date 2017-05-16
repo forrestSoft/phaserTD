@@ -78,6 +78,7 @@ export const Pathfinder =  stampit()
 	            console.time('astar time')
 	            this.star.findPath(origin_coord.column, origin_coord.row, target_coord.column, target_coord.row, this.call_callback_function.bind(this, callback, context));
 	            this.star.calculate();
+	            console.timeEnd('astar time')
 	            return true;
 	        } else {
 	            return false;
@@ -149,6 +150,7 @@ export const Pathfinder =  stampit()
 	    },
 
 	    call_callback_function (callback, context, path) {
+	        // console.timeEnd('astar time')
 	        let path_positions, pt, p,x,y;
 	        path_positions = [];
 	        if (path !== null) {

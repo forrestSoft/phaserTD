@@ -162,7 +162,9 @@ export default class extends base_level {
 			bullet = b
 			creep = a
 		}
-
+		if(bullet.weapon.target !== creep){
+			// console.log(bullet,creep)
+		}
 		return (bullet.weapon.target == creep)
 	}
 
@@ -232,7 +234,7 @@ export default class extends base_level {
 		bullet.kill()
 		bullet.body.x = 0
 		bullet.body.y = 0
-		player.hit(bullet.damageValue)
+		player.hit(bullet.damage[bullet.level])
 	}
 
 	dispatchCollision2(splash, creep){
@@ -242,7 +244,7 @@ export default class extends base_level {
 	render(){
 		try{
 			game.bullets[0].children.forEach((b,i)=>{
-				// game.debug.body(game.bullets[0].children[i])
+				game.debug.body(game.bullets[0].children[i])
 				// game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
 			})
 		}catch(e){}

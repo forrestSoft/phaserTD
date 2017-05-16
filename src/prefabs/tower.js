@@ -61,15 +61,17 @@ export const Tower = Stampit()
 				sprite: this.sprite,
 				brush: this.brush,
 				// fireAngle: dynamicParams.fireAngle,
-				bulletKillDistance: dynamicParams.rangeRadius+28,
-				damageValue: dynamicParams.damage
+				bulletKillDistance: dynamicParams.rangeRadius+28
+				// damageValue: dynamicParams.damage
 			})
 			
 			this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
 			
 			this.weapon.bullets.forEach((b,i) => {
+				debugger
 				let scaleX = dynamicParams.scale && dynamicParams.scale[0] || .25
 				let scaleY = dynamicParams.scale && dynamicParams.scale[1] || .25
+
 				b.scale.setTo(scaleX,scaleY)
 				b.body.setSize(6, 4, 6, 18);
 				// b.body.syncBounds = true
@@ -77,6 +79,8 @@ export const Tower = Stampit()
 				b.body.preUpdate = this.tappedPreUpdate.bind(b.body)
 				b.data.name = i
 				b.damageValue = dynamicParams.damageValue
+				b.damage = dynamicParams.damage
+				b.level = this.level
 				b.type = dynamicParams.index
 				b.weapon = this.weapon
 			}, this)
@@ -110,6 +114,9 @@ export const Tower = Stampit()
 
 			this.sprite.events.onInputOver.add(this.showRange, this)
 			this.sprite.events.onInputOut.add(this.hideRange, this)
+			this.sprite.events.onInputDown.add(this.menu, this)
+
+			this.level = 0
 
 			this.buildRangeIndicator()
 			this.buildBullets()	
@@ -125,6 +132,13 @@ export const Tower = Stampit()
 		},
 		showRange(){
 			this.rangeIndicator.alpha = 1
+		},
+		menu(){
+			console.log('menu')
+			if(this.level < 3)
+				this.level ++
+			else
+				console.log('max')
 		},
 		// over ride positioning based on world to based on sprite local + manual offset
 		tappedPreUpdate() {
