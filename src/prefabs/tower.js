@@ -68,7 +68,6 @@ export const Tower = Stampit()
 			this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
 			
 			this.weapon.bullets.forEach((b,i) => {
-				debugger
 				let scaleX = dynamicParams.scale && dynamicParams.scale[0] || .25
 				let scaleY = dynamicParams.scale && dynamicParams.scale[1] || .25
 
@@ -84,7 +83,7 @@ export const Tower = Stampit()
 				b.type = dynamicParams.index
 				b.weapon = this.weapon
 			}, this)
-			// debugger
+
 			this.weapon.fireFrom.setTo(this.sprite.centerX, this.sprite.centerY)
 
 			game.physics.enable(this.weapon, Phaser.Physics.ARCADE)

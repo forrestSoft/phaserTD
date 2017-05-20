@@ -18,6 +18,7 @@ import {Board} from '../ui/board'
 import {Cursor, Brush} from '../ui/cursors'
 import {Palette} from '../ui/palette'
 import {TowerPalette} from '../ui/towerPalette'
+import {CollisionManager} from '../engine/collisionManager'
 
 export default class extends base_level {
 	init () {
@@ -99,7 +100,6 @@ export default class extends base_level {
 
 		this.baseLayer = this.layers['background']
 
-
 		this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
 		// this.palette2 = Palette({ y: 0, x: 240})
 		this.towerPalette = TowerPalette().build()
@@ -114,10 +114,11 @@ export default class extends base_level {
 
 		GLOBALS.stars.get('creep').find_path_goal_spawn();
 
-		// this.life = 20
 		GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
 		GLOBALS.signals.towerPlaced.add(this.loseGold, this)
 		GLOBALS.signals.creepKilled.add(this.getGold, this)
+
+		this.CollisionManager = CollisionManager()
 		console.timeEnd('boot')
 	}
 	loseLife(){
@@ -153,92 +154,14 @@ export default class extends base_level {
 		// console.log('mp', this.getPointFrom('mouse'))
 		// this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
 	}
-	processCallBack(a, b){
-		let bullet, creep
-		if(a.weapon){
-			bullet = a
-			creeep = b
-		}else{
-			bullet = b
-			creep = a
-		}
-		if(bullet.weapon.target !== creep){
-			// console.log(bullet,creep)
-		}
-		return (bullet.weapon.target == creep)
-	}
-
 	update () {
-		let g = this.board.getCollisionObjects()
-		if(game.bullets){
-			game.physics.arcade.overlap(g[0], game.bullets, this.dispatchCollision, this.processCallBack, this)
-		}
-
-		GLOBALS.splashes.forEach((a)=>{
-			game.physics.arcade.overlap(g[0],a.sprite, this.dispatchCollision2, null, this)
-		})
-		// game.physics.arcade.overlap(g[0],GLOBALS.splashes, this.dispatchCollision2, null, this)
-		game.time.slowMotion = 1.5
-		GLOBALS.splashes.forEach((a,i)=>{
-			// console.log(a)
-			if(a.frame > 1){
-				GLOBALS.splashes[i].sprite.destroy()
-				GLOBALS.splashes.splice(i,1)
-				return
-			}
-
-			a.frame++
-		})
+		this.CollisionManager.collide(CollisionObjects)
 
 		GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
 
 		if(!game.input.activePointer.withinGame){
 			GLOBALS.signals.outOfGame.dispatch()
 		}
-	}
-
-	dispatchCollision(objA,objB){
-		let player, bullet
-		if(objA.key == 'weapons'){
-			bullet = objA
-			player = objB
-		}else{
-			bullet = objB
-			player = objA
-		}
-		if(bullet.type == 45){
-			let splash = {
-				sprite: game.make.sprite(bullet.centerX, bullet.centerY-6,'ms', 32),
-				frame: 0
-			}
-			splash.sprite.anchor.setTo(0.5, 0.5)
-			splash.sprite.scale.setTo(1,1)
-			splash.alpha = 0
-			splash.sprite.damageValue = bullet.damageValue
-			game.physics.arcade.enable(splash.sprite)
-			splash.sprite.body.syncBounds = true
-			GLOBALS.groups.board.addChild(splash.sprite)
-			GLOBALS.splashes.push(splash)
-			window.splash = splash
-
-			let boom = game.make.sprite(player.centerX, player.centerY, 'kaboom', 0, GLOBALS.groups.board);
-			boom.anchor.setTo(0.5, 0.5);
-			boom.scale.setTo(.5,.5)
-			boom.alpha = .5
-			boom.tint = 0xffa500
-			boom.animations.add('kaboom')
-			GLOBALS.groups.board.addChild(boom)
-			boom.play('kaboom', 30, false, true);
-		}
-		// debugger
-		bullet.kill()
-		bullet.body.x = 0
-		bullet.body.y = 0
-		player.hit(bullet.damage[bullet.level])
-	}
-
-	dispatchCollision2(splash, creep){
-		creep.hit(splash.damageValue)
 	}
 
 	render(){
