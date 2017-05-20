@@ -92,6 +92,7 @@ export const Tower = Stampit()
 			this.group.bringToTop(this.sprite)
 		},
 		buildTower(){
+			this.level = 0
 			// this.sprite = TowerSprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'tank', 'turret')
 			this.sprite = new TowerSprite({
 				x: this.x+(GLOBALS.tH/2) - GLOBALS.globalOffset.x,
@@ -101,7 +102,8 @@ export const Tower = Stampit()
 				type: this.brush,
 				offset:{ 
 					x:-16, y:0
-				}
+				},
+				level: this.level
 			})
 
 			Object.assign(this.sprite, {
@@ -115,7 +117,7 @@ export const Tower = Stampit()
 			this.sprite.events.onInputOut.add(this.hideRange, this)
 			this.sprite.events.onInputDown.add(this.menu, this)
 
-			this.level = 0
+			
 
 			this.buildRangeIndicator()
 			this.buildBullets()
@@ -136,10 +138,12 @@ export const Tower = Stampit()
 		},
 		menu(){
 			console.log('menu')
-			if(this.level < 3)
+			if(this.level < 3){
 				this.level ++
-			else
+				this.sprite.nextLevel(this.level)
+			}else{
 				console.log('max')
+			}
 		},
 		// over ride positioning based on world to based on sprite local + manual offset
 		tappedPreUpdate() {
