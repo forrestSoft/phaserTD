@@ -17,6 +17,7 @@ export const TowerManager = Manager.compose(Builder)
 		addTower({x,y,brush,tint}){
 			let cost = GLOBALS.towers.towers[brush].cost
 			let tower =  Tower({x:x,y:y,brush:brush,tint:tint,group:this.group})
+			this.towers.push(tower)
 			this.addBullets(tower.weapon)
 			GLOBALS.signals.towerPlaced.dispatch(cost)
 		},
@@ -102,7 +103,6 @@ export const Tower = Stampit()
 					x:-16, y:0
 				}
 			})
-			towers.push(this)
 
 			Object.assign(this.sprite, {
 				anchor: {x: .6, y: .5},
@@ -118,7 +118,9 @@ export const Tower = Stampit()
 			this.level = 0
 
 			this.buildRangeIndicator()
-			this.buildBullets()	
+			this.buildBullets()
+
+			return this
 		},
 		buildRangeIndicator(){
 			this.rangeIndicator = game.make.graphics()

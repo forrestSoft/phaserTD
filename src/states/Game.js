@@ -123,6 +123,11 @@ export default class extends base_level {
 	}
 	loseLife(){
 		GLOBALS.player.life --
+
+		if(GLOBALS.player.life <= 0){
+			console.warn('you are dead')
+			debugger
+		}
 	}
 	loseGold(cost = 5){
 		GLOBALS.player.gold -= cost
