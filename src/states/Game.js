@@ -155,7 +155,7 @@ export default class extends base_level {
 		// this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
 	}
 	update () {
-		this.CollisionManager.collide(CollisionObjects)
+		this.CollisionManager.collide()
 
 		GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
 

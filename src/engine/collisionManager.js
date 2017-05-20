@@ -39,7 +39,7 @@ export const  CollisionManager = stampit()
 				})
 			}
 		},
-		collide({creeps, bullets, splash}){
+		collide(){
 			GLOBALS.splashes.forEach((a,i)=>{
 				if(a.frame > 10){
 					GLOBALS.splashes[i].sprite.destroy()
