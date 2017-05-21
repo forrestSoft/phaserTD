@@ -41,7 +41,7 @@ export const  CollisionManager = stampit()
 		},
 		collide(){
 			GLOBALS.splashes.forEach((a,i)=>{
-				if(a.frame > 10){
+				if(a.frame > 1){
 					GLOBALS.splashes[i].sprite.destroy()
 					GLOBALS.splashes.splice(i,1)
 					return
@@ -101,11 +101,11 @@ let Proccessors = stampit()
 		processCallBack (a, b){
 			let bullet, creep
 			if(a.weapon){
-				console.log(1)
+				// console.log(1)
 				bullet = a
 				creeep = b
 			}else{
-				console.log(2)
+				// console.log(2)
 				bullet = b
 				creep = a
 			}

@@ -92,8 +92,8 @@ export const Tower = Stampit()
 			this.group.bringToTop(this.sprite)
 		},
 		buildTower(){
-			this.level = 0
-			// this.sprite = TowerSprite(this.x+GLOBALS.tH/2,this.y+GLOBALS.tW/2, 'tank', 'turret')
+			this.level = 1
+
 			this.sprite = new TowerSprite({
 				x: this.x+(GLOBALS.tH/2) - GLOBALS.globalOffset.x,
 				y: this.y+(GLOBALS.tW/2) - GLOBALS.globalOffset.y, 
@@ -116,8 +116,6 @@ export const Tower = Stampit()
 			this.sprite.events.onInputOver.add(this.showRange, this)
 			this.sprite.events.onInputOut.add(this.hideRange, this)
 			this.sprite.events.onInputDown.add(this.menu, this)
-
-			
 
 			this.buildRangeIndicator()
 			this.buildBullets()

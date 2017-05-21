@@ -37,7 +37,7 @@ export default class extends Prefab {
     }
 
     hit(damage = 1){
-        console.log(`hit for ${damage}`)
+        // console.log(`hit for ${damage}`)
         this.life -= damage
         this.updateHealthMeter()
 

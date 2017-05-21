@@ -13,7 +13,7 @@ var creeps = [
 			texture: "female02_rouge_spritesheet",
 			walking_speed: 12,
 			gold: 1,
-			health: 20
+			health: 20	
 		},
 		"type":"player",
 		"visible":true,
