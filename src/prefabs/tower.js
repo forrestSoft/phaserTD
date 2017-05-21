@@ -15,7 +15,7 @@ var Manager = Stampit()
 export const TowerManager = Manager.compose(Builder)
 	.methods({
 		addTower({x,y,brush,tint}){
-			let cost = GLOBALS.towers.towers[brush].cost
+			let cost = GLOBALS.towers.towers[brush].cost[0]
 			let tower =  Tower({x:x,y:y,brush:brush,tint:tint,group:this.group})
 			this.towers.push(tower)
 			this.addBullets(tower.weapon)
@@ -103,20 +103,24 @@ export const Tower = Stampit()
 				offset:{ 
 					x:-16, y:0
 				},
-				level: this.level
+				level: this.level,
+				signalOver: this.signalOver,
+				signalOut: this.signalOut,
+				doesInput: true
 			})
 
 			Object.assign(this.sprite, {
 				anchor: {x: .6, y: .5},
-				inputEnabled: true
+				inputEnabled: true,
 			})
 
 			this.group.addChild(this.sprite)
 
-			this.sprite.events.onInputOver.add(this.showRange, this)
-			this.sprite.events.onInputOut.add(this.hideRange, this)
+			// this.sprite.events.onInputOver.add(this.over, this)
+			// this.sprite.events.onInputOut.add(this.out, this)
 			this.sprite.events.onInputDown.add(this.menu, this)
-
+			this.sprite.signalOver.add(this.over, this)
+			this.sprite.signalOut.add(this.out, this)
 			this.buildRangeIndicator()
 			this.buildBullets()
 
@@ -129,14 +133,41 @@ export const Tower = Stampit()
 			this.group.addChild(this.rangeIndicator)
 		},
 		hideRange(){
-			this.rangeIndicator.alpha = 0
+			this.rangeIndicator && (this.rangeIndicator.alpha = 0)
 		},
 		showRange(){
-			this.rangeIndicator.alpha = 1
+			this.rangeIndicator && (this.rangeIndicator.alpha = 1)
+		},
+		over(){
+			this.showRange()
+			GLOBALS.towerReferenceManager.setTower(this)
+			this.tintTower()
+		},
+		out(){
+			this.hideRange()
+			GLOBALS.towerReferenceManager.setTower(null)
+			this.tintTower(true)
+		},
+		canUpgrade(){
+			let cost = GLOBALS.towers.towers[this.brush].cost[this.level]
+			// console.log('c',cost)
+			return (GLOBALS.player.gold > cost)
+		},
+		tintTower(out){
+			if(!this.canUpgrade() && !out){
+				this.sprite.tint = 0xff0000
+			}else{
+				this.sprite.tint = 0xffffff
+			}
 		},
 		menu(){
 			console.log('menu')
+			if(!this.canUpgrade()){
+				return
+			}
 			if(this.level < 3){
+				let cost = GLOBALS.towers.towers[this.brush].cost[this.level]
+				GLOBALS.signals.towerLeveled.dispatch(cost)
 				this.level ++
 				this.sprite.nextLevel(this.level)
 			}else{

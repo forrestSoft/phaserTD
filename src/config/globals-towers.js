@@ -11,7 +11,7 @@ var towers = {
 			bulletSpeed: 150,
 			damageValue: 2.5,
 			damage: [2.5, 3, 3.5],	
-			cost: 5
+			cost: [10, 17, 22]
 		},
 		36: {
 			name: 'sniper',
@@ -24,7 +24,7 @@ var towers = {
 			bulletSpeed: 250,
 			damageValue: 15,
 			damage: [15, 20, 28],
-			cost: 25
+			cost: [25, 20, 50]
 		},
 		26: {
 			name: 'gattling',
@@ -36,7 +36,7 @@ var towers = {
 			rangeRadius: 25,
 			bulletSpeed: 275,
 			damageValue: 1,
-			cost: 10,
+			cost: [10, 12, 18],
 			scale: [.1,.1],
 			damage: [1,1.25,1.8]
 		}

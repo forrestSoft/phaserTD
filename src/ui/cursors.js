@@ -288,10 +288,13 @@ export const CursorState = Stampit()
 			let isTower = this.brushType == 'tower'
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
-			let hasEnoughMoney 
+			let hasEnoughMoney
+			// let overExistingTower = tileT
+			// debugger
 
 			if(isTower){
-				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost < GLOBALS.player.gold
+				// console.log(GLOBALS.towers.towers[this.currentBrush].cost[0])
+				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost[0] < GLOBALS.player.gold
 			}
 
 			this.validPlacement = 	(isTowerFoundation && isTower && hasEnoughMoney) ||
@@ -349,6 +352,7 @@ export const Brush = Stampit()
 						this.lastBrushType = 'tower'
 
 						GLOBALS.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
+						this.sprite.destroy()
 						break
 
 					case 'fancy':

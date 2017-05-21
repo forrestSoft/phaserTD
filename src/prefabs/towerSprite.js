@@ -1,11 +1,12 @@
 import Phaser from 'phaser'
+import _ from 'underscore'
 
 import TowerSprite from '../prefabs/towerSprite'
 
 import GLOBALS from '../config/globals'
 
 export default class extends Phaser.Sprite {
-	constructor ({x,y,key,frame,type,offset,level}) {
+	constructor ({x,y,key,frame,type,offset,level, signalOver, signalOut, doesInput}) {
 		super(game,x,y,key,frame)
 		this.data.type = type
 		this.anchor.x = .5
@@ -15,6 +16,26 @@ export default class extends Phaser.Sprite {
 		this.type = type
 		this.offset = offset
 		this.buildColorDot()
+		this.signalOver = new Phaser.Signal()
+		this.signalOut = new Phaser.Signal()
+		this.isOver = false
+
+		if(!doesInput){
+			this.update = function(){}
+		}else{
+			this.update = _.throttle(this.update.bind(this), 250)
+		}
+	}
+	update (){
+		if(!this.input){
+			return
+		}
+
+		if(this.input.pointerOver()){
+			this.signalOver.dispatch()
+		}else{
+			this.signalOut.dispatch()
+		}
 	}
 	buildColorDot(type, offset){
 		// let dot = game.make.graphics()

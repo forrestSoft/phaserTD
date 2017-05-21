@@ -40,7 +40,9 @@ export default class extends base_level {
 
 		this.layers = {}
 		this.groups = {
-			board: this.game.add.group(undefined,'board')
+			board: this.game.add.group(undefined,'board'),
+			cursor: this.game.add.group(undefined,'cursor'),
+			towers: this.game.add.group(undefined,'towers')
 		}
 
 		GLOBALS.groups = this.groups
@@ -103,7 +105,11 @@ export default class extends base_level {
 		this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
 		// this.palette2 = Palette({ y: 0, x: 240})
 		this.towerPalette = TowerPalette().build()
-		this.cursor = Cursor({p:this, group: this.groups.board})
+
+		this.groups.board.addChild(this.groups.towers)
+		this.cursor = Cursor({p:this, group: this.groups.cursor})
+		this.groups.board.addChild(this.groups.cursor)
+
 		this.brush = Brush()
 
 		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
@@ -116,6 +122,7 @@ export default class extends base_level {
 
 		GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
 		GLOBALS.signals.towerPlaced.add(this.loseGold, this)
+		GLOBALS.signals.towerLeveled.add(this.loseGold, this)
 		GLOBALS.signals.creepKilled.add(this.getGold, this)
 
 		this.CollisionManager = CollisionManager()
@@ -221,9 +228,9 @@ export default class extends base_level {
 
 		let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
 											 'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
-											 'creepKilled'].forEach((name,i)=>{
+											 'towerLeveled','creepKilled'].forEach((name,i)=>{
 													tempGLOBALS.signals[name] = new Phaser.Signal()                  
-											 })      
+											 })
 
 		Object.assign(GLOBALS, tempGLOBALS)
 
