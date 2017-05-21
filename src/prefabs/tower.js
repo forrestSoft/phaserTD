@@ -151,7 +151,7 @@ export const Tower = Stampit()
 		canUpgrade(){
 			let cost = GLOBALS.towers.towers[this.brush].cost[this.level]
 			// console.log('c',cost)
-			return (GLOBALS.player.gold > cost)
+			return (GLOBALS.player.gold >= cost)
 		},
 		tintTower(out){
 			if(!this.canUpgrade() && !out){

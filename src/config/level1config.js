@@ -39,8 +39,9 @@ let b = [0, boardHeight-1].map((y,i)=>{
 		}
 	})
 })
-
+arrays[boardHeight -4][boardWidth-2] = 35
 collisionArray = [].concat.apply([], arrays)
+
 // collisionArray[1] = 33
 
 let goalsArray = Array.from(new Array(boardSize), (x,i) => 0)

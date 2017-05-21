@@ -59,7 +59,7 @@ export const Cursor = Stampit()
 				y = game.input.activePointer.worldY
 
 				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker)
-				
+
 				if(nextCursorPosition === null){
 					return
 				}
@@ -272,6 +272,14 @@ export const CursorState = Stampit()
 				}
 
 				this.sprite.alpha = .75
+
+				// this.sprite.update= ()=>{
+				// 	if(GLOBALS.towerReferenceManager.getTower()){
+				// 		this.alpha=0.1
+				// 	}else{
+				// 		this.alpha=.75
+				// 	}
+				// }
 			}
 		},
 		getBrushSize(){

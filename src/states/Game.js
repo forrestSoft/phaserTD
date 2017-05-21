@@ -203,6 +203,20 @@ export default class extends base_level {
 		game.debug.text(text,2,12)
 		this.game.time.advancedTiming = true
 		this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
+
+		let currentTower = GLOBALS.towerReferenceManager.getTower()
+		if(currentTower != null){
+			// debugger
+			let level = currentTower.level
+			let brush = currentTower.brush
+			let data = GLOBALS.towers.towers[brush]
+			let cost = data.cost[level] || 'max'
+			let power = data.damage[level]
+
+			this.game.debug.text(`level: ${level}`, 50, 250, "#000000")
+			this.game.debug.text(`next level cost: ${cost}`, 50, 270, "#000000")
+			this.game.debug.text(`current power: ${power}`, 50, 290, "#000000")
+		}
 	}
 
 	buildDynamicGlobals(){
