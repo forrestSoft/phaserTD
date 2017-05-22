@@ -14,6 +14,8 @@ import Player from '../prefabs/player'
 import {CreepManager} from '../prefabs/creeps'
 
 import GLOBALS from '../config/globals'
+import config from '../config/config'
+
 import {Board} from '../ui/board'
 import {Cursor, Brush} from '../ui/cursors'
 import {Palette} from '../ui/palette'
@@ -98,6 +100,8 @@ export default class extends base_level {
 		GLOBALS.timers.firstWave.start()
 
 		this.maskBoard()
+		this.buildBG()
+
 		this.board.buildForCreate()
 
 		this.baseLayer = this.layers['background']
@@ -194,7 +198,7 @@ export default class extends base_level {
 			// game.debug.spriteInfo(towers[0].sprite, 16,16)
 		}catch(e){}
 		try{
-			game.debug.body(window.splash, 'ff0000')
+			// game.debug.spriteBounds(this.bg, 'ff0000')
 		}catch(e){}
 		let life = GLOBALS.player.life
 		let gold = GLOBALS.player.gold
@@ -206,7 +210,6 @@ export default class extends base_level {
 
 		let currentTower = GLOBALS.towerReferenceManager.getTower()
 		if(currentTower != null){
-			// debugger
 			let level = currentTower.level
 			let brush = currentTower.brush
 			let data = GLOBALS.towers.towers[brush]
@@ -217,6 +220,17 @@ export default class extends base_level {
 			this.game.debug.text(`next level cost: ${cost}`, 50, 270, "#000000")
 			this.game.debug.text(`current power: ${power}`, 50, 290, "#000000")
 		}
+	}
+
+	buildBG(){
+		this.bg = game.make.graphics()
+		this.bg.beginFill(0xff0000)
+		this.bg.drawRect(0,0,config.gameWidth, config.gameHeight)
+		this.bg.inputEnabled = true
+		this.bg.hitArea = new Phaser.Rectangle(0, 0, config.gameWidth, config.gameHeight)
+		this.bg.events.onInputDown.add(()=>{console.log('asdf');GLOBALS.signals.updateBrush.dispatch(null)})
+		game.world.addChild(this.bg)
+		game.world.sendToBack(this.bg)
 	}
 
 	buildDynamicGlobals(){

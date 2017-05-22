@@ -206,6 +206,10 @@ export const CursorState = Stampit()
 		},
 		getSprite(){
 			if(!this.brushType){
+				if(this.sprite){
+					this.sprite.destroy()
+					this.sprite = null
+				}
 				return
 			}
 
@@ -225,16 +229,11 @@ export const CursorState = Stampit()
 			if(!!this.sprite){
 				this.sprite.x = spriteOffsetX
 				this.sprite.y = spriteOffsetY
-				
-				if(!!this.rangeIndicator && this.brushType == 'tower'){
-					this.rangeIndicator.clear()
-					this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
-					this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.currentBrush].rangeRadius*2)
-				}
 			}else{
 				switch (this.brushType){
 					case 'tower':
 						this.lastBrushType = 'tower'
+						let tower = GLOBALS.towers.towers[this.currentBrush]
 						// this.sprite = game.add.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
 						this.sprite = new TowerSprite({
 							x: spriteOffsetX,
@@ -243,18 +242,12 @@ export const CursorState = Stampit()
 							frame:'turret',
 							type: this.currentBrush,
 							offset:{ 
-								x:-16, y:0
-							}
+								x:-2, y:0
+							},
+							angle: tower.displayAngle,
+							doesRange: true
 						})
-						this.sprite.anchor.x = 0.5
-						this.sprite.anchor.y = 0.5
-						this.sprite.angle = GLOBALS.towers.towers[this.currentBrush].displayAngle
 						this.container.add(this.sprite)
-
-						this.rangeIndicator = game.make.graphics()
-						this.rangeIndicator.lineStyle(2, 0x00ffff, 1);
-						this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.currentBrush].range)
-						this.container.add(this.rangeIndicator)
 						break
 
 					case 'fancy':
@@ -325,7 +318,7 @@ export const CursorState = Stampit()
 	.init(function ({tileMap, container, marker}, {args, instance, stamp}) {
 		Object.assign(instance, {
 			container: container,
-			modes: ['basic', 'fancy', 'tower'],
+			modes: ['basic', 'fancy', 'tower', null],
 			previous: {x: 0, y: 0},
 			brushType: 'simple',
 			currentBrush: 26,
@@ -358,9 +351,9 @@ export const Brush = Stampit()
 				switch (this.brushType){
 					case 'tower':
 						this.lastBrushType = 'tower'
-
+						// debugger
 						GLOBALS.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
-						this.sprite.destroy()
+						// this.sprite.destroy()
 						break
 
 					case 'fancy':
@@ -388,7 +381,6 @@ export const Brush = Stampit()
 		}
 	})
 
-	
 export const MiniCursor = Stampit()
 	.methods({
 		buildCursor(){

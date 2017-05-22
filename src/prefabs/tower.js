@@ -23,7 +23,7 @@ export const TowerManager = Manager.compose(Builder)
 		},
 		addBullets(bullets){
 			this.bullets.push(bullets.bullets)
-		}	
+		}
 	})
 	.init(function ({group}, {args, instance, stamp}) {
 		Object.assign(instance, {
@@ -41,7 +41,7 @@ export const Tower = Stampit()
 		buildBullets(){
 			this.weapon = game.plugins.add(Weapon);
 
-			let dynamicParams = GLOBALS.towers.towers[this.brush]
+			let dynamicParams = GLOBALS.towers.data(this.brush)
 
 			Object.assign(this.weapon,{
 				bulletClass: Bullet,
@@ -65,7 +65,7 @@ export const Tower = Stampit()
 				bulletKillDistance: dynamicParams.rangeRadius+28
 				// damageValue: dynamicParams.damage
 			})
-			
+
 			this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
 			
 			this.weapon.bullets.forEach((b,i) => {
@@ -101,63 +101,48 @@ export const Tower = Stampit()
 				frame:'turret',
 				type: this.brush,
 				offset:{ 
-					x:-16, y:0
+					x:-2, y:0
 				},
 				level: this.level,
-				signalOver: this.signalOver,
-				signalOut: this.signalOut,
-				doesInput: true
+				doesInput: true,
+				doesRange: true
 			})
 
-			Object.assign(this.sprite, {
-				anchor: {x: .6, y: .5},
-				inputEnabled: true,
-			})
+			// Object.assign(this.sprite, {
+			// 	anchor: {x: .6, y: .5},
+			// 	inputEnabled: true,
+			// })
 
 			this.group.addChild(this.sprite)
 
 			// this.sprite.events.onInputOver.add(this.over, this)
-			// this.sprite.events.onInputOut.add(this.out, this)
-			this.sprite.events.onInputDown.add(this.menu, this)
+			this.sprite.towerSprite.events.onInputOut.add(this.notOver, this)
+			this.sprite.towerSprite.events.onInputDown.add(this.menu, this)
 			this.sprite.signalOver.add(this.over, this)
 			this.sprite.signalOut.add(this.out, this)
-			this.buildRangeIndicator()
 			this.buildBullets()
 
 			return this
 		},
-		buildRangeIndicator(){
-			this.rangeIndicator = game.make.graphics()
-			this.rangeIndicator.lineStyle(2, 0x00ffff, 1)
-			this.rangeIndicator.drawCircle(this.sprite.x,this.sprite.y,GLOBALS.towers.towers[this.brush].rangeRadius*2)
-			this.group.addChild(this.rangeIndicator)
-		},
-		hideRange(){
-			this.rangeIndicator && (this.rangeIndicator.alpha = 0)
-		},
-		showRange(){
-			this.rangeIndicator && (this.rangeIndicator.alpha = 1)
-		},
 		over(){
-			this.showRange()
 			GLOBALS.towerReferenceManager.setTower(this)
 			this.tintTower()
 		},
-		out(){
-			this.hideRange()
+		notOver(){
 			GLOBALS.towerReferenceManager.setTower(null)
+		},
+		out(){
 			this.tintTower(true)
 		},
 		canUpgrade(){
 			let cost = GLOBALS.towers.towers[this.brush].cost[this.level]
-			// console.log('c',cost)
 			return (GLOBALS.player.gold >= cost)
 		},
 		tintTower(out){
 			if(!this.canUpgrade() && !out){
-				this.sprite.tint = 0xff0000
+				this.sprite.towerSprite.tint = 0xff0000
 			}else{
-				this.sprite.tint = 0xffffff
+				this.sprite.towerSprite.tint = 0xffffff
 			}
 		},
 		menu(){

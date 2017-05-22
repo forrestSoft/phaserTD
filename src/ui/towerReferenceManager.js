@@ -6,11 +6,9 @@ import GLOBALS from '../config/globals'
 export var TowerReferenceManager = stampit()
 	.methods({
 		getTower(){
-			// console.log('gt',this)
 			return this.tower
 		},
 		setTower(tower){
-			// console.log('t',this)
 			this.tower = tower
 		}
 	})

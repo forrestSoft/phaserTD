@@ -52,6 +52,9 @@ const tempGlobalsEntrance = {
 Object.assign(globals.entrance, tempGlobalsEntrance)
 Object.assign(globals, Brushes)
 globals.towers = Towers
+globals.towers.data = (index)=>{
+	return GLOBALS.towers.towers[index]
+}
 
 globals.waves = Waves
 globals.player = Player

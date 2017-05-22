@@ -34,15 +34,15 @@ let base = Stampit()
 					frame:'turret',
 					type:b,
 					offset:{ 
-						x:-10, y:0
+						x:-2, y:-1
 					}
 				})
 
-				s.angle = brushes[b].displayAngle
-				s.inputEnabled = true
-				s.events.onInputDown.add(this.setTower,this)
-				s.events.onInputOver.add(this.setCursor,this)
-				s.events.onInputOut.add(this.clearCursor,this)
+				s.towerSprite.angle = brushes[b].displayAngle
+				s.towerSprite.inputEnabled = true
+				s.towerSprite.events.onInputDown.add(this.setTower,this)
+				s.towerSprite.events.onInputOver.add(this.setCursor,this)
+				s.towerSprite.events.onInputOut.add(this.clearCursor,this)
 
 				group.addChild(s)
 				group.sendToBack(s)
@@ -67,11 +67,11 @@ let base = Stampit()
 		},
 
 		setTower(sprite, pointer){
-			GLOBALS.signals.updateBrush.dispatch('tower', sprite.data.type)
+			GLOBALS.signals.updateBrush.dispatch('tower', sprite.parent.data.type)
 		},
 
 		setCursor(sprite, pointer){
-			let {x,y} = sprite.position
+			let {x,y} = sprite.parent.position
 			let {tW:width,tH:height} = GLOBALS
 			this.updateCursor({x:(x-GLOBALS.tW/2),y:y-(GLOBALS.tH/2),width,height})
 		}
