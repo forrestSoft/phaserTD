@@ -147,12 +147,13 @@ export const CursorState = Stampit()
 				return
 			}
 
+			let image = this.sprite.towerSprite || this.sprite
 			if(this.validPlacement && !this.pathFail){
-				this.sprite.towerSprite.tint = 0xffffff
+				image.tint = 0xffffff
 			}else if(this.validPlacement && this.brushType == 'tower'){
-				this.sprite.towerSprite.tint = 0xffffff
+				image.tint = 0xffffff
 			}else{
-				this.sprite.towerSprite.tint = 0xff0000
+				image.tint = 0xff0000
 			}
 		},
 		calculateCursorTile(x,y, marker){
@@ -265,13 +266,10 @@ export const CursorState = Stampit()
 
 				this.sprite.alpha = .75
 
-				// this.sprite.update= ()=>{
-				// 	if(GLOBALS.towerReferenceManager.getTower()){
-				// 		this.alpha=0.1
-				// 	}else{
-				// 		this.alpha=.75
-				// 	}
-				// }
+				this.sprite.update= ()=>{
+					this.checkValidPlacement()
+					this.setSpriteTint()
+				}
 			}
 		},
 		getBrushSize(){
@@ -293,7 +291,7 @@ export const CursorState = Stampit()
 
 			if(isTower){
 				// console.log(GLOBALS.towers.towers[this.currentBrush].cost[0])
-				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost[0] < GLOBALS.player.gold
+				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost[0] <= GLOBALS.player.gold
 			}
 
 			let validPlacementTower = (isTowerFoundation && isTower && hasEnoughMoney)

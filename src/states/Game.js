@@ -214,7 +214,7 @@ export default class extends base_level {
 			let brush = currentTower.brush
 			let data = GLOBALS.towers.towers[brush]
 			let cost = data.cost[level] || 'max'
-			let power = data.damage[level]
+			let power = data.damage[level-1]
 
 			this.game.debug.text(`level: ${level}`, 50, 250, "#000000")
 			this.game.debug.text(`next level cost: ${cost}`, 50, 270, "#000000")
