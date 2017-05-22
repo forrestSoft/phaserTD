@@ -146,13 +146,13 @@ export const CursorState = Stampit()
 			if(!this.sprite){
 				return
 			}
-			
+
 			if(this.validPlacement && !this.pathFail){
-				this.sprite.tint = 0xffffff
+				this.sprite.towerSprite.tint = 0xffffff
 			}else if(this.validPlacement && this.brushType == 'tower'){
-				this.sprite.tint = 0xffffff
+				this.sprite.towerSprite.tint = 0xffffff
 			}else{
-				this.sprite.tint = 0xff0000
+				this.sprite.towerSprite.tint = 0xff0000
 			}
 		},
 		calculateCursorTile(x,y, marker){
@@ -197,7 +197,6 @@ export const CursorState = Stampit()
 				marker.y = this.y
 				marker.alpha = 1
 			}
-
 			this.checkValidPlacement()
 			this.getSprite()
 			this.setSpriteTint()
@@ -291,15 +290,15 @@ export const CursorState = Stampit()
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
 			let hasEnoughMoney
 			// let overExistingTower = tileT
-			// debugger
 
 			if(isTower){
 				// console.log(GLOBALS.towers.towers[this.currentBrush].cost[0])
 				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost[0] < GLOBALS.player.gold
 			}
 
-			this.validPlacement = 	(isTowerFoundation && isTower && hasEnoughMoney) ||
-									(isTileAcceptable && !isTower && !this.pathFail)
+			let validPlacementTower = (isTowerFoundation && isTower && hasEnoughMoney)
+			let validPlacementBrush = (isTileAcceptable && !isTower && !this.pathFail)
+			this.validPlacement = validPlacementTower || validPlacementBrush
 		},
 		setOutOfBounds(marker){
 			if(this.sprite){
@@ -320,8 +319,8 @@ export const CursorState = Stampit()
 			container: container,
 			modes: ['basic', 'fancy', 'tower', null],
 			previous: {x: 0, y: 0},
-			brushType: 'simple',
-			currentBrush: 26,
+			brushType: null,
+			currentBrush: null,
 			validPlacement: true,
 			sprite: undefined,
 			attachObj: game,
@@ -336,7 +335,6 @@ export const Brush = Stampit()
 	.methods({
 		  paint(){
 		  	console.log('paint')
-
 		  	if(!this.validPlacement){
 		  		return
 		  	}
