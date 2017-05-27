@@ -30,6 +30,7 @@ export var Board = stampit()
 		},
 		buildTowerReferenceManager(){
 			this.towerReferenceManager = TowerReferenceManager()
+			this.towerReferenceManager.setup()
 			GLOBALS.towerReferenceManager = this.towerReferenceManager
 		},
 		getCollisionObjects(){

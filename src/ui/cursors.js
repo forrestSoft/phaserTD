@@ -98,7 +98,6 @@ export const Cursor = Stampit()
 		this.buildAndBind_cursor()
 	})
 
-
 export const CursorState = Stampit()
 	.methods({
 		setBrushType(type, i){
@@ -287,14 +286,18 @@ export const CursorState = Stampit()
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
 			let hasEnoughMoney
-			// let overExistingTower = tileT
+			// console.log('aadsf', game.input.activePointer.targetObject.sprite.data)
+			let overExistingTower //=  game.input.activePointer.targetObject.sprite.key
+			// console.log('t',tileC)
 
 			if(isTower){
-				// console.log(GLOBALS.towers.towers[this.currentBrush].cost[0])
+				overExistingTower = game.input.activePointer.targetObject &&
+									game.input.activePointer.targetObject.sprite &&
+									game.input.activePointer.targetObject.sprite.key == 'tank'
 				hasEnoughMoney = GLOBALS.towers.towers[this.currentBrush].cost[0] <= GLOBALS.player.gold
 			}
 
-			let validPlacementTower = (isTowerFoundation && isTower && hasEnoughMoney)
+			let validPlacementTower = (isTowerFoundation && isTower && hasEnoughMoney && !overExistingTower)
 			let validPlacementBrush = (isTileAcceptable && !isTower && !this.pathFail)
 			this.validPlacement = validPlacementTower || validPlacementBrush
 		},
@@ -346,9 +349,10 @@ export const Brush = Stampit()
 				}
 				switch (this.brushType){
 					case 'tower':
+						// debugger
 						this.lastBrushType = 'tower'
 						// debugger
-						GLOBALS.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush})
+						GLOBALS.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush, cursorTile})
 						// this.sprite.destroy()
 						break
 

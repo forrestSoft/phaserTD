@@ -32,27 +32,44 @@ export default class extends Phaser.Group {
 			this.towerSprite.inputEnabled = true
 			this.signalOver = new Phaser.Signal()
 			this.signalOut = new Phaser.Signal()
-			this.update = _.throttle(this.update.bind(this), 125)
+			this.update = _.throttle(this.update.bind(this), 250)
+			// something about the Phaser.Pointer object changing after window.focusLoss/focus
+			// which would cause cursors to lose events. or something
+			this.towerSprite.input.resetLocked = true //super fucking important
 		}
+
+		this.lastOverState = false
+		GLOBALS.signals.towerLeveled.add(this.clearLastOver, this)
+	}
+	clearLastOver(){
+		this.lastOverState = null
 	}
 	update (){
 		if(!this.data.doesInput){
 			return
 		}
 
-		if(this.towerSprite.input.pointerOver()){
+		let currentlyOver = this.towerSprite.input.pointerOver()
+		if(currentlyOver == this.lastOverState){
+			return
+		}
+
+		if(currentlyOver){
 			this.signalOver.dispatch()
 			this.showRange()
 		}else{
 			this.signalOut.dispatch()
 			this.hideRange()
 		}
+
+		this.lastOverState = currentlyOver
 	}
 	buildSprite(){
 		this.towerSprite = game.make.sprite(0,0,'tank', 'turret')
 		this.towerSprite.anchor.x = .5
 		this.towerSprite.anchor.y = .5
 		this.towerSprite.scale.setTo(.275, .45)
+		this.towerSprite.data.realTower = true
 		this.addChild(this.towerSprite)
 	}
 	buildColorDot(type, offset){

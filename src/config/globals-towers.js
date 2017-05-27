@@ -6,12 +6,12 @@ var towers = {
 			tint: 'ff0000',
 			bulletAngleOffset: 90,
 			index: 45,
-			firingInterval: 1500,
+			firingInterval: 1750,
 			rangeRadius: 40,
 			bulletSpeed: 150,
 			damageValue: 2.5,
 			damage: [2.5, 3.5, 5],
-			cost: [10, 17, 22]
+			cost: [10, 10, 17]
 		},
 		36: {
 			name: 'sniper',

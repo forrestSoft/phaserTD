@@ -127,9 +127,31 @@ export default class extends base_level {
 		GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
 		GLOBALS.signals.towerPlaced.add(this.loseGold, this)
 		GLOBALS.signals.towerLeveled.add(this.loseGold, this)
-		GLOBALS.signals.creepKilled.add(this.getGold, this)
+		GLOBALS.signals.creepKilled.add(this.creepKilled, this)
 
 		this.CollisionManager = CollisionManager()
+
+		game.onFocus.add(()=>{
+			// debugger
+			game.input.activePointer.dirty = true
+			// game.input.pointers.forEach((p)=>{
+			// 	console.log('p',p.position)
+			// 	p.dirty = true
+			// })
+		})
+
+		game.input.maxPointers = 1
+		game.input.setInteractiveCandidateHandler((pointer, candidates, favorite)=>{
+			for (var i = 0; i < candidates.length; i++)
+			{
+				if (candidates[i].sprite.key === 'tank')
+				{
+				    return candidates[i];
+				}
+			}
+			return favorite
+		}, this)
+
 		console.timeEnd('boot')
 	}
 	loseLife(){
@@ -143,8 +165,9 @@ export default class extends base_level {
 	loseGold(cost = 5){
 		GLOBALS.player.gold -= cost
 	}
-	getGold(gold = 1){
+	creepKilled(gold = 1){
 		GLOBALS.player.gold += gold
+		GLOBALS.player.score += (gold*GLOBALS.player.wave)
 	}
 
 	maskBoard (){
@@ -203,12 +226,15 @@ export default class extends base_level {
 		let life = GLOBALS.player.life
 		let gold = GLOBALS.player.gold
 		let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
-		let text = `life: ${life} t-: ${duration} gold: ${gold}`
+		let score = GLOBALS.player.score
+		let text = `life: ${life} gold: ${gold} score: ${score}`
+		// t-: ${duration}
 		game.debug.text(text,2,12)
 		this.game.time.advancedTiming = true
 		this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
 
 		let currentTower = GLOBALS.towerReferenceManager.getTower()
+		// console.log(currentTower)
 		if(currentTower != null){
 			let level = currentTower.level
 			let brush = currentTower.brush

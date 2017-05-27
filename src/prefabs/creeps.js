@@ -62,6 +62,7 @@ export const CreepManager = Manager.compose(Builder)
 			// console.group('wave')
 
 			this.team ++
+			GLOBALS.player.wave = this.team
 			// console.log('Team:', this.team)
 			this.checkDifficulty()
 			this.setNextCreepType()
@@ -82,7 +83,7 @@ export const CreepManager = Manager.compose(Builder)
 			this.nextCreepType = Phaser.Math.between(0,2)
 		},
 		nextWaveInterval(){
-			let i = Phaser.Math.random(1.25, 1.5)
+			let i = Phaser.Math.random(1.5, 2)
 			// console.log('next wave interval:', i) 
 			return i
 		},

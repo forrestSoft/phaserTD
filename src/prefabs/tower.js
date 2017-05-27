@@ -14,9 +14,9 @@ var Manager = Stampit()
 
 export const TowerManager = Manager.compose(Builder)
 	.methods({
-		addTower({x,y,brush,tint}){
+		addTower({x,y,brush,cursorTile}){
 			let cost = GLOBALS.towers.towers[brush].cost[0]
-			let tower =  Tower({x:x,y:y,brush:brush,tint:tint,group:this.group})
+			let tower =  Tower({x:x,y:y,brush:brush,cursorTile,group:this.group})
 			this.towers.push(tower)
 			this.addBullets(tower.weapon)
 			GLOBALS.signals.towerPlaced.dispatch(cost)
@@ -125,14 +125,19 @@ export const Tower = Stampit()
 			return this
 		},
 		over(){
+			console.log('o')
 			GLOBALS.towerReferenceManager.setTower(this)
 			this.tintTower()
 		},
 		notOver(){
+			console.log('no')
 			GLOBALS.towerReferenceManager.setTower(null)
+			this.tintTower(true)
 		},
 		out(){
-			this.tintTower(true)
+			// console.log('out')
+			// GLOBALS.towerReferenceManager.setTower(null)
+			// this.tintTower(true)
 		},
 		canUpgrade(){
 			let cost = GLOBALS.towers.towers[this.brush].cost[this.level]
@@ -244,7 +249,7 @@ export const Tower = Stampit()
 			this._reset = false
 		}
 	})
-	.init(function ({x,y,brush,tint,group}, {args, instance, stamp}) {
-		Object.assign(instance, {x,y,brush,tint,group})
+	.init(function ({x,y,brush,tint,cursorTile,group}, {args, instance, stamp}) {
+		Object.assign(instance, {x,y,brush,tint,group, cursorTile})
 		instance.buildTower()
 	})
