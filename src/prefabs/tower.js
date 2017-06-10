@@ -108,15 +108,8 @@ export const Tower = Stampit()
 				doesRange: true
 			})
 
-			// Object.assign(this.sprite, {
-			// 	anchor: {x: .6, y: .5},
-			// 	inputEnabled: true,
-			// })
-
 			this.group.addChild(this.sprite)
 
-			// this.sprite.events.onInputOver.add(this.over, this)
-			this.sprite.towerSprite.events.onInputOut.add(this.notOver, this)
 			this.sprite.towerSprite.events.onInputDown.add(this.menu, this)
 			this.sprite.signalOver.add(this.over, this)
 			this.sprite.signalOut.add(this.out, this)
@@ -125,19 +118,15 @@ export const Tower = Stampit()
 			return this
 		},
 		over(){
-			console.log('o')
-			GLOBALS.towerReferenceManager.setTower(this)
 			this.tintTower()
+			GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
 		},
 		notOver(){
-			console.log('no')
-			GLOBALS.towerReferenceManager.setTower(null)
 			this.tintTower(true)
 		},
 		out(){
-			// console.log('out')
-			// GLOBALS.towerReferenceManager.setTower(null)
-			// this.tintTower(true)
+			GLOBALS.signals.display.dispatch({type: 'towerOut', brush: 'null'})
+			this.tintTower(true)
 		},
 		canUpgrade(){
 			let cost = GLOBALS.towers.towers[this.brush].cost[this.level]
@@ -151,8 +140,7 @@ export const Tower = Stampit()
 			}
 		},
 		menu(){
-			console.log('menu')
-			if(!this.canUpgrade()){
+			if(!this.canUpgrade() }} GLOBALS.cursor.towerActive){
 				return
 			}
 			if(this.level < 3){
@@ -163,6 +151,8 @@ export const Tower = Stampit()
 			}else{
 				console.log('max')
 			}
+			this.tintTower()
+			GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
 		},
 		// over ride positioning based on world to based on sprite local + manual offset
 		tappedPreUpdate() {

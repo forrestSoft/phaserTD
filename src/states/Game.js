@@ -20,6 +20,7 @@ import {Board} from '../ui/board'
 import {Cursor, Brush} from '../ui/cursors'
 import {Palette} from '../ui/palette'
 import {TowerPalette} from '../ui/towerPalette'
+import {Display} from '../ui/display'
 import {CollisionManager} from '../engine/collisionManager'
 
 export default class extends base_level {
@@ -60,6 +61,9 @@ export default class extends base_level {
 			layers:this.layers,
 			state: this,
 			objects: this.objects
+		})
+		this.display = Display({
+			offset: {x:190, y: 130},
 		})
 		this.map = this.board.buildMap()
 
@@ -103,6 +107,7 @@ export default class extends base_level {
 		this.buildBG()
 
 		this.board.buildForCreate()
+		this.display.buildRenderer()
 
 		this.baseLayer = this.layers['background']
 
@@ -133,7 +138,7 @@ export default class extends base_level {
 
 		game.onFocus.add(()=>{
 			// debugger
-			game.input.activePointer.dirty = true
+			// game.input.activePointer.dirty = true
 			// game.input.pointers.forEach((p)=>{
 			// 	console.log('p',p.position)
 			// 	p.dirty = true
@@ -146,7 +151,7 @@ export default class extends base_level {
 			{
 				if (candidates[i].sprite.key === 'tank')
 				{
-				    return candidates[i];
+				    // return candidates[i];
 				}
 			}
 			return favorite
@@ -233,19 +238,19 @@ export default class extends base_level {
 		this.game.time.advancedTiming = true
 		this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
 
-		let currentTower = GLOBALS.towerReferenceManager.getTower()
-		// console.log(currentTower)
-		if(currentTower != null){
-			let level = currentTower.level
-			let brush = currentTower.brush
-			let data = GLOBALS.towers.towers[brush]
-			let cost = data.cost[level] || 'max'
-			let power = data.damage[level-1]
+		// let currentTower = GLOBALS.towerReferenceManager.getTower()
+		// // console.log(currentTower)
+		// if(currentTower != null){
+		// 	let level = currentTower.level
+		// 	let brush = currentTower.brush
+		// 	let data = GLOBALS.towers.towers[brush]
+		// 	let cost = data.cost[level] || 'max'
+		// 	let power = data.damage[level-1]
 
-			this.game.debug.text(`level: ${level}`, 50, 250, "#000000")
-			this.game.debug.text(`next level cost: ${cost}`, 50, 270, "#000000")
-			this.game.debug.text(`current power: ${power}`, 50, 290, "#000000")
-		}
+		// 	this.game.debug.text(`level: ${level}`, 50, 250, "#000000")
+		// 	this.game.debug.text(`next level cost: ${cost}`, 50, 270, "#000000")
+		// 	this.game.debug.text(`current power: ${power}`, 50, 290, "#000000")
+		// }
 	}
 
 	buildBG(){
@@ -277,14 +282,18 @@ export default class extends base_level {
 				"player": Player
 			},
 
-			signals: {}
+			signals: {},
+			cursor: {
+				towerActive: false
+			}
 		}
 
 		let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
 											 'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
-											 'towerLeveled','creepKilled'].forEach((name,i)=>{
+											 'towerLeveled','creepKilled', 'display', 'cursorActive'].forEach((name,i)=>{
 													tempGLOBALS.signals[name] = new Phaser.Signal()                  
 											 })
+
 
 		Object.assign(GLOBALS, tempGLOBALS)
 

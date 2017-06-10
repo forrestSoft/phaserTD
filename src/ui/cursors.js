@@ -132,6 +132,8 @@ export const CursorState = Stampit()
 			if(this.marker){
 				this.marker.clear()
 			}
+
+			GLOBALS.cursor.towerActive = false
 		},
 		setPathFail(fail){
 			if(fail){
@@ -208,6 +210,7 @@ export const CursorState = Stampit()
 				if(this.sprite){
 					this.sprite.destroy()
 					this.sprite = null
+					GLOBALS.cursor.towerActive = false
 				}
 				return
 			}
@@ -215,6 +218,7 @@ export const CursorState = Stampit()
 			if(this.brushType != this.lastBrushType && this.sprite){
 				this.sprite.destroy()
 				this.sprite = null
+				GLOBALS.cursor.towerActive = false
 			}
 
 			let spriteOffsetX = this.x
@@ -233,7 +237,7 @@ export const CursorState = Stampit()
 					case 'tower':
 						this.lastBrushType = 'tower'
 						let tower = GLOBALS.towers.towers[this.currentBrush]
-						// this.sprite = game.add.sprite(spriteOffsetX, spriteOffsetY , 'ms', this.currentBrush, this.container)
+
 						this.sprite = new TowerSprite({
 							x: spriteOffsetX,
 							y: spriteOffsetY, 
@@ -247,6 +251,8 @@ export const CursorState = Stampit()
 							doesRange: true
 						})
 						this.container.add(this.sprite)
+
+						GLOBALS.cursor.towerActive = true
 						break
 
 					case 'fancy':
@@ -255,11 +261,15 @@ export const CursorState = Stampit()
 						
 						this.lastBrushType = 'fancy'
 						game.currentFancyBrush = this.currentBrush
+
+						GLOBALS.cursor.towerActive = false
 						break
 
 					case 'simple':	
 						this.sprite = game.add.sprite(this.x,this.y, 'ms', this.currentBrush-1)
 						this.lastBrushType = 'basic'
+
+						GLOBALS.cursor.towerActive = false
 						break
 				}
 
@@ -286,9 +296,7 @@ export const CursorState = Stampit()
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
 			let hasEnoughMoney
-			// console.log('aadsf', game.input.activePointer.targetObject.sprite.data)
 			let overExistingTower //=  game.input.activePointer.targetObject.sprite.key
-			// console.log('t',tileC)
 
 			if(isTower){
 				overExistingTower = game.input.activePointer.targetObject &&
@@ -313,6 +321,8 @@ export const CursorState = Stampit()
 			}
 			marker.alpha = 0
 			this.previous = {x: -1, y: -1}
+
+			GLOBALS.cursor.towerActive = false
 		}
 	})
 	.init(function ({tileMap, container, marker}, {args, instance, stamp}) {
