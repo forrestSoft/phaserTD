@@ -140,7 +140,7 @@ export const Tower = Stampit()
 			}
 		},
 		menu(){
-			if(!this.canUpgrade() }} GLOBALS.cursor.towerActive){
+			if(!this.canUpgrade() || GLOBALS.cursor.towerActive){
 				return
 			}
 			if(this.level < 3){

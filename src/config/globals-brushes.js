@@ -62,13 +62,22 @@ var brushes = {
 					 'brownWall','brownWall','brownWall'],
 			size: [3,3],
 			name: 'upRight90'
+		},
+		{
+			sprite:['brownWall','straightDownB','brownWall',
+					 'straightDownA','straightDownB','brownWall',
+					 'brownWall','straightDownB','brownWall',
+					 'brownWall','straightDownB','brownWall'],
+			size: [3,4],
+			name: 'test'
 		}
 	],
 	brushMap: {
 		brownWall: 34,
 		straightDownA: 30,
 		straightDownB: 31
-	}
+	},
+	brushesWidth: 3
 }
 
 export default brushes
