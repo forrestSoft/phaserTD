@@ -387,6 +387,7 @@ export const Brush = Stampit()
 						break
 				}
 				this.checkValidPlacement()
+				this.brushType = null
 			}
 		}
 	})

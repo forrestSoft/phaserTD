@@ -22,16 +22,11 @@ let a = [...Array(boardHeight)].forEach((_,i)=>{
 
 	// arrays[boardHeight-1][i] = 33
 	arrays[i][0] = 33
-
-	
 })
 
 let b = [0, boardHeight-1].map((y,i)=>{
 	console.log(22,y,i)
-	// debugger
 	arrays[y].forEach((frame,x)=>{
-		// arrays[a][b]
-		// console.log(33, frame,x)
 		if(x == GLOBALS.entrance.column && y == 0){
 			arrays[y][x] = 0
 		}else{
@@ -39,6 +34,23 @@ let b = [0, boardHeight-1].map((y,i)=>{
 		}
 	})
 })
+
+//temp tower bases
+// col[1]
+arrays[4][1] = 35
+
+//col[2]
+arrays[2][2] = 35
+arrays[6][2] = 35
+
+//col[3]
+arrays[1][3] = 35
+arrays[2][3] = 35
+arrays[3][3] = 35
+arrays[4][3] = 35
+arrays[5][3] = 35
+arrays[6][3] = 35
+
 arrays[boardHeight -4][boardWidth-2] = 35
 collisionArray = [].concat.apply([], arrays)
 

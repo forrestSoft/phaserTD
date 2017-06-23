@@ -2,9 +2,19 @@ import Prefab from './prefab'
 
 import GLOBALS from '../config/globals'
 
+
+
 export default class extends Prefab {
     constructor (game_state, name, position, properties) {
         super(game_state, name, position, properties);
+        
+        if(!window.creepIDcount){
+            window.creepIDcount = 0
+        }
+
+        this.data.id = window.creepIDcount
+        window.creepIDcount++
+        this.data.beenHitBy = {}
         
         this.anchor.setTo(0.5);
         this.scale.setTo(0.666, 0.5);
@@ -37,8 +47,8 @@ export default class extends Prefab {
     }
 
     hit(damage = 1){
-        // console.log(`hit for ${damage}`)
         this.life -= damage
+        console.log(`hit for ${damage}, life left ${this.life}`, this.data.id)
         this.updateHealthMeter()
 
         if(this.life <= 0){

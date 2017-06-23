@@ -41,7 +41,7 @@ export const  CollisionManager = stampit()
 		},
 		collide(){
 			GLOBALS.splashes.forEach((a,i)=>{
-				if(a.frame > 1){
+				if(a.frame > 5){
 					GLOBALS.splashes[i].sprite.destroy()
 					GLOBALS.splashes.splice(i,1)
 					return
@@ -49,6 +49,7 @@ export const  CollisionManager = stampit()
 
 				a.frame++
 			})
+			console.log('--')
 
 			Object.keys(this.watchers).forEach((w)=>{
 				let values = this.arrangeValues(w)
@@ -86,6 +87,7 @@ export const  CollisionManager = stampit()
 		}
 	})
 	.init(function ({}, {args, instance, stamp}) {
+		window.splashID = 0
 		let proccessors = Proccessors()
 		Object.assign(instance, {
 			collisionSplashToCreep: proccessors.collisionSplashToCreep,
@@ -125,13 +127,18 @@ let Proccessors = stampit()
 			}
 			if(bullet.type == 45){
 				let splash = {
-					sprite: game.make.sprite(bullet.centerX, bullet.centerY-6,'ms', 32),
+					sprite: game.make.sprite(bullet.centerX, bullet.centerY,'ms', 32),
 					frame: 0
 				}
 				splash.sprite.anchor.setTo(0.5, 0.5)
-				splash.sprite.scale.setTo(1,1)
-				splash.alpha = 0
-				splash.sprite.damageValue = bullet.damageValue
+				splash.sprite.scale.setTo(1.5,1.5)
+				splash.x = bullet.centerX
+				splash.y = bullet.centerY
+				splash.sprite.data.id = window.splashID
+				window.splashID++
+				// splash.alpha = 0
+				splash.sprite.damageValue = bullet.damage[bullet.level-1]
+				console.log(111,bullet.damage[bullet.level])
 				game.physics.arcade.enable(splash.sprite)
 				splash.sprite.body.syncBounds = true
 				GLOBALS.groups.board.addChild(splash.sprite)
@@ -146,15 +153,27 @@ let Proccessors = stampit()
 				boom.animations.add('kaboom')
 				GLOBALS.groups.board.addChild(boom)
 				boom.play('kaboom', 30, false, true);
+			}else{
+				player.hit(bullet.damage[bullet.level])
 			}
 
 			bullet.kill()
 			bullet.body.x = 0
 			bullet.body.y = 0
-			player.hit(bullet.damage[bullet.level])
+			
 		},
 		collisionSplashToCreep (splash, creep){
-			creep.hit(splash.damageValue)
+			let sID = splash.data.id
+			// console.log(splash.data.id, creep.data.id,splash.damageValue,creep.data.beenHitBy[sID] == true)
+			if(creep.data.beenHitBy[sID] == true){
+				// console.log('already been hit by', sID, 'no damage')
+			}else{
+				// console.log('good hit', sID)
+				console.log(splash.data.id, creep.data.id,splash.damageValue, creep.data)
+				creep.hit(splash.damageValue)
+				Object.assign(creep.data.beenHitBy, {[sID]: true})
+			}
+			
 		}
 	})
 
