@@ -7,13 +7,8 @@ import GLOBALS from '../config/globals'
 export default class extends Prefab {
     constructor (game_state, name, position, properties) {
         super(game_state, name, position, properties);
-        
-        if(!window.creepIDcount){
-            window.creepIDcount = 0
-        }
 
-        this.data.id = window.creepIDcount
-        window.creepIDcount++
+        this.data.id = game_state.counters.creepID++
         this.data.beenHitBy = {}
         
         this.anchor.setTo(0.5);
@@ -22,6 +17,7 @@ export default class extends Prefab {
         this.walking_speed = +properties.walking_speed;
 
         this.game_state.game.physics.arcade.enable(this);
+        
         // change the size and position of the collision box
         this.body.setSize(8, 14, 8, 12);
         this.body.collideWorldBounds = true;

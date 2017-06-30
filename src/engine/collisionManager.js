@@ -134,8 +134,9 @@ let Proccessors = stampit()
 				splash.sprite.scale.setTo(1.5,1.5)
 				splash.x = bullet.centerX
 				splash.y = bullet.centerY
-				splash.sprite.data.id = window.splashID
-				window.splashID++
+
+				//this is a dumb way to access this
+				splash.sprite.data.id = game.state.states.Game.counters.splashID++
 				// splash.alpha = 0
 				splash.sprite.damageValue = bullet.damage[bullet.level-1]
 				console.log(111,bullet.damage[bullet.level])

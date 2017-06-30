@@ -89,6 +89,11 @@ export default class extends base_level {
 		this.signals = {
 			playerMove: new Phaser.Signal()
 		}
+
+		this.counters = {
+			creepID: 0,
+			splashID: 0
+		}
 	}
 	start(){
 		GLOBALS.signals.waveStart.dispatch()
