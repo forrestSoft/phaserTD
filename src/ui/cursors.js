@@ -17,7 +17,7 @@ export const Cursor = Stampit()
 		    this.container.add(this.marker)
 
 		    //fix me !!!
-		    this.container.y = -16
+		    // this.container.y = -16
 
 		    // game.input.pollRate = 2
 		    this.cursorState = CursorState.compose(Brush)({
@@ -30,6 +30,7 @@ export const Cursor = Stampit()
 		    GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
 		    GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
 		    GLOBALS.signals.outOfGame.add(this.cursorState.hideCursor, this.cursorState)
+		    GLOBALS.signals.rotate.add(this.cursorState.rotate, this.cursorState)
 		},
 		smallRect(){
 			this.marker.clear()
@@ -51,9 +52,11 @@ export const Cursor = Stampit()
 			let x,y
 
 			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
+				// debugger
 				if(!this.marker){
 					this.buildAndBind_cursor()
 				}
+
 				let x,y
 				x = game.input.activePointer.worldX
 				y = game.input.activePointer.worldY
@@ -136,6 +139,7 @@ export const CursorState = Stampit()
 			GLOBALS.cursor.towerActive = false
 		},
 		setPathFail(fail){
+			console.log('f',fail )
 			if(fail){
 				this.pathFail = true
 			}else{
@@ -163,31 +167,39 @@ export const CursorState = Stampit()
 			let  {tH, tW, globalOffset, height, width} = GLOBALS
 
 			//snap to grid
-			this.x = (Math.floor(x/ tH)) * tH
+			this.x = (Math.floor(x/ tH)) * tH - globalOffset.x
 			this.originalX = this.x
-			this.y = (Math.floor(y/tW)) * tW
+			this.y = (Math.floor(y/tW)) * tW - globalOffset.y
 			this.originalY = this.y
 
+			let cutOffY1 = (tH)
 			let cutOffY = ((height + 1) * tH) - ((size[0]+1)*tH)
+			let cutOffX1 = (tW)
 			let cutOffX = ((width + 1) * tW) - ((size[0]+1)*tW)
-			
-			if(cutOffX <= this.x){
+
+			// use the above x/y, unless
+			// - over the last/first row/col
+			// then snap
+			// console.log(this.x,this.y, globalOffset)
+
+			if(this.x >= cutOffX){
 				this.x = width*tH - ((size[0]+1)*tH)
-			}else if(this.x == globalOffset.x){
+			}else if(this.x <= globalOffset.x){
 				this.x = tH + globalOffset.x
 			}
 
 			if(cutOffY <= this.y){
-				this.y = height*tW - ((size[1])*tW)
-			}else if(this.y == globalOffset.y){
-				this.y = tW + globalOffset.y
+				this.y = height*tW - ((size[1]+1)*tW)
+			}else if(this.y <= globalOffset.y){
+				this.y = tW
 			}
 
 			this.tileX = (this.x/16) - (globalOffset.x / tW)
 			this.tileY = (this.y/16) - (globalOffset.y / tH)
 			let compareX = (this.x+globalOffset.x)
 			let compareY = (this.y+globalOffset.y)
-			
+			// console.log((this.x/16) ,globalOffset.x , tW)
+			// debugger
 			if((this.previous.x == compareX && this.previous.y == compareY)){
 				this.previous.x == compareX
 				this.previous.y == compareY
@@ -230,8 +242,7 @@ export const CursorState = Stampit()
 			}
 
 			if(!!this.sprite){
-				this.sprite.x = spriteOffsetX
-				this.sprite.y = spriteOffsetY
+				this.translateSprite()
 			}else{
 				switch (this.brushType){
 					case 'tower':
@@ -257,7 +268,13 @@ export const CursorState = Stampit()
 
 					case 'fancy':
 						this.sprite = game.make.sprite(this.x,this.y,game.fancyBrushSprites[this.currentBrush].generateTexture())
+						this.sprite.pivot.setTo(25,25)
+						// this.sprite.anchor.setTo(.5,.5)
+						this.sprite.boundsPadding = 0
 						this.container.add(this.sprite)
+						// this.sprite.x = this.x
+						// this.sprite.y = this.y
+						this.translateSprite()
 						
 						this.lastBrushType = 'fancy'
 						game.currentFancyBrush = this.currentBrush
@@ -276,9 +293,22 @@ export const CursorState = Stampit()
 				this.sprite.alpha = .75
 
 				this.sprite.update= ()=>{
+					game.debug.spriteBounds(this.group)
 					this.checkValidPlacement()
 					this.setSpriteTint()
 				}
+			}
+		},
+		translateSprite(){
+			this.sprite.x = this.x + 24
+			this.sprite.y = this.y + 24
+		},
+		rotate(){
+			this.sprite.rotation += Phaser.Math.degToRad(90)
+			if(this.rotationFactor == 3){
+				this.rotationFactor = 0
+			}else{
+				this.rotationFactor++
 			}
 		},
 		getBrushSize(){
@@ -325,7 +355,7 @@ export const CursorState = Stampit()
 			GLOBALS.cursor.towerActive = false
 		}
 	})
-	.init(function ({tileMap, container, marker}, {args, instance, stamp}) {
+	.init(function ({tileMap, container, marker, group}, {args, instance, stamp}) {
 		Object.assign(instance, {
 			container: container,
 			modes: ['basic', 'fancy', 'tower', null],
@@ -338,7 +368,9 @@ export const CursorState = Stampit()
 			tileMap: tileMap,
 			spriteKey: 'ms',
 			towerManager: GLOBALS.towerManager,
-			marker: marker
+			rotationFactor: 0,
+			marker: marker,
+			group
 		})
 	})
 
@@ -354,8 +386,8 @@ export const Brush = Stampit()
 				let baseLayer = game.tileMapLayers['collision']
 				
 				let cursorTile = {
-					x: baseLayer.getTileX(this.x-GLOBALS.globalOffset.x),
-					y: baseLayer.getTileY(this.y-GLOBALS.globalOffset.y)
+					x: baseLayer.getTileX(this.x),
+					y: baseLayer.getTileY(this.y)
 				}
 				switch (this.brushType){
 					case 'tower':
@@ -368,11 +400,16 @@ export const Brush = Stampit()
 
 					case 'fancy':
 						let brushData = GLOBALS.fancyBrushes[game.currentFancyBrush]
-
+						let newBrush = GLOBALS.rotateFancyBrush(game.currentFancyBrush, this.rotationFactor)
+						this.rotationFactor = 0
 						FancyBrush.brushSpriteLoop({
 							vars: {pW: brushData.size[0],pH: brushData.size[1]},
-							sprite: brushData.sprite,
+							sprite: newBrush,
 							command: ({x,y,tX,tY},sprite) => {
+								console.log(sprite, sprite=='none')
+								if(sprite == 'none'){
+									return
+								}
 								this.tileMap.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
 							}
 						})

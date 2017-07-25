@@ -37,19 +37,19 @@ let b = [0, boardHeight-1].map((y,i)=>{
 
 //temp tower bases
 // col[1]
-arrays[4][1] = 35
+// arrays[4][1] = 35
 
 //col[2]
-arrays[2][2] = 35
-arrays[6][2] = 35
+// arrays[2][2] = 35
+// arrays[6][2] = 35
 
 //col[3]
-arrays[1][3] = 35
-arrays[2][3] = 35
-arrays[3][3] = 35
-arrays[4][3] = 35
-arrays[5][3] = 35
-arrays[6][3] = 35
+// arrays[1][3] = 35
+// arrays[2][3] = 35
+// arrays[3][3] = 35
+// arrays[4][3] = 35
+// arrays[5][3] = 35
+// arrays[6][3] = 35
 
 arrays[boardHeight -4][boardWidth-2] = 35
 collisionArray = [].concat.apply([], arrays)

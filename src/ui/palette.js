@@ -5,6 +5,8 @@ import { buildBoundInputMask, highLightableGroup } from '../utils'
 import {FancyBrush} from './fancyBrush'
 import GLOBALS from '../config/globals'
 
+import Packer from '../ext/packer'
+
 export const Palette = Stampit()
 	.methods({
 		build( ){
@@ -41,6 +43,9 @@ export const Palette = Stampit()
 		},
 
 		buildFancyBrushes(){
+			let p = new Packer(12,20)
+			p.fit(GLOBALS.fancySortedSizes)
+
 			game.fancyBrushSprites = []
 			let brushGroup = game.add.group()
 			brushGroup.scale.setTo(.5,.5)
@@ -50,7 +55,11 @@ export const Palette = Stampit()
 			brushGroup.x = tw*(GLOBALS.width + 1)
 		    brushGroup.y = th
 
+		    let w = {x: 0, y: 0}
 			this.brushes.forEach((data,i)=>{
+				
+				// console.log(data.size)
+				let fit = GLOBALS.fancySortedSizes[i].fit
 				let group = new highLightableGroup({
 					game: game, 
 					parent: brushGroup, 
@@ -67,12 +76,78 @@ export const Palette = Stampit()
 					vars: {pW,pH},
 					sprite: data.sprite,
 					command: ({x,y}, sprite) => {
+						// console.log(sprite, sprite=='none')
+						if(sprite == 'none'){
+							return
+						}
 						group.addChild(game.make.sprite(x,y, 'ms', GLOBALS.brushMap[sprite]))
 					}
 				})
+				group.updateHitArea()
+				// console.log(GLOBALS.fancySortedSizes[i].fit)
+				// console.log(fit)
+				let tx = 0,ty = 0
+				// if(fit.x == 0 && fit.y == 0){
+				// 	console.log(1)
+				// 	tx = 0
+				// 	ty = 0
+				// }else{
+					ty = fit.y
+					tx = fit.x
+				// 	if(fit.x !== 0){
+				// 		console.log(GLOBALS.fancySortedSizes[i-1].fit)
+				// 		tx = fit.x + 1
+				// 	}
 
-				group.x = (i%pW)* (pW*th) + (i%pW*this.gridWiggle)
-				group.y = Math.floor(i/pH)*(pH*tw) + (Math.floor(i/pH)*this.gridWiggle)
+				// 	if(fit.y !== 0){
+				// 		ty = fit.y + 1
+				// 	}
+				// }
+				// console.log(fit)
+				// if(fit.y != 0){
+				// 	ty = GLOBALS.fancySortedSizes[i-1].fit.down.y +1
+				// }else{
+				// 	ty = fit.y
+				// }
+
+				// if(fit.x != 0){
+				// 	tx = GLOBALS.fancySortedSizes[i-1].fit.down.x +1
+				// }else{
+					// tx = fit.x
+				// }
+				// if(fit.y == 0){
+				// 	console.log(2)
+				// 	tx = GLOBALS.fancySortedSizes[i-1].fit.down.x +1
+				// 	ty = 0
+				// }else if(fit.x == 0){
+				// 	console.log(3)
+				// 	tx = 0
+				// 	ty = GLOBALS.fancySortedSizes[i-1].fit.down.y +1
+				// }else{
+				// 	tx = GLOBALS.fancySortedSizes[i].fit.x +1
+				// 	ty = GLOBALS.fancySortedSizes[i].fit.y +1
+				// }
+				// console.log('ww',tx,ty)
+				// console.log(fit.x,fit.y)
+				// console.log(fit)
+
+				// if(fit.x == 0 && fit.y != 0){
+				// 	// console.log('y', w.y)
+				// 	w.y++
+				// 	// w.x = 0
+				// }
+
+				// if(fit.y == 0 && fit.x != 0){
+				// 	// console.log('x', w.x)
+				// 	w.x++
+				// 	w.y = 0
+				// }
+				// console.log('f', fit.x, fit.y)
+				// console.log('w',w)
+				group.x = (tx * tw)
+				group.y = (ty * th)
+				// console.log(group.x,group.y, this.gridWiggle*w.x)
+				
 				game.fancyBrushSprites.push(group)
 				brushGroup.addChild(group)
 			})

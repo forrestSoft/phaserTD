@@ -23,10 +23,14 @@ import {TowerPalette} from '../ui/towerPalette'
 import {Display} from '../ui/display'
 import {CollisionManager} from '../engine/collisionManager'
 
+import GrowingPacker from '../ext/packer.growing'
+import Packer from '../ext/packer'
+
 export default class extends base_level {
 	init () {
 		console.time('boot')
 		this.buildDynamicGlobals()
+		window.GLOBALS = window.G = GLOBALS
 
 		this.level_data = this.cache.getJSON('level1');
 		this.globalOffset = GLOBALS.globalOffset
@@ -99,9 +103,7 @@ export default class extends base_level {
 		GLOBALS.signals.waveStart.dispatch()
 	}
 	create () {
-		let group_name, object_layer, collision_tiles, tile_dimensions, layerObj
-
-		GLOBALS.timers = {
+		G.timers = {
 			firstWave: game.time.create(false)
 		}
 
@@ -110,23 +112,27 @@ export default class extends base_level {
 
 		this.maskBoard()
 		this.buildBG()
-
 		this.board.buildForCreate()
 		this.display.buildRenderer()
 
-		this.baseLayer = this.layers['background']
-
-		this.palette = Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true})
-		// this.palette2 = Palette({ y: 0, x: 240})
-		this.towerPalette = TowerPalette().build()
+		Object.assign(this,{
+			baseLayer: this.layers['background'],
+			palette: Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true}),
+			// palette2: Palette({ y: 0, x: 240}),
+			towerPalette: TowerPalette().build(),
+			cursor: Cursor({p:this, group: this.groups.cursor}),
+			brush: Brush(),
+			CollisionManager: CollisionManager()
+		})
 
 		this.groups.board.addChild(this.groups.towers)
-		this.cursor = Cursor({p:this, group: this.groups.cursor})
 		this.groups.board.addChild(this.groups.cursor)
-
-		this.brush = Brush()
-
+		// game.inputMasks.board.events.onInputOver.add((e,i,p)=>{console.log(e,i,p)})
 		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
+		this.r = game.input.keyboard.addKey(Phaser.Keyboard.R);
+		this.r.onDown.add((key)=>{
+			GLOBALS.signals.rotate.dispatch()
+		})
 
 		window.g = this.game
 		window.t = this
@@ -134,12 +140,13 @@ export default class extends base_level {
 
 		GLOBALS.stars.get('creep').find_path_goal_spawn();
 
-		GLOBALS.signals.creepReachedGoal.add(this.loseLife, this)
-		GLOBALS.signals.towerPlaced.add(this.loseGold, this)
-		GLOBALS.signals.towerLeveled.add(this.loseGold, this)
-		GLOBALS.signals.creepKilled.add(this.creepKilled, this)
+		let s = GLOBALS.signals
+		s.creepReachedGoal.add(this.loseLife, this)
+		s.towerPlaced.add(this.loseGold, this)
+		s.towerLeveled.add(this.loseGold, this)
+		s.creepKilled.add(this.creepKilled, this)
 
-		this.CollisionManager = CollisionManager()
+		
 
 		game.onFocus.add(()=>{
 			// debugger
@@ -151,17 +158,6 @@ export default class extends base_level {
 		})
 
 		game.input.maxPointers = 1
-		game.input.setInteractiveCandidateHandler((pointer, candidates, favorite)=>{
-			for (var i = 0; i < candidates.length; i++)
-			{
-				if (candidates[i].sprite.key === 'tank')
-				{
-				    // return candidates[i];
-				}
-			}
-			return favorite
-		}, this)
-
 		console.timeEnd('boot')
 	}
 	loseLife(){
@@ -204,6 +200,7 @@ export default class extends base_level {
 		// this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
 	}
 	update () {
+
 		this.CollisionManager.collide()
 
 		GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
@@ -295,13 +292,11 @@ export default class extends base_level {
 
 		let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
 											 'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
-											 'towerLeveled','creepKilled', 'display', 'cursorActive'].forEach((name,i)=>{
+											 'towerLeveled','creepKilled', 'display', 'cursorActive',
+											 'rotate'].forEach((name,i)=>{
 													tempGLOBALS.signals[name] = new Phaser.Signal()                  
 											 })
 
-
 		Object.assign(GLOBALS, tempGLOBALS)
-
-		window.GLOBALS = GLOBALS
 	}
 }

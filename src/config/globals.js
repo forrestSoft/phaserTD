@@ -26,7 +26,7 @@ var globals = {
 	exit: {
 		row: 9
 	},
-	acceptableTiles: [-1,25,30,31,32],
+	acceptableTiles: [-1,25,30,31,32, -999,0],
 	unacceptableTiles: [30,31,34,44,45],
 	creeps: {
 		pool: 10

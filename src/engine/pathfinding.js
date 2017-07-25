@@ -8,8 +8,8 @@ import {FancyBrush} from '../ui/fancyBrush'
 
 import GLOBALS from '../config/globals'
 
-export const Pathfinders = stampit().
-	methods({
+export const Pathfinders = stampit()
+	.methods({
 		add (stars) {
 			if(!this.stars){
 				this.stars = {}
@@ -28,11 +28,10 @@ export const Pathfinders = stampit().
 		}
 	})
 
-export const Pathfinder =  stampit()
+export const Pathfinder = stampit()
 	.methods({
 		build({grid, acceptableTiles, tileDimenstions}){
 	        // this.easy_star.enableDiagonals()
-
 	        this.gridDimenstions = {row: grid.length, column: grid[0].length};
 	        this.tileDimenstions = tileDimenstions;
 
@@ -49,6 +48,7 @@ export const Pathfinder =  stampit()
 	                // if(grid[row][grid_column].index != -1){
 	                //     console.log(grid[row][grid_column].index)
 	                // }
+	                console.log(grid[row][grid_column].index)
 	                tilesIndexes[row][grid_column] = grid[row][grid_column].index;
 	            }
 	        }
@@ -91,7 +91,7 @@ export const Pathfinder =  stampit()
 	    },
 	    find_path_from_brush (origin, target, callback, context,x,y) {
 	        let grid = GLOBALS.currentCollisionLayer()
-	        let c = {x: x- GLOBALS.globalOffset.x, y: y-GLOBALS.globalOffset.y}
+	        let c = {x: x- GLOBALS.globalOffset.x, y: y}
 	        
 	        if(game.currentFancyBrush != undefined){
 	        	let brush = GLOBALS.fancyBrushes[game.currentFancyBrush]
@@ -115,7 +115,7 @@ export const Pathfinder =  stampit()
 
 				    	//overlapping existing piece, invalid position
 				    	let overlapping = (!outsideOfGrid && grid[mappedY][mappedX].index !== -1)
-
+				    	// console.log(outsideOfGrid, overlapping, sprite)
 				    	if(outsideOfGrid || overlapping){
 				    		console.log('early abort')
 				    		earlyAbort = true
@@ -126,6 +126,7 @@ export const Pathfinder =  stampit()
 				    	return true
 					}
 				})
+				console.log(grid)
 
 				if(earlyAbort){
 					this.call_callback_function(callback, context, null)

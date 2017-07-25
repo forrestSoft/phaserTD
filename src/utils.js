@@ -60,23 +60,27 @@ export class highLightableGroup extends Phaser.Group {
 
         this.callBack = _.debounce(this.isDownCallback.bind(this.context), 100)
     }
+    markerOn(){
+        this.marker.alpha = 1
+    }
     toggleMarker(p){
         console.log('toggle', p,this.marker.alpha)
         this.marker.alpha = p
     }
+
     update(){
         if(game.input.hitTest(this, game.input.activePointer, new Phaser.Point())){
             this.swap(this.marker, this.getTop())
             this.marker.alpha = 1
-
             if(game.input.activePointer.isDown){
-                // this.marker.alpha = 0
                 this.callBack(this.name)
-                // this.marker.alpha = 1
             }
         }else{
             this.marker.alpha = 0
         }
+    }
+    updateHitArea(){
+        this.hitArea = this.getBounds()
     }
 }
 
