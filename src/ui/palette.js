@@ -83,6 +83,7 @@ export const Palette = Stampit()
 				})
 				group.updateHitArea()
 				
+				let tx = fit.x,ty = fit.y
 				group.x = (tx * tw)
 				group.y = (ty * th)
 
