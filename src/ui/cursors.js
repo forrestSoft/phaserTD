@@ -432,7 +432,9 @@ export const Brush = Stampit()
 						break
 				}
 				this.checkValidPlacement()
-				this.brushType = null
+				if(!GLOBALS.player.ui.tileLock){
+					this.brushType = null
+				}
 			}
 		}
 	})

@@ -129,10 +129,9 @@ export default class extends base_level {
 		this.groups.board.addChild(this.groups.cursor)
 		// game.inputMasks.board.events.onInputOver.add((e,i,p)=>{console.log(e,i,p)})
 		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
-		this.r = game.input.keyboard.addKey(Phaser.Keyboard.R);
-		this.r.onDown.add((key)=>{
-			GLOBALS.signals.rotate.dispatch()
-		})
+
+		this.keys = {}
+		this.defineKeyHandlers()
 
 		window.g = this.game
 		window.t = this
@@ -145,6 +144,7 @@ export default class extends base_level {
 		s.towerPlaced.add(this.loseGold, this)
 		s.towerLeveled.add(this.loseGold, this)
 		s.creepKilled.add(this.creepKilled, this)
+		s.tileLockToggle.add(this.tileLockToggle, this)
 
 		
 
@@ -159,6 +159,10 @@ export default class extends base_level {
 
 		game.input.maxPointers = 1
 		console.timeEnd('boot')
+	}
+	tileLockToggle(){
+		let tileLock = GLOBALS.player.ui.tileLock
+		GLOBALS.player.ui.tileLock = (tileLock === 0 ? 1 : 0)
 	}
 	loseLife(){
 		GLOBALS.player.life --
@@ -193,6 +197,21 @@ export default class extends base_level {
 		// this.brush.setTile.apply(this, arguments)
 		// this.move_player.apply(this,arguments)
 		GLOBALS.signals.paintWithBrush.dispatch()
+	}
+
+	defineKeyHandlers (){
+		this.keys.r = game.input.keyboard.addKey(Phaser.Keyboard.R);
+		this.keys.r.onDown.add((key)=>{
+			GLOBALS.signals.rotate.dispatch()
+		})
+
+		this.keys.shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+		this.keys.shift.onDown.add((key)=>{
+			GLOBALS.signals.tileLockToggle.dispatch()
+		})
+		this.keys.shift.onUp.add((key)=>{
+			GLOBALS.signals.tileLockToggle.dispatch()
+		})
 	}
 
 	move_player () {
@@ -239,6 +258,9 @@ export default class extends base_level {
 		game.debug.text(text,2,12)
 		this.game.time.advancedTiming = true
 		this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
+
+		let text2 = `tile lock: ${GLOBALS.player.ui.tileLock}`
+		game.debug.text(text2, 4, 230)
 
 		// let currentTower = GLOBALS.towerReferenceManager.getTower()
 		// // console.log(currentTower)
@@ -293,7 +315,7 @@ export default class extends base_level {
 		let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
 											 'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
 											 'towerLeveled','creepKilled', 'display', 'cursorActive',
-											 'rotate'].forEach((name,i)=>{
+											 'rotate', 'tileLockToggle'].forEach((name,i)=>{
 													tempGLOBALS.signals[name] = new Phaser.Signal()                  
 											 })
 
