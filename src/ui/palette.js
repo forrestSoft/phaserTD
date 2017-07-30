@@ -11,35 +11,35 @@ export const Palette = Stampit()
 	.methods({
 		build( ){
 			let group = game.add.group()
-		    let brushes = this.brushes
-		    // let brushes = [28,32,33,34, 46,24]
-		    let tw,th,pW, l
-		    l = brushes.length
-		    tw = GLOBALS.tx
-		    th = GLOBALS.ty
-		    pW = 10
+			let brushes = this.brushes
+			// let brushes = [28,32,33,34, 46,24]
+			let tw,th,pW, l
+			l = brushes.length
+			tw = GLOBALS.tx
+			th = GLOBALS.ty
+			pW = 10
 
-		    const res = [...Array(l)].map((_, i) => {
-		    	let y = Math.floor(i/pW) * tw
-		    	let x = (i%pW)* th
-		    	let s = game.make.sprite(x,y, 'ms', brushes[i])
-		    	s.inputEnabled = true
-		    	s.events.onInputDown.add(this.changeTile,this)
-		    	group.addChild(s)
+			const res = [...Array(l)].map((_, i) => {
+				let y = Math.floor(i/pW) * tw
+				let x = (i%pW)* th
+				let s = game.make.sprite(x,y, 'ms', brushes[i])
+				s.inputEnabled = true
+				s.events.onInputDown.add(this.changeTile,this)
+				group.addChild(s)
 			  return s;
 			});
 
-		    group.x = tw*11 + this.xOffset
-		    group.y = th + this.yOffset
+			group.x = tw*11 + this.xOffset
+			group.y = th + this.yOffset
 
-		    let rect = {
-		      x: group.x,
-		      y: group.y,
-		      height: tw*pW,
-		      width: th*(l+1/2),
-		      objectToMask: group,
-		      name: 'palette'
-		    }
+			let rect = {
+			  x: group.x,
+			  y: group.y,
+			  height: tw*pW,
+			  width: th*(l+1/2),
+			  objectToMask: group,
+			  name: 'palette'
+			}
 		},
 
 		buildFancyBrushes(){
@@ -49,16 +49,15 @@ export const Palette = Stampit()
 			game.fancyBrushSprites = []
 			let brushGroup = game.add.group()
 			brushGroup.scale.setTo(.5,.5)
-		    const th = GLOBALS.tH
+			const th = GLOBALS.tH
 			const tw = GLOBALS.tW
 
 			brushGroup.x = tw*(GLOBALS.width + 1)
-		    brushGroup.y = th
+			brushGroup.y = th
 
-		    let w = {x: 0, y: 0}
+			let w = {x: 0, y: 0}
 			this.brushes.forEach((data,i)=>{
 				
-				// console.log(data.size)
 				let fit = GLOBALS.fancySortedSizes[i].fit
 				let group = new highLightableGroup({
 					game: game, 
@@ -75,8 +74,7 @@ export const Palette = Stampit()
 				FancyBrush.brushSpriteLoop({
 					vars: {pW,pH},
 					sprite: data.sprite,
-					command: ({x,y}, sprite) => {
-						// console.log(sprite, sprite=='none')
+					command: ({i,x,y}, sprite) => {
 						if(sprite == 'none'){
 							return
 						}
@@ -84,77 +82,20 @@ export const Palette = Stampit()
 					}
 				})
 				group.updateHitArea()
-				// console.log(GLOBALS.fancySortedSizes[i].fit)
-				// console.log(fit)
-				let tx = 0,ty = 0
-				// if(fit.x == 0 && fit.y == 0){
-				// 	console.log(1)
-				// 	tx = 0
-				// 	ty = 0
-				// }else{
-					ty = fit.y
-					tx = fit.x
-				// 	if(fit.x !== 0){
-				// 		console.log(GLOBALS.fancySortedSizes[i-1].fit)
-				// 		tx = fit.x + 1
-				// 	}
-
-				// 	if(fit.y !== 0){
-				// 		ty = fit.y + 1
-				// 	}
-				// }
-				// console.log(fit)
-				// if(fit.y != 0){
-				// 	ty = GLOBALS.fancySortedSizes[i-1].fit.down.y +1
-				// }else{
-				// 	ty = fit.y
-				// }
-
-				// if(fit.x != 0){
-				// 	tx = GLOBALS.fancySortedSizes[i-1].fit.down.x +1
-				// }else{
-					// tx = fit.x
-				// }
-				// if(fit.y == 0){
-				// 	console.log(2)
-				// 	tx = GLOBALS.fancySortedSizes[i-1].fit.down.x +1
-				// 	ty = 0
-				// }else if(fit.x == 0){
-				// 	console.log(3)
-				// 	tx = 0
-				// 	ty = GLOBALS.fancySortedSizes[i-1].fit.down.y +1
-				// }else{
-				// 	tx = GLOBALS.fancySortedSizes[i].fit.x +1
-				// 	ty = GLOBALS.fancySortedSizes[i].fit.y +1
-				// }
-				// console.log('ww',tx,ty)
-				// console.log(fit.x,fit.y)
-				// console.log(fit)
-
-				// if(fit.x == 0 && fit.y != 0){
-				// 	// console.log('y', w.y)
-				// 	w.y++
-				// 	// w.x = 0
-				// }
-
-				// if(fit.y == 0 && fit.x != 0){
-				// 	// console.log('x', w.x)
-				// 	w.x++
-				// 	w.y = 0
-				// }
-				// console.log('f', fit.x, fit.y)
-				// console.log('w',w)
+				
 				group.x = (tx * tw)
 				group.y = (ty * th)
-				// console.log(group.x,group.y, this.gridWiggle*w.x)
-				
+
 				game.fancyBrushSprites.push(group)
+				group.gSprite = group.generateTexture()
+				group.gSprite.x=0
+				group.gSprite.y=0
+
 				brushGroup.addChild(group)
 			})
 		},
 		isDownCallBack(brush){
 			this.changeBrushFancy(brush)
-			// debugger
 		},
 		changeBrushFancy(brush){
 			GLOBALS.signals.updateBrush.dispatch('fancy', brush)

@@ -47,24 +47,6 @@ export default class extends Phaser.Group {
 	}
 	update (){
 		return
-		// if(!this.data.doesInput){
-		// 	return
-		// }
-
-		// let currentlyOver = this.towerSprite.input.pointerOver()
-		// if(currentlyOver == this.lastOverState){
-		// 	return
-		// }
-
-		// if(currentlyOver){
-		// 	this.signalOver.dispatch()
-		// 	this.showRange()
-		// }else{
-		// 	this.signalOut.dispatch()
-		// 	this.hideRange()
-		// }
-
-		// this.lastOverState = currentlyOver
 	}
 	buildSprite(){
 		this.towerSprite = game.make.sprite(0,0,'tank', 'turret')

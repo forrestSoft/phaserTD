@@ -49,7 +49,6 @@ export const  CollisionManager = stampit()
 
 				a.frame++
 			})
-			console.log('--')
 
 			Object.keys(this.watchers).forEach((w)=>{
 				let values = this.arrangeValues(w)

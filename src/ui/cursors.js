@@ -13,6 +13,7 @@ export const Cursor = Stampit()
 			this.container = game.make.group()
 			this.group.add(this.container)
 			this.marker = game.make.graphics()
+			
 
 		    this.container.add(this.marker)
 
@@ -36,11 +37,11 @@ export const Cursor = Stampit()
 			this.marker.clear()
 			this.marker.lineStyle(2, 0xffffff, 1);
 		    this.marker.alpha = 1
-			this.marker.drawRect(0,0,16,16)
+			this.marker.drawRect(0,0,GLOBALS.tH,GLOBALS.tW)
 		},
 		largeRect(){
 			let size = GLOBALS.fancyBrushes[this.cursorState.currentBrush].size
-
+			console.log(size)
 			this.marker.clear()
 			this.marker.lineStyle(2, 0xffffff, 1);
 		    this.marker.alpha = 1
@@ -52,17 +53,20 @@ export const Cursor = Stampit()
 			let x,y
 
 			if(game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())){
+				// console.log(game.inputMasks.board.events.onInputOver)
 				// debugger
 				if(!this.marker){
 					this.buildAndBind_cursor()
 				}
 
 				let x,y
-				x = game.input.activePointer.worldX
-				y = game.input.activePointer.worldY
+				let offset = {x,y} = game.inputMasks.board.getBounds()
+				x = game.input.activePointer.worldX - offset.x
+				y = game.input.activePointer.worldY - offset.y
+
 
 				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker)
-
+				// console.log(nextCursorPosition)
 				if(nextCursorPosition === null){
 					return
 				}
@@ -77,7 +81,7 @@ export const Cursor = Stampit()
 				this.cursorState.checkValidPlacement()
 				if(validCursorType){
 					this.position = {x:0,y:0}
-					this.findFunction(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y)
+					this.findFunction(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y, this.cursorState.rotationFactor)
 				}				
 			}else if(this.marker){
 				this.cursorState.setOutOfBounds(this.marker)
@@ -88,6 +92,7 @@ export const Cursor = Stampit()
 			this.findFunction = _.debounce(GLOBALS.stars.get('cursor').find_path_from_brush.bind(GLOBALS.stars.get('cursor')), 75)
 		},
 		PathCalculated(path) {
+			console.log('p',path)
 			this.cursorState.setPathFail(!path)
 			this.cursorState.checkValidPlacement()
 			this.cursorState.setSpriteTint()
@@ -167,9 +172,10 @@ export const CursorState = Stampit()
 			let  {tH, tW, globalOffset, height, width} = GLOBALS
 
 			//snap to grid
-			this.x = (Math.floor(x/ tH)) * tH - globalOffset.x
+			this.x = (Math.floor(x/ tH) * tH)// - globalOffset.x
 			this.originalX = this.x
-			this.y = (Math.floor(y/tW)) * tW - globalOffset.y
+			this.y = (Math.floor(y/tW) * tW)// - globalOffset.y
+			// console.log('xy', (this.x/16), (this.y/16))
 			this.originalY = this.y
 
 			let cutOffY1 = (tH)
@@ -267,15 +273,17 @@ export const CursorState = Stampit()
 						break
 
 					case 'fancy':
-						this.sprite = game.make.sprite(this.x,this.y,game.fancyBrushSprites[this.currentBrush].generateTexture())
-						this.sprite.pivot.setTo(25,25)
-						// this.sprite.anchor.setTo(.5,.5)
+						// debugger
+						// console.log('qwe',this.marker.height, this.marker.width)
+						this.sprite = game.make.sprite( this.x, this.y ,game.fancyBrushSprites[this.currentBrush].generateTexture(), this.group)
 						this.sprite.boundsPadding = 0
-						this.container.add(this.sprite)
-						// this.sprite.x = this.x
-						// this.sprite.y = this.y
-						this.translateSprite()
+						// this.sprite.pivot.setTo(this.sprite.width * .5,this.sprite.height * .5)
+						this.sprite.anchor.setTo(.5,.5)
 						
+						this.translateSprite()
+						this.container.add(this.sprite)
+						this.sprite.alpha = 1
+
 						this.lastBrushType = 'fancy'
 						game.currentFancyBrush = this.currentBrush
 
@@ -296,15 +304,16 @@ export const CursorState = Stampit()
 					game.debug.spriteBounds(this.group)
 					this.checkValidPlacement()
 					this.setSpriteTint()
+					this.translateSprite()
 				}
 			}
 		},
 		translateSprite(){
-			this.sprite.x = this.x + 24
-			this.sprite.y = this.y + 24
+			this.sprite.x = this.x + this.marker.height/2  // + this.x //+ 33
+			this.sprite.y = this.y + this.marker.width/2 //+ 33
 		},
 		rotate(){
-			this.sprite.rotation += Phaser.Math.degToRad(90)
+			this.sprite.angle += 90
 			if(this.rotationFactor == 3){
 				this.rotationFactor = 0
 			}else{
@@ -321,10 +330,10 @@ export const CursorState = Stampit()
 		checkValidPlacement(){
 			let tileC = this.tileMap.getTile(this.tileX,this.tileY,'collision', true).index
 			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
-
 			let isTower = this.brushType == 'tower'
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC-1)
+
 			let hasEnoughMoney
 			let overExistingTower //=  game.input.activePointer.targetObject.sprite.key
 
@@ -391,9 +400,7 @@ export const Brush = Stampit()
 				}
 				switch (this.brushType){
 					case 'tower':
-						// debugger
 						this.lastBrushType = 'tower'
-						// debugger
 						GLOBALS.towerManager.addTower({x: this.x, y: this.y, brush: this.currentBrush, cursorTile})
 						// this.sprite.destroy()
 						break
@@ -405,12 +412,12 @@ export const Brush = Stampit()
 						FancyBrush.brushSpriteLoop({
 							vars: {pW: brushData.size[0],pH: brushData.size[1]},
 							sprite: newBrush,
-							command: ({x,y,tX,tY},sprite) => {
-								console.log(sprite, sprite=='none')
+							command: ({i,x,y,tX,tY},sprite) => {
 								if(sprite == 'none'){
 									return
 								}
-								this.tileMap.putTile(GLOBALS.brushMap[sprite]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
+								console.log(GLOBALS.brushMap[newBrush[i]])
+								this.tileMap.putTile(GLOBALS.brushMap[newBrush[i]]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
 							}
 						})
 						GLOBALS.stars.get('creep').setGrid(this.tileMap.layers[1].data)

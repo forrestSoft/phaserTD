@@ -12,7 +12,7 @@ export const FancyBrush = {
 			let tX = (i%vars.pW) 
 			let x = tX * GLOBALS.tH
 
-			command({x,y,tX, tY}, sprite[i])
+			command({i,x,y,tX, tY}, sprite[i])
 		});
 
 	},
