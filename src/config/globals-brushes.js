@@ -82,6 +82,10 @@ var brushes = {
 					 'none', 'brownWall', 'none',
 					 'brownWall', 'none', 'none'],
 			 size: [3,3]
+		},
+		{
+			sprite: ['brownWall'],
+			size: [1,1]
 		}
 
 	],
@@ -109,7 +113,7 @@ var brushes = {
 		})
 
 		if(CWRotFactor == 0){
-			console.log(c)
+			// console.log(c)
 			return [].concat(...c)
 		}
 
@@ -127,7 +131,7 @@ var brushes = {
 			finalArray = intermediateArray
 		})
 
-		console.log([].concat(...finalArray))
+		// console.log([].concat(...finalArray))
 		return [].concat(...finalArray)
 	}
 }

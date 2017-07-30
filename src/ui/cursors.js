@@ -41,7 +41,7 @@ export const Cursor = Stampit()
 		},
 		largeRect(){
 			let size = GLOBALS.fancyBrushes[this.cursorState.currentBrush].size
-			console.log(size)
+			// console.log(size)
 			this.marker.clear()
 			this.marker.lineStyle(2, 0xffffff, 1);
 		    this.marker.alpha = 1
@@ -92,7 +92,7 @@ export const Cursor = Stampit()
 			this.findFunction = _.debounce(GLOBALS.stars.get('cursor').find_path_from_brush.bind(GLOBALS.stars.get('cursor')), 75)
 		},
 		PathCalculated(path) {
-			console.log('p',path)
+			// console.log('p',path)
 			this.cursorState.setPathFail(!path)
 			this.cursorState.checkValidPlacement()
 			this.cursorState.setSpriteTint()
@@ -103,6 +103,8 @@ export const Cursor = Stampit()
 		instance.group = group
 		this._ff()
 		game.input.addMoveCallback(this.updateMarker, this);
+		// debugger
+		game.inputMasks.board.events.onInputOver.add(a => console.log(a), this)
 		this.buildAndBind_cursor()
 	})
 
@@ -144,7 +146,6 @@ export const CursorState = Stampit()
 			GLOBALS.cursor.towerActive = false
 		},
 		setPathFail(fail){
-			console.log('f',fail )
 			if(fail){
 				this.pathFail = true
 			}else{
@@ -416,7 +417,7 @@ export const Brush = Stampit()
 								if(sprite == 'none'){
 									return
 								}
-								console.log(GLOBALS.brushMap[newBrush[i]])
+								// console.log(GLOBALS.brushMap[newBrush[i]])
 								this.tileMap.putTile(GLOBALS.brushMap[newBrush[i]]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
 							}
 						})

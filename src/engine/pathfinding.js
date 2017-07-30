@@ -110,8 +110,8 @@ export const Pathfinder = stampit()
 						let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
 
 						//overlapping existing piece, invalid position
-						let overlapping = (!outsideOfGrid &&  ![-1, -999].includes(grid[mappedY][mappedX].index))
-						if(outsideOfGrid || overlapping){
+						// let overlapping = (!outsideOfGrid &&  ![-1, -999].includes(grid[mappedY][mappedX].index))
+						if(outsideOfGrid){
 							console.log('early abort')
 							earlyAbort = true
 							return false
@@ -120,7 +120,6 @@ export const Pathfinder = stampit()
 						return true
 					}
 				})
-				console.log(grid)
 
 				if(earlyAbort){
 					this.call_callback_function(callback, context, null)
