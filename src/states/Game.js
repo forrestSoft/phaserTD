@@ -22,6 +22,7 @@ import {Palette} from '../ui/palette'
 import {TowerPalette} from '../ui/towerPalette'
 import {Display} from '../ui/display'
 import {CollisionManager} from '../engine/collisionManager'
+import {DebugManager} from '../engine/phaserDebugger'
 
 import GrowingPacker from '../ext/packer.growing'
 import Packer from '../ext/packer'
@@ -31,6 +32,8 @@ export default class extends base_level {
 		console.time('boot')
 		this.buildDynamicGlobals()
 		window.GLOBALS = window.G = GLOBALS
+
+		GLOBALS.pd = DebugManager()
 
 		this.level_data = this.cache.getJSON('level1');
 		this.globalOffset = GLOBALS.globalOffset
@@ -107,6 +110,11 @@ export default class extends base_level {
 			firstWave: game.time.create(false)
 		}
 
+		GLOBALS.pd.add(()=>{
+			this.game.time.advancedTiming = true
+			this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
+		})
+
 		GLOBALS.timers.firstWave.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
 		GLOBALS.timers.firstWave.start()
 
@@ -141,21 +149,23 @@ export default class extends base_level {
 
 		let s = GLOBALS.signals
 		s.creepReachedGoal.add(this.loseLife, this)
+		s.creepKilled.add(this.creepKilled, this)
+		
 		s.towerPlaced.add(this.loseGold, this)
 		s.towerLeveled.add(this.loseGold, this)
-		s.creepKilled.add(this.creepKilled, this)
-		s.tileLockToggle.add(this.tileLockToggle, this)
-
-		
-
-		game.onFocus.add(()=>{
-			// debugger
-			// game.input.activePointer.dirty = true
-			// game.input.pointers.forEach((p)=>{
-			// 	console.log('p',p.position)
-			// 	p.dirty = true
-			// })
+		GLOBALS.pd.add(()=>{
+			let life = GLOBALS.player.life
+			let gold = GLOBALS.player.gold
+			let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
+			let score = GLOBALS.player.score
+			let text = `life: ${life} gold: ${gold} score: ${score}`
+			game.debug.text(text,2,12)
 		})
+
+		s.tileLockToggle.add(this.tileLockToggle, this)
+		GLOBALS.player.debug()
+
+		// game.onFocus.add(()=>{})
 
 		game.input.maxPointers = 1
 		console.timeEnd('boot')
@@ -226,48 +236,12 @@ export default class extends base_level {
 		try{
 			game.bullets[0].children.forEach((b,i)=>{
 				game.debug.body(game.bullets[0].children[i])
-				// game.debug.bodyInfo(game.bullets[0].children[i], 0,20)
 			})
 		}catch(e){}
-		try{
-			GLOBALS.groups.creeps.children.forEach((b,i)=>{
-				// game.debug.body(GLOBALS.groups.creeps.children[i])  
-			})
-			// game.debug.spriteInfo(game.bullets[0].children[0])
-			
-			// game.debug.spriteInfo(this.groups.board.children[5].children[0], 16,16)
-			// game.debug.spriteBounds(towers[0].sprite)
-			// game.debug.spriteInfo(towers[0].sprite, 16,16)
-		}catch(e){}
-		try{
-			// game.debug.spriteBounds(this.bg, 'ff0000')
-		}catch(e){}
-		let life = GLOBALS.player.life
-		let gold = GLOBALS.player.gold
-		let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
-		let score = GLOBALS.player.score
-		let text = `life: ${life} gold: ${gold} score: ${score}`
-		// t-: ${duration}
-		game.debug.text(text,2,12)
-		this.game.time.advancedTiming = true
-		this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
+		
 
-		let text2 = `tile lock: ${GLOBALS.player.ui.tileLock}`
-		game.debug.text(text2, 4, 230)
-
-		// let currentTower = GLOBALS.towerReferenceManager.getTower()
-		// // console.log(currentTower)
-		// if(currentTower != null){
-		// 	let level = currentTower.level
-		// 	let brush = currentTower.brush
-		// 	let data = GLOBALS.towers.towers[brush]
-		// 	let cost = data.cost[level] || 'max'
-		// 	let power = data.damage[level-1]
-
-		// 	this.game.debug.text(`level: ${level}`, 50, 250, "#000000")
-		// 	this.game.debug.text(`next level cost: ${cost}`, 50, 270, "#000000")
-		// 	this.game.debug.text(`current power: ${power}`, 50, 290, "#000000")
-		// }
+		let f = GLOBALS.pd.getFunctions()
+		f.forEach(g => g())
 	}
 
 	buildBG(){

@@ -260,13 +260,13 @@ export const CursorState = Stampit()
 						let tower = GLOBALS.towers.towers[this.currentBrush]
 
 						this.sprite = new TowerSprite({
-							x: spriteOffsetX,
-							y: spriteOffsetY, 
+							x: this.x,
+							y: this.y, 
 							key:'tank',
 							frame:'turret',
 							type: this.currentBrush,
 							offset:{ 
-								x:-2, y:0
+								x:0, y:0
 							},
 							angle: tower.displayAngle,
 							doesRange: true
