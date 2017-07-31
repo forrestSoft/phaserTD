@@ -16,7 +16,7 @@ export const TowerManager = Manager.compose(Builder)
 	.methods({
 		addTower({x,y,brush,cursorTile}){
 			let cost = GLOBALS.towers.towers[brush].cost[0]
-			let tower =  Tower({x:x,y:y,brush:brush,cursorTile,group:this.group})
+			let tower =  Tower({x:x+GLOBALS.globalOffset.x,y:y+GLOBALS.globalOffset.y,brush:brush,cursorTile,group:this.group})
 			this.towers.push(tower)
 			this.addBullets(tower.weapon)
 			GLOBALS.signals.towerPlaced.dispatch(cost)

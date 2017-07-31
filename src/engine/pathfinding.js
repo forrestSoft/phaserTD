@@ -87,7 +87,7 @@ export const Pathfinder = stampit()
 		},
 		find_path_from_brush (origin, target, callback, context,x,y, rotation) {
 			let grid = GLOBALS.currentCollisionLayer()
-			let c = {x: x- GLOBALS.globalOffset.x, y: y}
+			let c = {x: x - GLOBALS.globalOffset.x, y: y - GLOBALS.globalOffset.y}
 			
 			if(game.currentFancyBrush != undefined){
 				let brush = GLOBALS.fancyBrushes[game.currentFancyBrush]

@@ -80,8 +80,11 @@ export const Cursor = Stampit()
 				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
 				this.cursorState.checkValidPlacement()
 				if(validCursorType){
+					let xP = nextCursorPosition.x// - (GLOBALS.globalOffset.x)
+					let yP = nextCursorPosition.y// - (GLOBALS.globalOffset.y)
+					console.log(xP,nextCursorPosition.x,yP,nextCursorPosition.y)
 					this.position = {x:0,y:0}
-					this.findFunction(null,null, this.PathCalculated, this,nextCursorPosition.x,nextCursorPosition.y, this.cursorState.rotationFactor)
+					this.findFunction(null,null, this.PathCalculated, this,xP,yP, this.cursorState.rotationFactor)
 				}				
 			}else if(this.marker){
 				this.cursorState.setOutOfBounds(this.marker)
@@ -201,7 +204,7 @@ export const CursorState = Stampit()
 				this.y = tW
 			}
 
-			this.tileX = (this.x/16) - (globalOffset.x / tW)
+			this.tileX = (this.x/16) - 1//(globalOffset.x / tW)
 			this.tileY = (this.y/16) - (globalOffset.y / tH)
 			let compareX = (this.x+globalOffset.x)
 			let compareY = (this.y+globalOffset.y)
@@ -329,7 +332,8 @@ export const CursorState = Stampit()
 			}
 		},
 		checkValidPlacement(){
-			let tileC = this.tileMap.getTile(this.tileX,this.tileY,'collision', true).index
+			console.log(this.tileX, this.tileY)
+			let tileC = this.tileMap.getTile(this.tileX+1,this.tileY+1,'collision', true).index
 			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
 			let isTower = this.brushType == 'tower'
 			let isTowerFoundation = (GLOBALS.towerFoundation == tileC)

@@ -194,8 +194,6 @@ export default class extends base_level {
 	}
 
 	onClick (point, event){
-		// this.brush.setTile.apply(this, arguments)
-		// this.move_player.apply(this,arguments)
 		GLOBALS.signals.paintWithBrush.dispatch()
 	}
 
@@ -214,12 +212,7 @@ export default class extends base_level {
 		})
 	}
 
-	move_player () {
-		// console.log('mp', this.getPointFrom('mouse'))
-		// this.signals.playerMove.dispatch(this.getPointFrom('mouse'))
-	}
 	update () {
-
 		this.CollisionManager.collide()
 
 		GLOBALS.groups.creeps.sort('y', Phaser.Group.SORT_ASCENDING);
