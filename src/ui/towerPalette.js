@@ -42,7 +42,7 @@ let base = Stampit()
 				s.towerSprite.inputEnabled = true
 				s.towerSprite.events.onInputDown.add(this.setTower,this)
 				s.towerSprite.events.onInputOver.add(this.setCursor,this)
-				s.towerSprite.events.onInputOut.add(this.clearCursor,this)
+				s.towerSprite.events.onInputOut.add(this.clearAndEmpty,this)
 
 				group.addChild(s)
 				group.sendToBack(s)
@@ -52,7 +52,7 @@ let base = Stampit()
 
 			group.sendToBack(g)
 			group.x = tw*11+16
-			group.y = th*8
+			group.y = th*11
 
 			this.attach()
 
@@ -68,13 +68,35 @@ let base = Stampit()
 
 		setTower(sprite, pointer){
 			GLOBALS.signals.updateBrush.dispatch('tower', sprite.parent.data.type)
+			this.towerSet = true
 		},
 
+		clearAndEmpty(){
+			this.clearCursor()
+
+			if(this.towerSet){
+				return 
+			}
+
+			let lines = {}
+			GLOBALS.reactUI.setState({tower: lines})
+		},
+		
 		setCursor(sprite, pointer){
 			let {x,y} = sprite.parent.position
 			let {tW:width,tH:height} = GLOBALS
 			this.updateCursor({x:(x-GLOBALS.tW/2),y:y-(GLOBALS.tH/2),width,height})
 			GLOBALS.towerReferenceManager.setTower(sprite.parent)
+
+			console.log(sprite.parent)
+			let towerData = sprite.parent.data.tower
+			let level = sprite.parent.data.level
+			let lines = {
+					damage: `damage: ${towerData.damage[level-1 || 0]}`,
+					level: `level: ${level || 'none'}`,
+					next: `level up cost: ${towerData.cost[level] || 'max'}`
+				}
+			GLOBALS.reactUI.setState({tower: lines})
 			// console.log(sprite.data.index)
 
 		}

@@ -43,7 +43,7 @@ export const Palette = Stampit()
 		},
 
 		buildFancyBrushes(){
-			let p = new Packer(12,20)
+			let p = new Packer(8,20)
 			p.fit(GLOBALS.fancySortedSizes)
 
 			game.fancyBrushSprites = []

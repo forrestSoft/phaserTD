@@ -7,6 +7,7 @@ var player = {
 			tileLock: 0
 		},
 		debug: function(){
+			return
 			GLOBALS.pd.add(()=>{
 				let text2 = `tile lock: ${GLOBALS.player.ui.tileLock}`
 				game.debug.text(text2, 4, 230)

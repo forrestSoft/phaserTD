@@ -11,6 +11,9 @@ var p2 = path.join(phaserModule, 'build/custom/p2.js')
 var stampit = path.join(__dirname, '/node_modules/stampit/dist/stampit.full.js')
 var underscore = path.join(__dirname, '/node_modules/underscore/underscore.js')
 
+var react = path.join(__dirname, '/node_modules/react/dist/react-with-addons.js')
+var reactDom = path.join(__dirname, '/node_modules/react-dom/dist/react-dom.js')
+
 var definePlugin = new webpack.DefinePlugin({
   __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'true'))
 })
@@ -44,11 +47,20 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /.jsx?$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        query: {
+          presets: ['es2015', 'react', 'stage-2']
+        }
+      },
       { test: /\.js$/, use: ['babel-loader'], include: path.join(__dirname, 'src') },
       { test: /pixi\.js/, use: ['expose-loader?PIXI'] },
       { test: /phaser-split\.js$/, use: ['expose-loader?Phaser'] },
       { test: /p2\.js/, use: ['expose-loader?p2'] },
-      { test: /stampit\.full\.js$/, use: ['expose-loader?Stampit'] }
+      { test: /stampit\.full\.js$/, use: ['expose-loader?Stampit'] },
+
     ]
   },
   node: {
@@ -62,7 +74,9 @@ module.exports = {
       'pixi': pixi,
       'p2': p2,
       'stampit': stampit,
-      'underscore': underscore
+      'underscore': underscore,
+      'react': react,
+      'reactDom': reactDom
     }
   },
   stats: {

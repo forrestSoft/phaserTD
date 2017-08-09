@@ -27,8 +27,12 @@ import {DebugManager} from '../engine/phaserDebugger'
 import GrowingPacker from '../ext/packer.growing'
 import Packer from '../ext/packer'
 
+import {App} from '../react/app.jsx' 
+
 export default class extends base_level {
 	init () {
+		
+
 		console.time('boot')
 		this.buildDynamicGlobals()
 		window.GLOBALS = window.G = GLOBALS
@@ -106,14 +110,13 @@ export default class extends base_level {
 		GLOBALS.signals.waveStart.dispatch()
 	}
 	create () {
+		GLOBALS.reactUI = this.reactUI = App()
+
 		G.timers = {
 			firstWave: game.time.create(false)
 		}
 
-		GLOBALS.pd.add(()=>{
-			this.game.time.advancedTiming = true
-			this.game.debug.text(this.game.time.fps || '--', 2, 280, "#000000")
-		})
+		this.game.time.advancedTiming = true
 
 		GLOBALS.timers.firstWave.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
 		GLOBALS.timers.firstWave.start()
@@ -173,9 +176,11 @@ export default class extends base_level {
 	tileLockToggle(){
 		let tileLock = GLOBALS.player.ui.tileLock
 		GLOBALS.player.ui.tileLock = (tileLock === 0 ? 1 : 0)
+		this.reactUI.setState({tileLock: GLOBALS.player.ui.tileLock})
 	}
 	loseLife(){
 		GLOBALS.player.life --
+		this.reactUI.setState({life: GLOBALS.player.life})
 
 		if(GLOBALS.player.life <= 0){
 			console.warn('you are dead')
@@ -184,10 +189,12 @@ export default class extends base_level {
 	}
 	loseGold(cost = 5){
 		GLOBALS.player.gold -= cost
+		this.reactUI.setState({gold: GLOBALS.player.gold})
 	}
 	creepKilled(gold = 1){
 		GLOBALS.player.gold += gold
 		GLOBALS.player.score += (gold*GLOBALS.player.wave)
+		this.reactUI.setState({gold: GLOBALS.player.gold})
 	}
 
 	maskBoard (){
@@ -239,6 +246,8 @@ export default class extends base_level {
 			})
 		}catch(e){}
 		
+		this.reactUI.setState({FPS: this.game.time.fps})
+		// console.log(this.game.time.fps)
 
 		let f = GLOBALS.pd.getFunctions()
 		f.forEach(g => g())

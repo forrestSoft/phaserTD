@@ -16,8 +16,8 @@ var globals = {
 	tH: 16,
 	tW: 16,
 	grid_dimensions: {
-		row: this.height, 
-		column: this.width
+		row: 12, 
+		column: 11
 	},
 	entrance: {
 		row: 0,

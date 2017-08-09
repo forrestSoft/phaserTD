@@ -52,6 +52,7 @@ export const Pathfinder = stampit()
 		},
 
 		setGrid(worldGrid){
+			console.log(this.getGrid(worldGrid))
 			this.star.setGrid(this.getGrid(worldGrid))
 		},
 
@@ -127,8 +128,11 @@ export const Pathfinder = stampit()
 				}
 
 			}else{
+				console.log(1)
 				let t =  Points.get_coord_from_point(c)
+				console.log(2.1,c)
 				if(Points.outside_grid(t)){
+					console.log(2)
 					return
 				}
 
