@@ -9,78 +9,63 @@ var pixi = path.join(phaserModule, 'build/custom/pixi.js')
 var p2 = path.join(phaserModule, 'build/custom/p2.js')
 
 var stampit = path.join(__dirname, '/node_modules/stampit/dist/stampit.full.js')
-var underscore = path.join(__dirname, '/node_modules/underscore/underscore.js')
-
-var react = path.join(__dirname, '/node_modules/react/dist/react-with-addons.js')
-var reactDom = path.join(__dirname, '/node_modules/react-dom/dist/react-dom.js')
-
-var definePlugin = new webpack.DefinePlugin({
-  __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'true'))
-})
 
 module.exports = {
-  entry: {
-    app: [
-      'babel-polyfill',
-      path.resolve(__dirname, 'src/main.js')
-    ],
-    vendor: ['pixi', 'p2', 'phaser', 'webfontloader']
-  },
-  devtool: 'cheap-source-map',
-  output: {
-    pathinfo: true,
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: './dist/',
-    filename: 'bundle.js'
-  },
-  watch: true,
-  plugins: [
-    definePlugin,
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */}),
-    new BrowserSyncPlugin({
-      host: process.env.IP || 'localhost',
-      port: process.env.PORT || 3000,
-      server: {
-        baseDir: ['./', './build']
-      }
-    })
-  ],
-  module: {
-    rules: [
-      {
+	entry: {
+		app: [
+			'babel-polyfill',
+			path.resolve(__dirname, 'src/main.js')
+		],
+		// vendor: ['pixi', 'p2', 'phaser']
+	},
+	output: {
+		pathinfo: true,
+		path: path.resolve(__dirname, 'dist'),
+		publicPath: './dist/',
+		filename: 'bundle.js'
+	},
+	watch: true,
+	plugins: [
+		new BrowserSyncPlugin({
+			host: process.env.IP || 'localhost',
+			port: process.env.PORT || 3000,
+			server: {
+				baseDir: ['./', './build']
+			}
+		})
+	],
+	module: {
+	  rules: [
+	    {
+	      test: /\.js$/,
+	      exclude: /(node_modules|bower_components)/,
+	      use: {
+	        loader: 'babel-loader',
+	        options: {
+	          presets: ['react','stage-2'],
+	          // plugins: [require('babel-plugin-transform-object-rest-spread')]
+	        }
+	      }
+	    },
+	    {
         test: /.jsx?$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'react', 'stage-2']
+          presets: ['react', 'stage-2']
         }
       },
-      { test: /\.js$/, use: ['babel-loader'], include: path.join(__dirname, 'src') },
-      { test: /pixi\.js/, use: ['expose-loader?PIXI'] },
-      { test: /phaser-split\.js$/, use: ['expose-loader?Phaser'] },
-      { test: /p2\.js/, use: ['expose-loader?p2'] },
-      { test: /stampit\.full\.js$/, use: ['expose-loader?Stampit'] },
-
-    ]
-  },
-  node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
-  },
-  resolve: {
-    alias: {
-      'phaser': phaser,
-      'pixi': pixi,
-      'p2': p2,
-      'stampit': stampit,
-      'underscore': underscore,
-      'react': react,
-      'reactDom': reactDom
+      { test: /pixi\.js/, use: ['expose-loader?PIXI']},
+      { test: /p2\.js/, use: ['expose-loader?p2']},
+      { test: /phaser-split\.js/, use: ['expose-loader?Phaser']},
+      // { test: /stampit\.full\.js$/, use: ['expose-loader?Stampit'] }
+	  ]
+	},
+	resolve: {
+        alias: {
+            pixi: pixi,
+            p2: p2,
+            phaser: phaser
+        }
     }
-  },
-  stats: {
-    timings: true,
-    maxModules: 400
-  }
 }

@@ -1,6 +1,6 @@
 import stampit from 'stampit'
 import React from 'react';
-import ReactDOM from 'reactDom';
+import ReactDOM from 'react-dom';
 
 import GLOBALS from '../config/globals'
 
