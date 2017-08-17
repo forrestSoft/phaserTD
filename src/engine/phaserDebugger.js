@@ -5,7 +5,7 @@ import {Points} from '../utils'
 
 import GLOBALS from '../config/globals'
 
-export const DebugManager = Stampit()
+export const DebugManager = stampit()
 	.methods({
 		add(f){
 			this.functions.push(f)

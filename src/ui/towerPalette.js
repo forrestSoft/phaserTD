@@ -7,7 +7,7 @@ import {MiniCursor, GroupManager} from './cursors'
 import TowerSprite from '../prefabs/towerSprite'
 import GLOBALS from '../config/globals'
 
-let base = Stampit()
+let base = stampit()
 	.methods({
 		build( ){
 			let group = this.getGroup() || game.add.group()

@@ -10,7 +10,7 @@ import Weapon from './weapon'
 import GLOBALS from '../config/globals'
 
 
-var Manager = Stampit()
+var Manager = stampit()
 
 export const TowerManager = Manager.compose(Builder)
 	.methods({
@@ -36,7 +36,7 @@ export const TowerManager = Manager.compose(Builder)
 		window.towers = instance.towers
 	})
 
-export const Tower = Stampit()
+export const Tower = stampit()
 	.methods({
 		buildBullets(){
 			this.weapon = game.plugins.add(Weapon);

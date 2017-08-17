@@ -2,7 +2,7 @@ import stampit from 'stampit'
 import Phaser from 'phaser'
 import GLOBALS from '../config/globals'
 
-export const Display = Stampit()
+export const Display = stampit()
 	.methods({
 		buildRenderer(){
 			this.group = game.add.group(undefined,'display')

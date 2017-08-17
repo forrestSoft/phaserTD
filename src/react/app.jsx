@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 import GLOBALS from '../config/globals'
 
-export const App = Stampit()
+export const App = stampit()
 	.methods({
 		
 	})

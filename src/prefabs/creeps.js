@@ -5,7 +5,7 @@ import {Points} from '../utils'
 
 import GLOBALS from '../config/globals'
 
-export const Builder = Stampit()
+export const Builder = stampit()
 	.methods({
 		create_object (object) {
 			let object_y, position, prefab;
@@ -18,7 +18,7 @@ export const Builder = Stampit()
 		}
 	})
 
-export const Manager = Stampit()
+export const Manager = stampit()
 
 export const CreepManager = Manager.compose(Builder)
 	.methods({

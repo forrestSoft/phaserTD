@@ -7,7 +7,7 @@ import TowerSprite from '../prefabs/towerSprite'
 
 import GLOBALS from '../config/globals'
 
-export const Cursor = Stampit()
+export const Cursor = stampit()
 	.methods({
 		buildAndBind_cursor (){
 			this.container = game.make.group()
@@ -111,7 +111,7 @@ export const Cursor = Stampit()
 		this.buildAndBind_cursor()
 	})
 
-export const CursorState = Stampit()
+export const CursorState = stampit()
 	.methods({
 		setBrushType(type, i){
 			if(!this.modes.includes(type)){
@@ -390,7 +390,7 @@ export const CursorState = Stampit()
 		})
 	})
 
-export const Brush = Stampit()
+export const Brush = stampit()
 	.methods({
 		  paint(){
 		  	console.log('paint')
@@ -445,7 +445,7 @@ export const Brush = Stampit()
 		}
 	})
 
-export const MiniCursor = Stampit()
+export const MiniCursor = stampit()
 	.methods({
 		buildCursor(){
 			this.marker = game.add.graphics();
@@ -466,7 +466,7 @@ export const MiniCursor = Stampit()
 
 	})
 
-export const GroupManager = Stampit()
+export const GroupManager = stampit()
 	.methods({
 		getGroup(){
 			if(!this.group){

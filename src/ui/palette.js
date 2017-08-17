@@ -7,7 +7,7 @@ import GLOBALS from '../config/globals'
 
 import Packer from '../ext/packer'
 
-export const Palette = Stampit()
+export const Palette = stampit()
 	.methods({
 		build( ){
 			let group = game.add.group()
