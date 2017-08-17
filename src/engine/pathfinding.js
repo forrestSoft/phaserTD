@@ -104,9 +104,9 @@ export const Pathfinder = stampit()
 					sprite: rotatedBrush,
 					command: ({x,y,tX, tY}, sprite) => {
 						let t =  Points.get_coord_from_point(c)	
-						let mappedX = t.column+tX
-						let mappedY = t.row+tY
-
+						let mappedX = t.column
+						let mappedY = t.row+2
+						console.log('y',mappedX, mappedY)
 						// tile is outside of grid, invalid position
 						let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
 

@@ -80,9 +80,9 @@ export const Cursor = Stampit()
 				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
 				this.cursorState.checkValidPlacement()
 				if(validCursorType){
-					let xP = nextCursorPosition.x// - (GLOBALS.globalOffset.x)
-					let yP = nextCursorPosition.y// - (GLOBALS.globalOffset.y)
-					console.log(xP,nextCursorPosition.x,yP,nextCursorPosition.y)
+					let xP = nextCursorPosition.x - (GLOBALS.globalOffset.x)
+					let yP = nextCursorPosition.y - (GLOBALS.globalOffset.y)
+					console.log('123432122',xP,nextCursorPosition.x/16,yP,nextCursorPosition.y/16)
 					this.position = {x:0,y:0}
 					this.findFunction(null,null, this.PathCalculated, this,xP,yP, this.cursorState.rotationFactor)
 				}				
@@ -95,7 +95,7 @@ export const Cursor = Stampit()
 			this.findFunction = _.debounce(GLOBALS.stars.get('cursor').find_path_from_brush.bind(GLOBALS.stars.get('cursor')), 75)
 		},
 		PathCalculated(path) {
-			// console.log('p',path)
+			console.log('p',path)
 			this.cursorState.setPathFail(!path)
 			this.cursorState.checkValidPlacement()
 			this.cursorState.setSpriteTint()
@@ -179,27 +179,29 @@ export const CursorState = Stampit()
 			this.x = (Math.floor(x/ tH) * tH)// - globalOffset.x
 			this.originalX = this.x
 			this.y = (Math.floor(y/tW) * tW)// - globalOffset.y
-			// console.log('xy', (this.x/16), (this.y/16))
+			console.log('xy', (this.x/16), (this.y/16))
 			this.originalY = this.y
 
 			let cutOffY1 = (tH)
 			let cutOffY = ((height + 1) * tH) - ((size[0]+1)*tH)
 			let cutOffX1 = (tW)
 			let cutOffX = ((width + 1) * tW) - ((size[0]+1)*tW)
-
+			// console.log(cutOffX1, cutOffX, cutOffY1, cutOffY)
 			// use the above x/y, unless
 			// - over the last/first row/col
 			// then snap
 			// console.log(this.x,this.y, globalOffset)
 
 			if(this.x >= cutOffX){
-				this.x = width*tH - ((size[0]+1)*tH)
+				console.log('123', width*tH, size[0]*tH, width*tH - size[0]*tH)
+				this.x = width*tH - ((size[0])*tH)
 			}else if(this.x <= globalOffset.x){
 				this.x = tH + globalOffset.x
 			}
 
 			if(cutOffY <= this.y){
 				this.y = height*tW - ((size[1]+1)*tW)
+				console.log(333, height*tW, size[1]*tW, height*tW-size[1]*tH)
 			}else if(this.y <= globalOffset.y){
 				this.y = tW
 			}
@@ -332,7 +334,7 @@ export const CursorState = Stampit()
 			}
 		},
 		checkValidPlacement(){
-			console.log(this.tileX, this.tileY)
+			// console.log(this.tileX, this.tileY)
 			let tileC = this.tileMap.getTile(this.tileX+1,this.tileY+1,'collision', true).index
 			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
 			let isTower = this.brushType == 'tower'
