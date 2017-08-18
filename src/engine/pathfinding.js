@@ -98,15 +98,16 @@ export const Pathfinder = stampit()
 				const tw = 16
 				let pW = brush.size[0]
 				let pH = brush.size[1]
-				
+				console.log('rtb', rotatedBrush)
 				FancyBrush.brushLoopFromSprite({
 					vars: {pH,pW},
 					sprite: rotatedBrush,
 					command: ({x,y,tX, tY}, sprite) => {
+						console.log('asdfasdfasdf',GLOBALS.brushMap[sprite],x,y)
 						let t =  Points.get_coord_from_point(c)	
-						let mappedX = t.column
-						let mappedY = t.row+2
-						console.log('y',mappedX, mappedY)
+						let mappedX = t.column+(x/16)
+						let mappedY = t.row+(y/16)+2
+						console.log('y',mappedX, mappedY, GLOBALS.brushMap[sprite])
 						// tile is outside of grid, invalid position
 						let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
 
@@ -118,6 +119,7 @@ export const Pathfinder = stampit()
 							return false
 						}
 						grid[mappedY][mappedX].index = GLOBALS.brushMap[sprite]
+						// console.log(grid[mappedY][mappedX].index)
 						return true
 					}
 				})
@@ -126,7 +128,7 @@ export const Pathfinder = stampit()
 					this.call_callback_function(callback, context, null)
 					return
 				}
-
+				console.log(33)
 			}else{
 				console.log(1)
 				let t =  Points.get_coord_from_point(c)
