@@ -92,27 +92,28 @@ export const Pathfinder = stampit()
 			
 			if(game.currentFancyBrush != undefined){
 				let brush = GLOBALS.fancyBrushes[game.currentFancyBrush]
+				// console.group(rotation)
 				let rotatedBrush = GLOBALS.rotateFancyBrush(game.currentFancyBrush, rotation)
+				// console.groupEnd(rotation)
 				let earlyAbort = false
 				const th = 16
 				const tw = 16
 				let pW = brush.size[0]
 				let pH = brush.size[1]
-				console.log('rtb', rotatedBrush)
+
 				FancyBrush.brushLoopFromSprite({
 					vars: {pH,pW},
 					sprite: rotatedBrush,
 					command: ({x,y,tX, tY}, sprite) => {
-						console.log('asdfasdfasdf',GLOBALS.brushMap[sprite],x,y)
-						let t =  Points.get_coord_from_point(c)	
-						let mappedX = t.column+(x/16)
-						let mappedY = t.row+(y/16)+2
-						console.log('y',mappedX, mappedY, GLOBALS.brushMap[sprite])
+						let t =  Points.get_coord_from_point(c)
+						let spritePosition = Points.get_coord_from_point({x,y})
+						
+						let mappedX = t.column+spritePosition.column//(x/16)
+						let mappedY = t.row+spritePosition.row+2//(y/16)+2
+						
 						// tile is outside of grid, invalid position
 						let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
 
-						//overlapping existing piece, invalid position
-						// let overlapping = (!outsideOfGrid &&  ![-1, -999].includes(grid[mappedY][mappedX].index))
 						if(outsideOfGrid){
 							console.log('early abort')
 							earlyAbort = true
@@ -128,13 +129,9 @@ export const Pathfinder = stampit()
 					this.call_callback_function(callback, context, null)
 					return
 				}
-				console.log(33)
 			}else{
-				console.log(1)
 				let t =  Points.get_coord_from_point(c)
-				console.log(2.1,c)
 				if(Points.outside_grid(t)){
-					console.log(2)
 					return
 				}
 

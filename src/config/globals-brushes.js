@@ -95,47 +95,72 @@ var brushes = {
 		straightDownB: 31,
 		none: -999
 	},
-	rotateFancyBrush: function(brush = 0, CWRotFactor = 0){
+	rotateFancyBrush: function(brush = 0, CWRotFactor = 0, data){
+		// console.log('----rot:', CWRotFactor, data)
+
 		// turn 1d brush array into 2d array, then rotate 0,90,180,270
 		if(![0,1,2,3].includes(CWRotFactor)){
 			console.error('rotateFancyBrushte: invalid rotation factor:', CWRotFactor)
 			return
 		}
+		let brushData = GLOBALS.fancyBrushes[brush]
+		let oSize = brushData.size.slice()
+		let size = CWRotFactor%2==0 ? oSize : oSize.reverse()
+		let modifiedArray = (data && data.slice()) || GLOBALS.fancyBrushes[brush].sprite.slice()
 
-		let b = GLOBALS.fancyBrushes[brush]
-
-		let c = []
-		let t = [...Array(b.size[1])].forEach((_,i)=>{
-			let l = i*b.size[1]
-			let k = l + b.size[0]
-			let d = b.sprite.slice(l,k)
-			c.push(d)
-		})
-
-		if(CWRotFactor == 0){
-			// console.log(c)
-			return [].concat(...c)
-		}
-
-		c.reverse()
-
-		let finalArray
-		let intermediateArray = c
-		window.t2 = [...Array(CWRotFactor)].forEach((_, i)=>{
-			intermediateArray = intermediateArray[0].map(function(col, i) { 
-			  return intermediateArray.map(function(row) { 
-			    return row[i] 
-			  })
+		let toRows = function(){
+			let c = []
+			let t = [...Array(size[1])].forEach((_,i)=>{
+				let l = i*size[1]
+				let k = l + size[0]
+				let d = modifiedArray.slice(l,k)
+				c.push(d)
 			})
 
-			finalArray = intermediateArray
-		})
+			return c.reverse()
+		}
 
-		// console.log([].concat(...finalArray))
-		return [].concat(...finalArray)
+		let rotate90 = function(a){
+			let rotated = a[0].map(function(col, i) {
+				return a.map(function(row) { 
+					return row[i]
+				})
+			})
+
+			return rotated
+		}
+
+		if(CWRotFactor == 0){
+			return [].concat(...modifiedArray)
+		}
+
+		let slice = modifiedArray.slice()
+		let rows = toRows(slice)
+		let rotated = rotate90(rows)
+
+		let newRotation = CWRotFactor - 1
+
+		return this.rotateFancyBrush(brush,newRotation,[].concat(...rotated))
 	}
 }
+/*
+[1,2,3]
+[4,5,6]
+[7,8,9]
 
+[7,4,1]
+[8,5,2]
+[9,6,3]
+
+[9,8,7]
+[6,5,4]
+[3,2,1]
+
+[3,6,9]
+[2,5,8]
+[1,4,7]
+
+*/
 brushes.fancyBrushes.sort((a,b)=> {
 	if(a.size[0] > b.size[0]){
 		return -1

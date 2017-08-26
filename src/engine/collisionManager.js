@@ -1,4 +1,5 @@
 import stampit from 'stampit'
+
 import Phaser from 'phaser'
 
 import {Points} from '../utils'
