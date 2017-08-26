@@ -17,7 +17,7 @@ import GLOBALS from '../config/globals'
 import config from '../config/config'
 
 import {Board} from '../ui/board'
-import {Cursor, Brush} from '../ui/cursors'
+import {Cursor} from '../ui/cursors'
 import {Palette} from '../ui/palette'
 import {TowerPalette} from '../ui/towerPalette'
 import {Display} from '../ui/display'
@@ -31,20 +31,17 @@ import {App} from '../react/app.jsx'
 
 export default class extends base_level {
 	init () {
-		
-
 		console.time('boot')
+
 		this.buildDynamicGlobals()
 		window.GLOBALS = window.G = GLOBALS
-
 		GLOBALS.pd = DebugManager()
 
 		this.level_data = this.cache.getJSON('level1');
 		this.globalOffset = GLOBALS.globalOffset
 
-		let tileset_index, tileDimensions, map;
 		this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-		this.scale.setUserScale(2,2)
+		this.scale.setUserScale(2.5,2.5)
 		// this.scale.pageAlignHorizontally = true;
 		// this.scale.pageAlignVertically = true;
 		
@@ -61,10 +58,11 @@ export default class extends base_level {
 
 		GLOBALS.groups = this.groups
 		GLOBALS.splashes = []
-		// this.groups.board.ignoreChildInput = true
-		this.groups.board.inputEnableChildren = true
+		
+		// this.groups.board.inputEnableChildren = true
 		this.prefabs = {}
 		this.objects = {}
+
 		this.board = Board({
 			name: 'level1',
 			mapData: this.level_data.map,
@@ -73,14 +71,29 @@ export default class extends base_level {
 			state: this,
 			objects: this.objects
 		})
+
 		this.display = Display({
 			offset: {x:190, y: 130},
 		})
+
 		this.map = this.board.buildMap()
 
-		// initialize pathfinding
-		tileDimensions = new Phaser.Point(this.board.map.tileWidth, this.board.map.tileHeight)
-		const stars = Pathfinders()
+		this.initPathfinding()
+		
+		GLOBALS.boardGroup = this.groups.board
+
+		this.signals = {
+			playerMove: new Phaser.Signal()
+		}
+
+		this.counters = {
+			creepID: 0,
+			splashID: 0
+		}
+	}
+	initPathfinding(){
+		let tileDimensions = new Phaser.Point(GLOBALS.tW, GLOBALS.tH)
+		let stars = Pathfinders()
 		stars.add({
 			creep: {
 				grid: this.board.map.layers[1].data,
@@ -95,23 +108,11 @@ export default class extends base_level {
 		})
 
 		GLOBALS.stars = stars
-		GLOBALS.boardGroup = this.groups.board
-
-		this.signals = {
-			playerMove: new Phaser.Signal()
-		}
-
-		this.counters = {
-			creepID: 0,
-			splashID: 0
-		}
 	}
 	start(){
 		GLOBALS.signals.waveStart.dispatch()
 	}
-	create () {
-		GLOBALS.reactUI = this.reactUI = App()
-
+	buildTimers(){
 		G.timers = {
 			firstWave: game.time.create(false)
 		}
@@ -119,8 +120,11 @@ export default class extends base_level {
 		this.game.time.advancedTiming = true
 
 		GLOBALS.timers.firstWave.add(Phaser.Timer.SECOND * GLOBALS.waves.beforeBegin, this.start, this)
-		GLOBALS.timers.firstWave.start()
+	}
+	create () {
+		GLOBALS.reactUI = this.reactUI = App()
 
+		this.buildTimers()
 		this.maskBoard()
 		this.buildBG()
 		this.board.buildForCreate()
@@ -132,7 +136,7 @@ export default class extends base_level {
 			// palette2: Palette({ y: 0, x: 240}),
 			towerPalette: TowerPalette().build(),
 			cursor: Cursor({p:this, group: this.groups.cursor}),
-			brush: Brush(),
+			// brush: Brush(),
 			CollisionManager: CollisionManager()
 		})
 
@@ -141,7 +145,7 @@ export default class extends base_level {
 		// game.inputMasks.board.events.onInputOver.add((e,i,p)=>{console.log(e,i,p)})
 		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
 
-		this.keys = {}
+		this.keyHandlers = {}
 		this.defineKeyHandlers()
 
 		window.g = this.game
@@ -150,51 +154,23 @@ export default class extends base_level {
 
 		GLOBALS.stars.get('creep').find_path_goal_spawn();
 
-		let s = GLOBALS.signals
-		s.creepReachedGoal.add(this.loseLife, this)
-		s.creepKilled.add(this.creepKilled, this)
-		
-		s.towerPlaced.add(this.loseGold, this)
-		s.towerLeveled.add(this.loseGold, this)
-		GLOBALS.pd.add(()=>{
-			let life = GLOBALS.player.life
-			let gold = GLOBALS.player.gold
-			let duration = (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
-			let score = GLOBALS.player.score
-			let text = `life: ${life} gold: ${gold} score: ${score}`
-			game.debug.text(text,2,12)
-		})
-
-		s.tileLockToggle.add(this.tileLockToggle, this)
-		GLOBALS.player.debug()
+		this.bindUIEvents()
+		GLOBALS.timers.firstWave.start()
 
 		// game.onFocus.add(()=>{})
 
 		game.input.maxPointers = 1
 		console.timeEnd('boot')
 	}
-	tileLockToggle(){
-		let tileLock = GLOBALS.player.ui.tileLock
-		GLOBALS.player.ui.tileLock = (tileLock === 0 ? 1 : 0)
-		this.reactUI.setState({tileLock: GLOBALS.player.ui.tileLock})
-	}
-	loseLife(){
-		GLOBALS.player.life --
-		this.reactUI.setState({life: GLOBALS.player.life})
-
-		if(GLOBALS.player.life <= 0){
-			console.warn('you are dead')
-			debugger
-		}
-	}
-	loseGold(cost = 5){
-		GLOBALS.player.gold -= cost
-		this.reactUI.setState({gold: GLOBALS.player.gold})
-	}
-	creepKilled(gold = 1){
-		GLOBALS.player.gold += gold
-		GLOBALS.player.score += (gold*GLOBALS.player.wave)
-		this.reactUI.setState({gold: GLOBALS.player.gold})
+	bindUIEvents(){
+		let s = GLOBALS.signals
+		// debugger
+		s.creepReachedGoal.add(this.UIEvents.loseLife, this)
+		s.creepKilled.add(this.UIEvents.creepKilled, this)
+		
+		s.towerPlaced.add(this.UIEvents.loseGold, this)
+		s.towerLeveled.add(this.UIEvents.loseGold, this)
+		s.tileLockToggle.add(this.UIEvents.tileLockToggle, this)
 	}
 
 	maskBoard (){
@@ -215,16 +191,16 @@ export default class extends base_level {
 	}
 
 	defineKeyHandlers (){
-		this.keys.r = game.input.keyboard.addKey(Phaser.Keyboard.R);
-		this.keys.r.onDown.add((key)=>{
+		this.keyHandlers.r = game.input.keyboard.addKey(Phaser.Keyboard.R);
+		this.keyHandlers.r.onDown.add((key)=>{
 			GLOBALS.signals.rotate.dispatch()
 		})
 
-		this.keys.shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
-		this.keys.shift.onDown.add((key)=>{
+		this.keyHandlers.shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+		this.keyHandlers.shift.onDown.add((key)=>{
 			GLOBALS.signals.tileLockToggle.dispatch()
 		})
-		this.keys.shift.onUp.add((key)=>{
+		this.keyHandlers.shift.onUp.add((key)=>{
 			GLOBALS.signals.tileLockToggle.dispatch()
 		})
 	}
@@ -240,14 +216,10 @@ export default class extends base_level {
 	}
 
 	render(){
-		try{
-			game.bullets[0].children.forEach((b,i)=>{
-				game.debug.body(game.bullets[0].children[i])
-			})
-		}catch(e){}
-		
-		this.reactUI.setState({FPS: this.game.time.fps})
-		// console.log(this.game.time.fps)
+		this.reactUI.setState({
+			FPS: this.game.time.fps,
+			timer: (GLOBALS.timers.firstWave.duration / 1000).toFixed(0)
+		})
 
 		let f = GLOBALS.pd.getFunctions()
 		f.forEach(g => g())
@@ -289,11 +261,39 @@ export default class extends base_level {
 		}
 
 		let signalNames = ['creepPathReset', 'updateBrush', 'paintWithBrush',
-											 'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
-											 'towerLeveled','creepKilled', 'display', 'cursorActive',
-											 'rotate', 'tileLockToggle'].forEach((name,i)=>{
-													tempGLOBALS.signals[name] = new Phaser.Signal()                  
-											 })
+			'creepReachedGoal', 'waveStart', 'outOfGame', 'towerPlaced',
+			'towerLeveled','creepKilled', 'display', 'cursorActive',
+			'rotate', 'tileLockToggle'].forEach((name,i)=>{
+				tempGLOBALS.signals[name] = new Phaser.Signal()                  
+			 })
+
+		this.UIEvents = {
+			tileLockToggle(){
+				let tileLock = GLOBALS.player.ui.tileLock
+				GLOBALS.player.ui.tileLock = (tileLock === 0 ? 1 : 0)
+				this.reactUI.setState({tileLock: GLOBALS.player.ui.tileLock})
+			},
+			loseLife(){
+				GLOBALS.player.life --
+				this.reactUI.setState({life: GLOBALS.player.life})
+
+				if(GLOBALS.player.life <= 0){
+					console.warn('you are dead')
+					debugger
+				}
+			},
+			loseGold(cost = 5){
+				GLOBALS.player.gold -= cost
+				this.reactUI.setState({gold: GLOBALS.player.gold})
+			},
+			creepKilled(gold = 1){
+				GLOBALS.player.gold += gold
+				GLOBALS.player.score += Math.ceil(gold*GLOBALS.player.wave/12)
+				this.reactUI.setState({
+					gold: GLOBALS.player.gold,
+					score: GLOBALS.player.score})
+			}
+		}
 
 		Object.assign(GLOBALS, tempGLOBALS)
 	}

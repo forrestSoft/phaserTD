@@ -5,9 +5,7 @@ import ReactDOM from 'react-dom';
 import GLOBALS from '../config/globals'
 
 export const App = stampit()
-	.methods({
-		
-	})
+	.methods({})
 	.init(function (a, {args, instance, stamp}) {
 		Object.assign(instance, {
 			functions: []
@@ -17,7 +15,6 @@ export const App = stampit()
 			<Container />,
 			document.getElementById('react')
 		)
-		
 	});
 
 class TowerContainer extends React.Component {
@@ -49,7 +46,6 @@ class Cell extends React.Component {
 
 class TowerInfo extends React.Component {
 	render(){
-		// console.log('r', this.props)
 		let data = this.props.tower
 
 		if(Object.keys(data).length < 1){
@@ -76,6 +72,7 @@ class StatsContainer extends React.Component {
 
 		return(
 			<tbody>
+				<Cell text={'timer'} value={stats.timer} />
 				<Cell text={'gold'} value={stats.gold} />
 				<Cell text={'score'} value={stats.score} />
 				<Cell text={'tile lock'} value={stats.tileLock} />
@@ -89,7 +86,8 @@ class Container extends React.Component {
 		super(props);
 		let locals = {
 			FPS: 0,
-			tower: {}
+			tower: {},
+			timer: '--'
 		}
 		this.state = {...GLOBALS.player, ...GLOBALS.player.ui, ...locals}
 

@@ -46,7 +46,7 @@ export const Cursor = stampit()
 		},
 		largeRect(){
 			let size = GLOBALS.fancyBrushes[this.cursorState.currentBrush].size
-			// console.log(size)
+			
 			this.marker.clear()
 			this.marker.lineStyle(2, 0xffffff, 1);
 		    this.marker.alpha = 1
@@ -327,8 +327,6 @@ export const CursorState = stampit()
 						break
 
 					case 'fancy':
-						// debugger
-						// console.log('qwe',this.marker.height, this.marker.width)
 						this.sprite = game.make.sprite( this.x, this.y ,game.fancyBrushSprites[this.currentBrush].generateTexture(), this.group)
 						this.sprite.boundsPadding = 0
 						// this.sprite.pivot.setTo(this.sprite.width * .5,this.sprite.height * .5)
@@ -356,7 +354,6 @@ export const CursorState = stampit()
 
 				this.sprite.update= ()=>{
 					// game.debug.spriteBounds(this.group)
-					// console.log('')
 					this.checkValidPlacement()
 					this.setSpriteTint()
 					this.translateSprite()
@@ -386,7 +383,6 @@ export const CursorState = stampit()
 			}
 		},
 		checkValidPlacement(){
-			// console.log(this.tileX, this.tileY)
 			let tileC = this.tileMap.getTile(this.tileX+1,this.tileY+1,'collision', true).index
 			let tileT = this.tileMap.getTile(this.tileX,this.tileY,'towers', true).index
 			let isTower = this.brushType == 'tower'
@@ -468,18 +464,16 @@ export const Brush = stampit()
 					case 'fancy':
 						let brushData = GLOBALS.fancyBrushes[game.currentFancyBrush]
 						let newBrush = GLOBALS.rotateFancyBrush(game.currentFancyBrush, this.rotationFactor)
-						console.log('nb',newBrush)
 						this.rotationFactor = 0
 						FancyBrush.brushSpriteLoop({
 							vars: {pW: brushData.size[0],pH: brushData.size[1]},
 							sprite: newBrush,
 							command: ({i,x,y,tX,tY},sprite) => {
-								console.log(x,y,sprite)
+								// console.log(x,y,sprite)
 								if(sprite == 'none'){
 									return
 								}
-								// console.log(GLOBALS.brushMap[newBrush[i]])
-								console.log('x',tX+cursorTile.x+1,tY+cursorTile.y+1)
+	
 								this.tileMap.putTile(GLOBALS.brushMap[newBrush[i]]+1, tX+cursorTile.x,tY+cursorTile.y , 'collision');
 							}
 						})

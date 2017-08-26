@@ -71,11 +71,11 @@ export const CreepManager = Manager.compose(Builder)
 			// console.groupEnd('wave')
 		},
 		checkDifficulty(){
-			if(this.team % 4 == 0){
+			if(this.team % 8 == 0){
 				this.difficultyMin += Phaser.Math.between(1,2)
 			}
 
-			if(this.team % 8 == 0){
+			if(this.team % 12 == 0){
 				this.difficultyMax += Phaser.Math.between(2,3)
 			}	
 		},

@@ -52,7 +52,6 @@ export const Pathfinder = stampit()
 		},
 
 		setGrid(worldGrid){
-			console.log(this.getGrid(worldGrid))
 			this.star.setGrid(this.getGrid(worldGrid))
 		},
 
@@ -149,17 +148,13 @@ export const Pathfinder = stampit()
 		call_callback_function (callback, context, path) {
 			// console.timeEnd('astar time')
 			let path_positions, pt, p,x,y;
+
 			path_positions = [];
 			if (path !== null) {
 				this.hasPath = true
 				path.forEach(function (path_coord, i) {
 					path_positions.push(Points.get_point_from_coord({row: path_coord.y, column: path_coord.x}));
 				}, this);
-
-				//account for the very small drift that has happened while this was calculating
-				// p = ({x, y} =  context.position)
-				// pt = new Phaser.Point(p.x,p.y)
-				// path_positions[0] = (pt);
 			}else{
 				this.hasPath = false
 				path_positions = null
@@ -169,6 +164,7 @@ export const Pathfinder = stampit()
 			if(!callback){
 				return
 			}
+			
 			callback.call(context, path_positions);
 			if(this.name === 'creep'){
 				GLOBALS.signals.creepPathReset.dispatch()

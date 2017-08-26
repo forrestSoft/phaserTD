@@ -44,15 +44,16 @@ export default class extends Prefab {
 
     hit(damage = 1){
         this.life -= damage
-        console.log(`hit for ${damage}, life left ${this.life}`, this.data.id)
+        // console.log(`hit for ${damage}, life left ${this.life}`, this.data.id)
         this.updateHealthMeter()
 
         if(this.life <= 0){
             let explosionAnimation = GLOBALS.kabooms.getFirstExists(false);
+
             explosionAnimation.reset(this.x, this.y);
             explosionAnimation.play('kaboom', 30, false, true);
+            
             this.kill()
-            // this.destroy()
             GLOBALS.signals.creepKilled.dispatch(this.gold)
         }
     }
@@ -79,7 +80,6 @@ export default class extends Prefab {
                                        next_position.y - this.position.y);
                 velocity.normalize();
                 this.velocity = velocity
-                // console.log(this.velocity)
                 let s,n
                 n = ((Math.atan2(-velocity.y,-velocity.x)))
                 if(n < -3 || n > 3){
@@ -98,7 +98,7 @@ export default class extends Prefab {
                 this.body.velocity.y = velocity.y * this.walking_speed;
             } else {
                 this.position.x = next_position.x;
-                this.position.y = next_position.y;
+                this.position.y = next_position.y; 
                 if (this.path_step < this.path.length - 1) {
                     this.path_step += 1;
                 } else {
@@ -131,6 +131,7 @@ export default class extends Prefab {
             this.path_step = 0
         }else{
             this.path.some((point,i)=>{
+                console.log(point, this.position)
                 if(this.position.x < point.x && this.position.y < point.y){
                     this.path_step = i
                     return true
