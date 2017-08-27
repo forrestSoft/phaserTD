@@ -45,9 +45,7 @@ export default class extends base_level {
 		// this.scale.pageAlignHorizontally = true;
 		// this.scale.pageAlignVertically = true;
 		
-		// start physics system
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
-		// this.game.physics.arcade.gravity
 
 		this.layers = {}
 		this.groups = {
@@ -72,9 +70,9 @@ export default class extends base_level {
 			objects: this.objects
 		})
 
-		this.display = Display({
-			offset: {x:190, y: 130},
-		})
+		// this.display = Display({
+		// 	offset: {x:190, y: 130},
+		// })
 
 		this.map = this.board.buildMap()
 
@@ -126,30 +124,26 @@ export default class extends base_level {
 
 		this.buildTimers()
 		this.maskBoard()
-		this.buildBG()
 		this.board.buildForCreate()
-		this.display.buildRenderer()
 
 		Object.assign(this,{
 			baseLayer: this.layers['background'],
 			palette: Palette({ brushes: GLOBALS.fancyBrushes, fancyBrush: true}),
-			// palette2: Palette({ y: 0, x: 240}),
 			towerPalette: TowerPalette().build(),
 			cursor: Cursor({p:this, group: this.groups.cursor}),
-			// brush: Brush(),
 			CollisionManager: CollisionManager()
+			// palette2: Palette({ y: 0, x: 240}),
+			// brush: Brush(),
 		})
 
 		this.groups.board.addChild(this.groups.towers)
 		this.groups.board.addChild(this.groups.cursor)
-		// game.inputMasks.board.events.onInputOver.add((e,i,p)=>{console.log(e,i,p)})
-		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
 
-		this.keyHandlers = {}
+		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
 		this.defineKeyHandlers()
 
-		window.g = this.game
-		window.t = this
+		// window.g = this.game
+		// window.t = this
 		this.groups.board.y = this.globalOffset.y
 
 		GLOBALS.stars.get('creep').find_path_goal_spawn();
@@ -173,6 +167,23 @@ export default class extends base_level {
 		s.tileLockToggle.add(this.UIEvents.tileLockToggle, this)
 	}
 
+	defineKeyHandlers (){
+		this.keyHandlers = {}
+
+		this.keyHandlers.r = game.input.keyboard.addKey(Phaser.Keyboard.R);
+		this.keyHandlers.r.onDown.add((key)=>{
+			GLOBALS.signals.rotate.dispatch()
+		})
+
+		this.keyHandlers.shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+		this.keyHandlers.shift.onDown.add((key)=>{
+			GLOBALS.signals.tileLockToggle.dispatch()
+		})
+		this.keyHandlers.shift.onUp.add((key)=>{
+			GLOBALS.signals.tileLockToggle.dispatch()
+		})
+	}
+
 	maskBoard (){
 		let rect = {
 			x: 0,
@@ -188,21 +199,6 @@ export default class extends base_level {
 
 	onClick (point, event){
 		GLOBALS.signals.paintWithBrush.dispatch()
-	}
-
-	defineKeyHandlers (){
-		this.keyHandlers.r = game.input.keyboard.addKey(Phaser.Keyboard.R);
-		this.keyHandlers.r.onDown.add((key)=>{
-			GLOBALS.signals.rotate.dispatch()
-		})
-
-		this.keyHandlers.shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
-		this.keyHandlers.shift.onDown.add((key)=>{
-			GLOBALS.signals.tileLockToggle.dispatch()
-		})
-		this.keyHandlers.shift.onUp.add((key)=>{
-			GLOBALS.signals.tileLockToggle.dispatch()
-		})
 	}
 
 	update () {
@@ -225,16 +221,16 @@ export default class extends base_level {
 		f.forEach(g => g())
 	}
 
-	buildBG(){
-		this.bg = game.make.graphics()
-		this.bg.beginFill(0xff0000)
-		this.bg.drawRect(0,0,config.gameWidth, config.gameHeight)
-		this.bg.inputEnabled = true
-		this.bg.hitArea = new Phaser.Rectangle(0, 0, config.gameWidth, config.gameHeight)
-		this.bg.events.onInputDown.add(()=>{console.log('asdf');GLOBALS.signals.updateBrush.dispatch(null)})
-		game.world.addChild(this.bg)
-		game.world.sendToBack(this.bg)
-	}
+	// buildBG(){
+	// 	this.bg = game.make.graphics()
+	// 	this.bg.beginFill(0xff0000)
+	// 	this.bg.drawRect(0,0,config.gameWidth, config.gameHeight)
+	// 	this.bg.inputEnabled = true
+	// 	this.bg.hitArea = new Phaser.Rectangle(0, 0, config.gameWidth, config.gameHeight)
+	// 	this.bg.events.onInputDown.add(()=>{console.log('asdf');GLOBALS.signals.updateBrush.dispatch(null)})
+	// 	game.world.addChild(this.bg)
+	// 	game.world.sendToBack(this.bg)
+	// }
 
 	buildDynamicGlobals(){
 		const tempGLOBALS = {

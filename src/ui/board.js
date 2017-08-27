@@ -9,33 +9,32 @@ export var Board = stampit()
 	.methods({
 		buildMap (){
 			let map = this.level_data.map
-		    this.map = game.add.tilemap(this.name);
-		    this.map.tilesets.forEach(function (tileset, i) {
-		        this.map.addTilesetImage(tileset.name, map.tilesets[i]);
-		    }, this);
-		    return this.map
+			this.map = game.add.tilemap(this.name);
+			this.map.tilesets.forEach(function (tileset, i) {
+				this.map.addTilesetImage(tileset.name, map.tilesets[i]);
+			}, this);
+			return this.map
 
-		    this.map.setLayer(1)
+			this.map.setLayer(1)
 		},
 		buildForCreate(){
 			this.buildTowerManager()
 			this.buildLayers()
-		    this.buildGroups()
-		    // this.buildCreep()
-		    this.buildGoal()
-		    this.buildSpawn()
-		    this.buildCreepManager()
-		    this.buildKaboomManager()
-		    this.buildTowerReferenceManager()
+			this.buildGroups()
+			this.buildGoal()
+			this.buildSpawn()
+			this.buildCreepManager()
+			this.buildKaboomManager()
+			this.buildTowerReferenceManager()
 		},
 		buildTowerReferenceManager(){
 			this.towerReferenceManager = TowerReferenceManager()
 			this.towerReferenceManager.setup()
 			GLOBALS.towerReferenceManager = this.towerReferenceManager
 		},
-		getCollisionObjects(){
-			return [this.CreepManager.getGroup(), this.temp]
-		},
+		// getCollisionObjects(){
+		// 	return [this.CreepManager.getGroup(), this.temp]
+		// },
 		buildTowerManager(){
 			this.towerManager = TowerManager({
 				group: this.groups.towers
@@ -52,41 +51,41 @@ export var Board = stampit()
 
 		buildKaboomManager(){
 			//  Explosion pool
-		    let explosions = game.make.group();
+			let explosions = game.make.group();
 
-		    for (var i = 0; i < 10; i++)
-		    {
-		        var explosionAnimation = explosions.create(0, 0, 'kaboom', [0], false);
-		        explosionAnimation.anchor.setTo(0.5, 0.5);
-		        explosionAnimation.animations.add('kaboom');
-		        explosionAnimation.scale.setTo(.25,.25)
-		    }
+			for (var i = 0; i < 10; i++)
+			{
+				var explosionAnimation = explosions.create(0, 0, 'kaboom', [0], false);
+				explosionAnimation.anchor.setTo(0.5, 0.5);
+				explosionAnimation.animations.add('kaboom');
+				explosionAnimation.scale.setTo(.25,.25)
+			}
 
-		    this.groups.board.addChild(explosions)
-		    GLOBALS.kabooms = explosions
+			this.groups.board.addChild(explosions)
+			GLOBALS.kabooms = explosions
 		},
 		buildLayers() {
 			game.tileMapLayers = {}
 			this.map.layers.forEach((layer) => {
-		      let layerObj = this.map.createLayer(layer.name);
-		      game.tileMapLayers[layer.name] = layerObj
-		      this.layers[layer.name] = layerObj
-		      this.groups.board.addChild(layerObj)
-		      this.layers[layer.name].fixedToCamera = false;
-		    }, this);
+			  let layerObj = this.map.createLayer(layer.name);
+			  game.tileMapLayers[layer.name] = layerObj
+			  this.layers[layer.name] = layerObj
+			  this.groups.board.addChild(layerObj)
+			  this.layers[layer.name].fixedToCamera = false;
+			}, this);
 
-		    // layers['goals'].bringToTop()
+			// layers['goals'].bringToTop()
 		},
 
 		buildGroups(){
-		    this.level_data.groups.forEach(function (group_name) {
-		        this.groups[group_name] = game.add.group();
-		    }, this);
+			this.level_data.groups.forEach(function (group_name) {
+				this.groups[group_name] = game.add.group();
+			}, this);
 		},
 		buildCreep(){
 			let data = this.map.objects.objects[0];
 			let prefab = this.create_object(data,this.state)
-		    this.groups.board.addChild(prefab)
+			this.groups.board.addChild(prefab)
 		},
 		buildCreepNew(){
 			this.buildCreep()
@@ -97,11 +96,11 @@ export var Board = stampit()
 			let prefab;
 			let data = this.map.objects.objects[0];
 			// console.log(data)
-		    // data.y = GLOBALS.globalOffset.y
-		    
-		    // groups.board.inputEnabled = true
-		    this.prefabs[data.name] = this.create_object(data,this.state)
-		    this.groups.board.addChild(this.prefabs[data.name])
+			// data.y = GLOBALS.globalOffset.y
+			
+			// groups.board.inputEnabled = true
+			this.prefabs[data.name] = this.create_object(data,this.state)
+			this.groups.board.addChild(this.prefabs[data.name])
 		},
 		buildSpawn(){
 			this.objects['spawn'] = game.make.sprite(GLOBALS.entrance.columnPX,GLOBALS.entrance.rowPX,'ms',43)
