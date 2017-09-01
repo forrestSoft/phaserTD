@@ -59,6 +59,7 @@ export default class extends Prefab {
     }
 
     update () {
+        // console.log('u', this.path_step)
         if(!GLOBALS.stars.get('creep').hasPath){
             return
         }
@@ -131,7 +132,7 @@ export default class extends Prefab {
             this.path_step = 0
         }else{
             this.path.some((point,i)=>{
-                console.log(point, this.position)
+                console.log('l',point, this.position)
                 if(this.position.x < point.x && this.position.y < point.y){
                     this.path_step = i
                     return true

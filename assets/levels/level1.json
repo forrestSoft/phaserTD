@@ -46,11 +46,8 @@
             "json": "assets/images/tank.json"
         }
     },
-    "groups": [
-        "players"
-    ],
     "map": {
         "assetKey": "level_tilemap",
-        "tilesets": ["map_tileset", "male_fighter_spritesheet"]
+        "tilesets": ["map_tileset"]
     }
 }

@@ -9,7 +9,7 @@ var creeps = [
 		"name":"player",
 		"properties":
 		{
-			group: "players",
+			group: "board",
 			texture: "female02_rouge_spritesheet",
 			walking_speed: 12,
 			gold: 2,
@@ -29,7 +29,7 @@ var creeps = [
 		"name":"player",
 		"properties":
 		{
-			"group":"players",
+			group: "board",
 			"texture":"male_fighter_spritesheet",
 			"walking_speed": 24,
 			gold: 1,
@@ -49,7 +49,7 @@ var creeps = [
 		"name":"player",
 		"properties":
 		{
-			"group":"players",
+			group: "board",
 			"texture":"female02_mage_spritesheet",
 			"walking_speed": 8,
 			gold: 3,

@@ -67,7 +67,8 @@ export default class extends base_level {
 			groups: this.groups,
 			layers:this.layers,
 			state: this,
-			objects: this.objects
+			objects: this.objects,
+			levelData: this.level_data
 		})
 
 		// this.display = Display({
@@ -75,10 +76,9 @@ export default class extends base_level {
 		// })
 
 		this.map = this.board.buildMap()
+		GLOBALS.boardGroup = this.groups.board
 
 		this.initPathfinding()
-		
-		GLOBALS.boardGroup = this.groups.board
 
 		this.signals = {
 			playerMove: new Phaser.Signal()

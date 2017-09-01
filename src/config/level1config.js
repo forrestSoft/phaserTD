@@ -103,33 +103,6 @@ data = {
 		"width":boardWidth,
 		"x":0,
 		"y":0
-	},
-	{
-		"height":boardHeight,
-		"name":"objects",
-		"objects":[
-			{
-				"gid":118,
-				"height":0,
-				"name":"player",
-				"properties":
-					{
-					"group":"players",
-					"texture":"male_fighter_spritesheet",
-					"walking_speed":creepSpeed
-					},
-				"type":"player",
-				"visible":true,
-				"width":0,
-				"x":GLOBALS.entrance.columnPX + 8,
-				"y":GLOBALS.entrance.rowPX
-			}],
-		"opacity":1,
-		"type":"objectgroup",
-		"visible":true,
-		"width":boardWidth,
-		"x":0,
-		"y":0
 	}],
 	 "orientation":"orthogonal",
 	 "properties":
@@ -150,18 +123,19 @@ data = {
 			"tileheight":16,
 			"tilewidth":16
 		}, 
-		{
-			"firstgid":111,
-			"image":"..\/images\/fighter_m.png",
-			"imageheight":128,
-			"imagewidth":72,
-			"margin":0,
-			"name":"fighter_m",
-			"properties":{},
-			"spacing":0,
-			"tileheight":32,
-			"tilewidth":24
-		}],
+		// {
+		// 	"firstgid":111,
+		// 	"image":"..\/images\/fighter_m.png",
+		// 	"imageheight":128,
+		// 	"imagewidth":72,
+		// 	"margin":0,
+		// 	"name":"fighter_m",
+		// 	"properties":{},
+		// 	"spacing":0,
+		// 	"tileheight":32,
+		// 	"tilewidth":24
+		// }
+		],
 	"tilewidth":16,
 	"version":1,
 	"width":boardWidth

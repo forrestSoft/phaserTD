@@ -119,12 +119,45 @@ export const Tower = stampit()
 		},
 		over(){
 			this.tintTower()
-			GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
+			let towerData = GLOBALS.towers.data(this.brush)
+				let level = this.level
+				console.log(GLOBALS.towers.data(this.brush),this)
+				
+				// debugger
+				let lines = {
+					damage: towerData.damage[level-1],
+					level: level,
+					next: towerData.cost[level] || 'max'
+				}
+				GLOBALS.reactUI.setState(lines)
+			// GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
 		},
 		notOver(){
 			this.tintTower(true)
+			let towerData = GLOBALS.towers.data(this.brush)
+				let level = this.level
+				console.log(GLOBALS.towers.data(this.brush),this)
+				
+				// debugger
+				let lines = {
+					damage: towerData.damage[level-1],
+					level: level,
+					next: towerData.cost[level] || 'max'
+				}
+				GLOBALS.reactUI.setState(lines)
 		},
 		out(){
+			let towerData = GLOBALS.towers.data(this.brush)
+				let level = this.level
+				console.log(GLOBALS.towers.data(this.brush),this)
+				
+				// debugger
+				let lines = {
+					damage: towerData.damage[level-1],
+					level: level,
+					next: towerData.cost[level] || 'max'
+				}
+				GLOBALS.reactUI.setState(lines)
 			GLOBALS.signals.display.dispatch({type: 'towerOut', brush: 'null'})
 			this.tintTower(true)
 		},
@@ -152,7 +185,9 @@ export const Tower = stampit()
 				console.log('max')
 			}
 			this.tintTower()
-			GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
+			// debugger
+			
+			// GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
 		},
 		// over ride positioning based on world to based on sprite local + manual offset
 		tappedPreUpdate() {

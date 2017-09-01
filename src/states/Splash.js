@@ -12,9 +12,17 @@ export default class extends Phaser.State {
 
     this.load.setPreloadSprite(this.loaderBar,0)
 
+    this.assetLoop()
+    this.load.tilemap('level1', null, Level1, Phaser.Tilemap.TILED_JSON)
+  }
+
+  create () { 
+    this.state.start('Game')
+  }
+
+  assetLoop(){
     let assets, asset_loader, asset_key, asset
     assets = this.cache.getJSON('level1').assets
-    
     for (asset_key in assets) {
         if (assets.hasOwnProperty(asset_key)) {
             asset = assets[asset_key];
@@ -38,11 +46,5 @@ export default class extends Phaser.State {
             }
         }
     }
-
-    this.load.tilemap('level1', null, Level1, Phaser.Tilemap.TILED_JSON)
-  }
-
-  create () { 
-    this.state.start('Game')
   }
 }

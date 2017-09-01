@@ -164,11 +164,12 @@ export const Pathfinder = stampit()
 			if(!callback){
 				return
 			}
-			
-			callback.call(context, path_positions);
-			if(this.name === 'creep'){
-				GLOBALS.signals.creepPathReset.dispatch()
-			}
+			// console.log('123')
+			// callback.call(context, path_positions);
+			// if(this.name === 'creep'){
+			// 	console.log(321)
+			// 	GLOBALS.signals.creepPathReset.dispatch()
+			// }
 		}
 	})
 	.init(function ({p}, {args, instance, stamp}) {
