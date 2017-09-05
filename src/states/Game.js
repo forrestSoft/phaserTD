@@ -59,7 +59,7 @@ export default class extends base_level {
 		
 		// this.groups.board.inputEnableChildren = true
 		this.prefabs = {}
-		this.objects = {}
+		// this.objects = {}
 
 		this.board = Board({
 			name: 'level1',
@@ -125,6 +125,7 @@ export default class extends base_level {
 		this.buildTimers()
 		this.maskBoard()
 		this.board.buildForCreate()
+		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
 
 		Object.assign(this,{
 			baseLayer: this.layers['background'],
@@ -139,16 +140,12 @@ export default class extends base_level {
 		this.groups.board.addChild(this.groups.towers)
 		this.groups.board.addChild(this.groups.cursor)
 
-		game.inputMasks.board.events.onInputDown.add(this.onClick, this)
 		this.defineKeyHandlers()
+		this.bindUIEvents()
 
-		// window.g = this.game
-		// window.t = this
 		this.groups.board.y = this.globalOffset.y
 
 		GLOBALS.stars.get('creep').find_path_goal_spawn();
-
-		this.bindUIEvents()
 		GLOBALS.timers.firstWave.start()
 
 		// game.onFocus.add(()=>{})
@@ -158,7 +155,7 @@ export default class extends base_level {
 	}
 	bindUIEvents(){
 		let s = GLOBALS.signals
-		// debugger
+
 		s.creepReachedGoal.add(this.UIEvents.loseLife, this)
 		s.creepKilled.add(this.UIEvents.creepKilled, this)
 		
@@ -166,7 +163,6 @@ export default class extends base_level {
 		s.towerLeveled.add(this.UIEvents.loseGold, this)
 		s.tileLockToggle.add(this.UIEvents.tileLockToggle, this)
 	}
-
 	defineKeyHandlers (){
 		this.keyHandlers = {}
 
@@ -183,7 +179,6 @@ export default class extends base_level {
 			GLOBALS.signals.tileLockToggle.dispatch()
 		})
 	}
-
 	maskBoard (){
 		let rect = {
 			x: 0,

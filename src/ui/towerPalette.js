@@ -91,14 +91,13 @@ let base = stampit()
 			console.log(sprite.parent)
 			let towerData = sprite.parent.data.tower
 			let level = sprite.parent.data.level
-			let lines = {
-					damage: `damage: ${towerData.damage[level-1 || 0]}`,
-					level: `level: ${level || 'none'}`,
-					next: `level up cost: ${towerData.cost[level] || 'max'}`
-				}
-			GLOBALS.reactUI.setState({tower: lines})
-			// console.log(sprite.data.index)
+			let tower = {
+				damage: towerData.damage[level-1 || 0],
+				level: 'build',
+				next: towerData.cost[0] || 'max'
+			}
 
+			GLOBALS.reactUI.setState({tower})
 		}
 	})
 

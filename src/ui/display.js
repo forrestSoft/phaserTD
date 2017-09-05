@@ -49,25 +49,25 @@ export const Display = stampit()
 			lines: {}
 		})
 		GLOBALS.signals.display.add((lines)=>{
-			console.log(0,lines.brush)
-			if(lines.brush == 'null'){
-				this.clear()
-				this.lines = {}
+			// console.log(0,lines.brush)
+			// if(lines.brush == 'null'){
+			// 	this.clear()
+			// 	this.lines = {}
 				
-			}else{
+			// }else{
 
-				let towerData = GLOBALS.towers.data(lines.brush)
-				let level = lines.tower.level
-				console.log(GLOBALS.towers.data(lines.brush),lines.tower)
+			// 	let towerData = GLOBALS.towers.data(lines.brush)
+			// 	let level = lines.tower.level
+			// 	console.log(GLOBALS.towers.data(lines.brush),lines.tower)
 				
-				// debugger
-				this.lines = {
-					damage: `damage: ${towerData.damage[level-1]}`,
-					level: `level: ${level}`,
-					next: `level up cost: ${towerData.cost[level] || 'max'}`
-				}
-			}
-			GLOBALS.reactUI.setState({tower: this.lines})
+			// 	// debugger
+			// 	this.lines = {
+			// 		damage: `damage: ${towerData.damage[level-1]}`,
+			// 		level: `level: ${level}`,
+			// 		next: `level up cost: ${towerData.cost[level] || 'max'}`
+			// 	}
+			// }
+			// GLOBALS.reactUI.setState({tower: this.lines})
 			// this.render()
 		})
 	})

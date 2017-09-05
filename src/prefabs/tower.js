@@ -120,45 +120,32 @@ export const Tower = stampit()
 		over(){
 			this.tintTower()
 			let towerData = GLOBALS.towers.data(this.brush)
-				let level = this.level
-				console.log(GLOBALS.towers.data(this.brush),this)
-				
-				// debugger
-				let lines = {
-					damage: towerData.damage[level-1],
-					level: level,
-					next: towerData.cost[level] || 'max'
-				}
-				GLOBALS.reactUI.setState(lines)
-			// GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
+			let level = this.level
+			
+			let tower = {
+				damage: towerData.damage[level-1],
+				level: level,
+				next: towerData.cost[level] || 'max'
+			}
+			GLOBALS.reactUI.setState({tower})
 		},
 		notOver(){
+			console.log('no')
 			this.tintTower(true)
 			let towerData = GLOBALS.towers.data(this.brush)
 				let level = this.level
-				console.log(GLOBALS.towers.data(this.brush),this)
-				
-				// debugger
-				let lines = {
+				let tower = {
 					damage: towerData.damage[level-1],
 					level: level,
 					next: towerData.cost[level] || 'max'
 				}
-				GLOBALS.reactUI.setState(lines)
+				// GLOBALS.reactUI.setState({tower})
 		},
 		out(){
 			let towerData = GLOBALS.towers.data(this.brush)
-				let level = this.level
-				console.log(GLOBALS.towers.data(this.brush),this)
-				
-				// debugger
-				let lines = {
-					damage: towerData.damage[level-1],
-					level: level,
-					next: towerData.cost[level] || 'max'
-				}
-				GLOBALS.reactUI.setState(lines)
-			GLOBALS.signals.display.dispatch({type: 'towerOut', brush: 'null'})
+			let level = this.level
+			let tower = {}
+			GLOBALS.reactUI.setState({tower})
 			this.tintTower(true)
 		},
 		canUpgrade(){
@@ -184,10 +171,17 @@ export const Tower = stampit()
 			}else{
 				console.log('max')
 			}
+
+			let towerData = GLOBALS.towers.data(this.brush)
+			let level = this.level
+
+			let tower = {
+				damage: towerData.damage[level-1],
+				level: level,
+				next: towerData.cost[level] || 'max'
+			}
+			GLOBALS.reactUI.setState({tower})
 			this.tintTower()
-			// debugger
-			
-			// GLOBALS.signals.display.dispatch({tower: this, header: 'test', type: 'towerOver', brush: this.brush})
 		},
 		// over ride positioning based on world to based on sprite local + manual offset
 		tappedPreUpdate() {

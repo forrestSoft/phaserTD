@@ -55,9 +55,9 @@ class TowerInfo extends React.Component {
 		}
 		return(
 			<ul>
-				<li>{data.damage}</li>
-				<li>{data.level}</li>
-				<li>{data.next}</li>
+				<li>damage: {data.damage}</li>
+				<li>level: {data.level}</li>
+				<li>next level cost: {data.next}</li>
 			</ul>
 		)
 	}

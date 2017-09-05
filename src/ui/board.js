@@ -61,21 +61,20 @@ export var Board = stampit()
 		},
 		buildLayers() {
 			game.tileMapLayers = {}
+
 			this.map.layers.forEach((layer) => {
-			  let layerObj = this.map.createLayer(layer.name);
-			  game.tileMapLayers[layer.name] = layerObj
-			  this.layers[layer.name] = layerObj
-			  this.groups.board.addChild(layerObj)
-			  this.layers[layer.name].fixedToCamera = false;
+				let layerObj = this.map.createLayer(layer.name);
+				game.tileMapLayers[layer.name] = layerObj
+				this.layers[layer.name] = layerObj
+				this.groups.board.addChild(layerObj)
+				this.layers[layer.name].fixedToCamera = false;
 			}, this)
 		},
 		buildSpawn(){
-			this.objects['spawn'] = game.make.sprite(GLOBALS.entrance.columnPX,GLOBALS.entrance.rowPX,'ms',43)
-			this.groups.board.addChild(this.objects['spawn'])
+			this.groups.board.addChild(game.make.sprite(GLOBALS.entrance.columnPX,GLOBALS.entrance.rowPX,'ms',43))
 		},
 		buildGoal(){
-			this.objects['goal'] = game.make.sprite(GLOBALS.exit.columnPX,GLOBALS.exit.rowPX,'ms',43)
-			this.groups.board.addChild(this.objects['goal'])
+			this.groups.board.addChild(game.make.sprite(GLOBALS.exit.columnPX,GLOBALS.exit.rowPX,'ms',43))
 		}
 	})
 	.refs({
