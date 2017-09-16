@@ -29,7 +29,7 @@ module.exports = {
 		],
 		"no-console": "off",
 		"no-undef": "off",
-		"array-element-newline":"off"
+		'debugger': 'off'
 	},
 	globals: {
 		// phaser: true,
