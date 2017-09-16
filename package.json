@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix src/**/*.js",
+    "lint:self": "eslint --fix .eslintrc.js --ignore-pattern \"!.eslintrc.js\"",
+    "lint:check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check"
   },
   "repository": {
     "type": "git",
@@ -29,10 +32,17 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-eslint": "^8.0.0",
     "babel-loader": "^7.1.1",
     "babel-preset-react": "^6.24.1",
     "browser-sync": "^2.18.13",
     "browser-sync-webpack-plugin": "^1.2.0",
+    "eslint": "^4.7.0",
+    "eslint-config-prettier": "^2.4.0",
+    "eslint-import-resolver-webpack": "^0.8.3",
+    "eslint-plugin-prettier": "^2.2.0",
+    "eslint-plugin-react": "^7.3.0",
+    "prettier": "^1.7.0",
     "webpack": "^3.5.2"
   }
 }
