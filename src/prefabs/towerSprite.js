@@ -8,6 +8,7 @@ import GLOBALS from '../config/globals'
 export default class extends Phaser.Group {
 	constructor ({x,y,key,frame,type,offset,level, signalOver, signalOut, doesInput, doesRange}) {
 		super(game, null, 'tower', false, false, 0)
+
 		this.data = {
 			type, level, offset, doesInput, doesRange,
 			isOver: false,
@@ -25,9 +26,7 @@ export default class extends Phaser.Group {
 
 		Object.assign(this, {x,y})
 
-		if(!doesInput){
-			this.update = function(){}
-		}else{
+		if(doesInput){
 			this.towerSprite.inputEnabled = true
 			this.signalOver = this.towerSprite.events.onInputOver//new Phaser.Signal()
 			this.signalOver.add(this.showRange, this)
@@ -44,9 +43,6 @@ export default class extends Phaser.Group {
 	}
 	clearLastOver(){
 		this.lastOverState = null
-	}
-	update (){
-		return
 	}
 	buildSprite(){
 		this.towerSprite = game.make.sprite(0,0,'tank', 'turret')

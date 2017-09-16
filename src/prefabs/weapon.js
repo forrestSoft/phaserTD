@@ -56,7 +56,6 @@ W.prototype.update = function(){
 	}
 
 	let angle
-	
 
 	if(this.lastFire % this.fireIntervalMod == 0 && this.lastFire == this.fireInterval){
 		var fA = this.firingSolution.call(this,this.target)

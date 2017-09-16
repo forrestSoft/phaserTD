@@ -123,9 +123,9 @@ export const Cursor = stampit()
 			}
 		},
 		checkPath(x = this.oldPos.x ,y = this.oldPos.y){
-			let xP = x - (GLOBALS.globalOffset.x)
-			let yP = y - (GLOBALS.globalOffset.y)
-
+			let xP = x// - (GLOBALS.globalOffset.x)
+			let yP = y// - (GLOBALS.globalOffset.y)
+			console.log('path',xP, yP)
 			this.position = {x:0,y:0}
 			this.findFunction(null,null, this.PathCalculated, this,xP,yP, this.cursorState.rotationFactor)
 		},
@@ -214,22 +214,22 @@ export const CursorState = stampit()
 		getTile(x,y){
 			let size = this.getBrushSize()
 			let  {tH, tW, globalOffset, height, width} = GLOBALS
-
+			console.log('g',x,y)
 			//snap to grid
 			let xN = (Math.floor(x/ tH) * tH)// - globalOffset.x
 			let yN = (Math.floor(y/tW) * tW)// - globalOffset.y
 			let point = {xN, yN}
-
+			console.log('point',point)
 			let cutOffY1 = (tH)
 			let cutOffY = ((height + 1) * tH) - ((size[0]+1)*tH)
 			let cutOffX1 = (tW)
-			let cutOffX = ((width + 1) * tW) - ((size[0]+1)*tW)
+			let cutOffX = ((width + 1) * tW) - ((size[1]+1)*tW)
 			
 			// use the above x/y, unless
 			// - over the last/first row/col
 			// then snap
 			if(xN >= cutOffX){
-				xN = width*tH - ((size[0])*tH)
+				xN = width*tH - ((size[0]+1)*tH)
 			}else if(xN <= globalOffset.x){
 				xN = tH + globalOffset.x
 			}
@@ -242,13 +242,14 @@ export const CursorState = stampit()
 
 			let tile = {
 				x: (xN/16) - 1,//(globalOffset.x / tW)
-				y: (yN/16) - (globalOffset.y / tH)
+				y: (yN/16) - 1//(globalOffset.y / tH)
 			}
+			console.log('nnn',xN,yN)
 			Object.assign(this.dataState,{
 				tile: tile,
 				pos: {x: xN, y: yN}
 			})
-			console.log(this.dataState.tile, this.dataState.pos)
+			// console.log(this.dataState.tile, this.dataState.pos)
 			return {point, tile}
 		},
 		calculateCursorTile(x,y, marker){
@@ -457,6 +458,7 @@ export const Brush = stampit()
 					x: baseLayer.getTileX(state.pos.x),
 					y: baseLayer.getTileY(state.pos.y)
 				}
+
 				switch (this.brushType){
 					case 'tower':
 						this.lastBrushType = 'tower'

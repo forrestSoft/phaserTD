@@ -16,7 +16,7 @@ export const TowerManager = Manager.compose(Builder)
 	.methods({
 		addTower({x,y,brush,cursorTile}){
 			let cost = GLOBALS.towers.towers[brush].cost[0]
-			let tower =  Tower({x:x+GLOBALS.globalOffset.x,y:y+GLOBALS.globalOffset.y,brush:brush,cursorTile,group:this.group})
+			let tower =  Tower({x,y,brush,cursorTile,group:this.group})
 			this.towers.push(tower)
 			this.addBullets(tower.weapon)
 			GLOBALS.signals.towerPlaced.dispatch(cost)
@@ -76,7 +76,7 @@ export const Tower = stampit()
 				b.body.setSize(6, 4, 6, 18);
 				// b.body.syncBounds = true
 				b.body.updateBounds();
-				b.body.preUpdate = this.tappedPreUpdate.bind(b.body)
+				// b.body.preUpdate = this.tappedPreUpdate.bind(b.body)
 				b.data.name = i
 				b.damageValue = dynamicParams.damageValue
 				b.damage = dynamicParams.damage
@@ -95,8 +95,8 @@ export const Tower = stampit()
 			this.level = 1
 
 			this.sprite = new TowerSprite({
-				x: this.x+(GLOBALS.tH/2) - GLOBALS.globalOffset.x,
-				y: this.y+(GLOBALS.tW/2) - GLOBALS.globalOffset.y, 
+				x: this.x+(GLOBALS.tH/2),
+				y: this.y+(GLOBALS.tW/2),
 				key:'tank',
 				frame:'turret',
 				type: this.brush,
@@ -223,7 +223,7 @@ export const Tower = stampit()
 
 			this.position.y = (this.sprite.y - (this.sprite.anchor.y * this.sprite.height)) + this.sprite.scale.y * this.offset.y;
 			this.position.y -= this.sprite.scale.y < 0 ? this.height : 0;
-			this.position.y += 16
+			// this.position.y += 16
 			this.rotation = this.sprite.angle;
 
 			this.preRotation = this.rotation;

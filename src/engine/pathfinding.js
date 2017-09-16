@@ -62,19 +62,17 @@ export const Pathfinder = stampit()
 		find_path (origin, target, callback, context) {
 			let origin_coord, target_coord;
 
-			origin_coord = Points.get_coord_from_point(origin);
 			// origin_coord = {row: 0, column: 0}
-
 			// target_coord = {row: 3, column: GLOBALS.width - 1}
-			target_coord = GLOBALS.exit
-			// console.log('find path',origin_coord, target_coord)
 			// target_coord = this.get_coord_from_point(target);
+			origin_coord = Points.get_coord_from_point(origin);
+			target_coord = GLOBALS.exit
 			
 			if (!Points.outside_grid(origin_coord) && !Points.outside_grid(target_coord)) {
 				console.time('astar time')
 				this.star.findPath(origin_coord.column, origin_coord.row, target_coord.column, target_coord.row, this.call_callback_function.bind(this, callback, context));
 				this.star.calculate();
-				console.timeEnd('astar time')
+				// console.timeEnd('astar time')
 				return true;
 			} else {
 				return false;
@@ -87,13 +85,12 @@ export const Pathfinder = stampit()
 		},
 		find_path_from_brush (origin, target, callback, context,x,y, rotation) {
 			let grid = GLOBALS.currentCollisionLayer()
-			let c = {x: x - GLOBALS.globalOffset.x, y: y - GLOBALS.globalOffset.y}
+			let c = {x, y}
 			
 			if(game.currentFancyBrush != undefined){
 				let brush = GLOBALS.fancyBrushes[game.currentFancyBrush]
-				// console.group(rotation)
 				let rotatedBrush = GLOBALS.rotateFancyBrush(game.currentFancyBrush, rotation)
-				// console.groupEnd(rotation)
+
 				let earlyAbort = false
 				const th = 16
 				const tw = 16
@@ -107,8 +104,8 @@ export const Pathfinder = stampit()
 						let t =  Points.get_coord_from_point(c)
 						let spritePosition = Points.get_coord_from_point({x,y})
 						
-						let mappedX = t.column+spritePosition.column//(x/16)
-						let mappedY = t.row+spritePosition.row+2//(y/16)+2
+						let mappedX = t.column + spritePosition.column
+						let mappedY = t.row + spritePosition.row
 						
 						// tile is outside of grid, invalid position
 						let outsideOfGrid = (!grid[mappedY] || !grid[mappedY][mappedX])
@@ -118,8 +115,9 @@ export const Pathfinder = stampit()
 							earlyAbort = true
 							return false
 						}
+						// console.log('mmm',mappedX, mappedY,'-',x,y,'-',t, spritePosition)
 						grid[mappedY][mappedX].index = GLOBALS.brushMap[sprite]
-						// console.log(grid[mappedY][mappedX].index)
+
 						return true
 					}
 				})
@@ -146,7 +144,7 @@ export const Pathfinder = stampit()
 		},
 
 		call_callback_function (callback, context, path) {
-			// console.timeEnd('astar time')
+			console.timeEnd('astar time')
 			let path_positions, pt, p,x,y;
 
 			path_positions = [];
@@ -164,9 +162,10 @@ export const Pathfinder = stampit()
 			if(!callback){
 				return
 			}
-			// console.log('123')
-			// callback.call(context, path_positions);
+			
+			callback.call(context, path_positions);
 			// if(this.name === 'creep'){
+			// console.log('123')
 			// 	console.log(321)
 			// 	GLOBALS.signals.creepPathReset.dispatch()
 			// }

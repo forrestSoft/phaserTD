@@ -86,7 +86,7 @@ let base = stampit()
 			let {x,y} = sprite.parent.position
 			let {tW:width,tH:height} = GLOBALS
 			this.updateCursor({x:(x-GLOBALS.tW/2),y:y-(GLOBALS.tH/2),width,height})
-			GLOBALS.towerReferenceManager.setTower(sprite.parent)
+			// GLOBALS.towerReferenceManager.setTower(sprite.parent)
 
 			console.log(sprite.parent)
 			let towerData = sprite.parent.data.tower

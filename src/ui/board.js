@@ -25,7 +25,7 @@ export var Board = stampit()
 			this.buildSpawn()
 			this.buildCreepManager()
 			this.buildKaboomManager()
-			this.buildTowerReferenceManager()
+			// this.buildTowerReferenceManager()
 		},
 		buildTowerReferenceManager(){
 			this.towerReferenceManager = TowerReferenceManager()

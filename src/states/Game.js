@@ -53,6 +53,7 @@ export default class extends base_level {
 			cursor: this.game.add.group(undefined,'cursor'),
 			towers: this.game.add.group(undefined,'towers')
 		}
+		this.groups.board.add(this.groups.towers)
 
 		GLOBALS.groups = this.groups
 		GLOBALS.splashes = []

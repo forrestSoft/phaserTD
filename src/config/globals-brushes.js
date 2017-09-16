@@ -96,8 +96,6 @@ var brushes = {
 		none: -999
 	},
 	rotateFancyBrush: function(brush = 0, CWRotFactor = 0, data){
-		// console.log('----rot:', CWRotFactor, data)
-
 		// turn 1d brush array into 2d array, then rotate 0,90,180,270
 		if(![0,1,2,3].includes(CWRotFactor)){
 			console.error('rotateFancyBrushte: invalid rotation factor:', CWRotFactor)
