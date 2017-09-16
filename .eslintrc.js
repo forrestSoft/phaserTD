@@ -26,7 +26,10 @@ module.exports = {
 				tabWidth: 1,
 				useTabs: true
 			}
-		]
+		],
+		"no-console": "off",
+		"no-undef": "off",
+		"array-element-newline":"off"
 	},
 	globals: {
 		// phaser: true,
