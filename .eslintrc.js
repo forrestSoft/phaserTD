@@ -27,9 +27,12 @@ module.exports = {
 				useTabs: true
 			}
 		],
-		"no-console": "off",
-		"no-undef": "off",
-		'debugger': 'off'
+		'no-console': 'off',
+		'no-undef': 'off',
+		debugger: 'off',
+		'brace-style': 'error',
+		'func-call-spacing': ["error", "never"],
+		'no-trailing-spaces': "error"
 	},
 	globals: {
 		// phaser: true,

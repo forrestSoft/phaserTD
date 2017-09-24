@@ -16,7 +16,7 @@ var globals = {
 	tH: 16,
 	tW: 16,
 	grid_dimensions: {
-		row: 12, 
+		row: 12,
 		column: 11
 	},
 	entrance: {
@@ -26,8 +26,8 @@ var globals = {
 	exit: {
 		row: 9
 	},
-	acceptableTiles: [-1,25,30,31,32, -999,0],
-	unacceptableTiles: [30,31,34,44,45],
+	acceptableTiles: [-1, 25, 30, 31, 32, -999, 0],
+	unacceptableTiles: [30, 31, 34, 44, 45],
 	creeps: {
 		pool: 10
 	},
@@ -52,7 +52,7 @@ const tempGlobalsEntrance = {
 Object.assign(globals.entrance, tempGlobalsEntrance)
 Object.assign(globals, Brushes)
 globals.towers = Towers
-globals.towers.data = (index)=>{
+globals.towers.data = index => {
 	return GLOBALS.towers.towers[index]
 }
 

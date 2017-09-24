@@ -3,162 +3,161 @@ import Prefab from './prefab'
 import GLOBALS from '../config/globals'
 
 export default class extends Prefab {
-    constructor (game_state, name, position, properties) {
-        super(game_state, name, position, properties)
+	constructor(game_state, name, position, properties) {
+		super(game_state, name, position, properties)
 
-        this.data.id = game_state.counters.creepID++
-        this.data.beenHitBy = {}
-        
-        this.anchor.setTo(0.5)
-        this.scale.setTo(0.666, 0.5)
-        
-        this.walking_speed = +properties.walking_speed
+		this.data.id = game_state.counters.creepID++
+		this.data.beenHitBy = {}
 
-        this.game_state.game.physics.arcade.enable(this)
-        
-        // change the size and position of the collision box
-        this.body.setSize(8, 14, 8, 12)
-        this.body.collideWorldBounds = true
-            
-        this.anchor.setTo(0.5, 0.5)
-        
-        this.path = [];
-        this.path_step = -1;
+		this.anchor.setTo(0.5)
+		this.scale.setTo(0.666, 0.5)
 
-        this.animations.add('walkNorth', [0,1,2], 10, true)
-        this.animations.add('walkEast', [3,4,5], 10, true)
-        this.animations.add('walkSouth', [6,7,8], 10, true)
-        this.animations.add('walkWest', [9,10,11], 10, true)
+		this.walking_speed = +properties.walking_speed
 
-        this.buildHealthBar()
-        
-        GLOBALS.signals.creepPathReset.add(this.reset,this)
+		this.game_state.game.physics.arcade.enable(this)
 
-        this.life = properties.health
-        this.fullLife = properties.health
-        this.value = properties.gold
-    }
+		// change the size and position of the collision box
+		this.body.setSize(8, 14, 8, 12)
+		this.body.collideWorldBounds = true
 
-    hit(damage = 1){
-        this.life -= damage
-        // console.log(`hit for ${damage}, life left ${this.life}`, this.data.id)
-        this.updateHealthMeter()
+		this.anchor.setTo(0.5, 0.5)
 
-        if(this.life <= 0){
-            let explosionAnimation = GLOBALS.kabooms.getFirstExists(false);
+		this.path = []
+		this.path_step = -1
 
-            explosionAnimation.reset(this.x, this.y);
-            explosionAnimation.play('kaboom', 30, false, true);
-            
-            this.kill()
-            GLOBALS.signals.creepKilled.dispatch(this.gold)
-        }
-    }
+		this.animations.add('walkNorth', [0, 1, 2], 10, true)
+		this.animations.add('walkEast', [3, 4, 5], 10, true)
+		this.animations.add('walkSouth', [6, 7, 8], 10, true)
+		this.animations.add('walkWest', [9, 10, 11], 10, true)
 
-    update () {
-        if(!GLOBALS.stars.get('creep').hasPath){
-            return
-        }
+		this.buildHealthBar()
 
-        if(this.path_step == -1){
-            this.path_step = 0
-        }
+		GLOBALS.signals.creepPathReset.add(this.reset, this)
 
-        this.path = GLOBALS.stars.get_path('creep')
+		this.life = properties.health
+		this.fullLife = properties.health
+		this.value = properties.gold
+	}
 
-        let next_position, velocity, tempPath;
-        this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision)
-        
-        if (this.path.length > 0) {
-            next_position = this.path[this.path_step]
-            
-            if (!this.reached_target_position(next_position)) {
-                velocity = new Phaser.Point(next_position.x - this.position.x,
-                                            next_position.y - this.position.y)
+	hit(damage = 1) {
+		this.life -= damage
+		// console.log(`hit for ${damage}, life left ${this.life}`, this.data.id)
+		this.updateHealthMeter()
 
-                velocity.normalize();
-                this.velocity = velocity
-                
-                let s,n
-                n = ((Math.atan2(-velocity.y,-velocity.x)))
-                if(n < -3 || n > 3){
-                    s = 'East'
-                }else if(n < -1.5){
-                    s = 'South'
-                }else if(n > 1.5){
-                    s = 'North'
-                }else{
-                    s = 'West'
-                }
+		if (this.life <= 0) {
+			let explosionAnimation = GLOBALS.kabooms.getFirstExists(false)
 
-                this.animations.play('walk'+s)
-                
-                this.body.velocity.x = velocity.x * this.walking_speed;
-                this.body.velocity.y = velocity.y * this.walking_speed;
-            } else {
-                this.position.x = next_position.x;
-                this.position.y = next_position.y; 
-                if (this.path_step < this.path.length - 1) {
-                    this.path_step += 1;
-                } else {
-                    GLOBALS.signals.creepReachedGoal.dispatch()
-                    this.destroy()
-                }
-            }
-        }
-    }
+			explosionAnimation.reset(this.x, this.y)
+			explosionAnimation.play('kaboom', 30, false, true)
 
-    reached_target_position (target_position) {
-        let distance;
-        distance = Phaser.Point.distance(this.position, target_position);
-        return distance < 1;
-    }
+			this.kill()
+			GLOBALS.signals.creepKilled.dispatch(this.gold)
+		}
+	}
 
-    move_through_path (path) {
-        if (path !== null) {
-            this.path = path;
-            this.path_step = 0;
-        } else {
-            this.path = [];
-        }
-    }
+	update() {
+		if (!GLOBALS.stars.get('creep').hasPath) {
+			return
+		}
 
-    reset(){
-        this.path = GLOBALS.stars.get_path('creep')
+		if (this.path_step == -1) {
+			this.path_step = 0
+		}
 
-        if(this.path_step == -1){
-            this.path_step = 0
-        }else{
-            this.path.some((point,i)=>{
-                console.log('l',point, this.position)
-                if(this.position.x < point.x && this.position.y < point.y){
-                    this.path_step = i
-                    return true
-                }else{
-                    return false
-                }
-            })
-        }
-    }
+		this.path = GLOBALS.stars.get_path('creep')
 
-    updateHealthMeter(){
-        this.healthMeter.width = 8*((this.fullLife-this.life)/this.fullLife)
-    }
+		let next_position, velocity, tempPath
+		this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision)
 
-    buildHealthBar(){
-        this.healthBar = game.make.graphics()
-        this.healthBar.beginFill(0x3399ff)
-        this.healthBar.drawRect(0,0,10,4)
+		if (this.path.length > 0) {
+			next_position = this.path[this.path_step]
 
-        this.healthMeter = game.make.graphics()
-        this.healthMeter.beginFill(0xff0000)
-        this.healthMeter.drawRect(0,0,10,4)
-        this.healthMeter.width = 0
+			if (!this.reached_target_position(next_position)) {
+				velocity = new Phaser.Point(next_position.x - this.position.x, next_position.y - this.position.y)
 
-        this.healthBar.addChild(this.healthMeter)
-        this.addChild(this.healthBar)
+				velocity.normalize()
+				this.velocity = velocity
 
-        this.healthBar.x = -5
-        this.healthBar.y = -17
-    }
+				let s, n
+				n = Math.atan2(-velocity.y, -velocity.x)
+				if (n < -3 || n > 3) {
+					s = 'East'
+				} else if (n < -1.5) {
+					s = 'South'
+				} else if (n > 1.5) {
+					s = 'North'
+				} else {
+					s = 'West'
+				}
+
+				this.animations.play('walk' + s)
+
+				this.body.velocity.x = velocity.x * this.walking_speed
+				this.body.velocity.y = velocity.y * this.walking_speed
+			} else {
+				this.position.x = next_position.x
+				this.position.y = next_position.y
+				if (this.path_step < this.path.length - 1) {
+					this.path_step += 1
+				} else {
+					GLOBALS.signals.creepReachedGoal.dispatch()
+					this.destroy()
+				}
+			}
+		}
+	}
+
+	reached_target_position(target_position) {
+		let distance
+		distance = Phaser.Point.distance(this.position, target_position)
+		return distance < 1
+	}
+
+	move_through_path(path) {
+		if (path !== null) {
+			this.path = path
+			this.path_step = 0
+		} else {
+			this.path = []
+		}
+	}
+
+	reset() {
+		this.path = GLOBALS.stars.get_path('creep')
+
+		if (this.path_step == -1) {
+			this.path_step = 0
+		} else {
+			this.path.some((point, i) => {
+				console.log('l', point, this.position)
+				if (this.position.x < point.x && this.position.y < point.y) {
+					this.path_step = i
+					return true
+				} else {
+					return false
+				}
+			})
+		}
+	}
+
+	updateHealthMeter() {
+		this.healthMeter.width = 8 * ((this.fullLife - this.life) / this.fullLife)
+	}
+
+	buildHealthBar() {
+		this.healthBar = game.make.graphics()
+		this.healthBar.beginFill(0x3399ff)
+		this.healthBar.drawRect(0, 0, 10, 4)
+
+		this.healthMeter = game.make.graphics()
+		this.healthMeter.beginFill(0xff0000)
+		this.healthMeter.drawRect(0, 0, 10, 4)
+		this.healthMeter.width = 0
+
+		this.healthBar.addChild(this.healthMeter)
+		this.addChild(this.healthBar)
+
+		this.healthBar.x = -5
+		this.healthBar.y = -17
+	}
 }

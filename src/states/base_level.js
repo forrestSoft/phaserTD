@@ -6,17 +6,17 @@ import Player from '../prefabs/player'
 
 export default class extends Phaser.State {
 	getTileProperties() {
-		var x = this.layers.layer1.getTileX(this.game.input.activePointer.worldX);
-		var y = this.layers.layer1.getTileY(this.game.input.activePointer.worldY);
+		var x = this.layers.layer1.getTileX(this.game.input.activePointer.worldX)
+		var y = this.layers.layer1.getTileY(this.game.input.activePointer.worldY)
 
-		var tile = this.map.getTile(x, y, this.layers.background);
+		var tile = this.map.getTile(x, y, this.layers.background)
 		console.log(tile)
-		tile.properties.wibble = true;
+		tile.properties.wibble = true
 	}
 
 	getPointFrom(where) {
-		let p;
-		switch (where){
+		let p
+		switch (where) {
 			case 'mouse':
 				p = new Phaser.Point(this.game.input.activePointer.x, this.game.input.activePointer.y)
 				return Phaser.Input.prototype.getLocalPosition(this.layers.background, p)
@@ -24,28 +24,28 @@ export default class extends Phaser.State {
 		}
 	}
 
-	getTileFrom(where){
+	getTileFrom(where) {
 		let x, y, tile
-		switch(where){
+		switch (where) {
 			case 'mouse':
-				x = this.layers.layer1.getTileX(game.input.activePointer.worldX);
-			    y = this.layers.layer1.getTileY(game.input.activePointer.worldY);
+				x = this.layers.layer1.getTileX(game.input.activePointer.worldX)
+				y = this.layers.layer1.getTileY(game.input.activePointer.worldY)
 
-			    return this.map.getTile(x, y, 0);
-			    break
+				return this.map.getTile(x, y, 0)
+				break
 		}
 	}
 
-	create_object (object) {
-		let object_y, position, prefab;
+	create_object(object) {
+		let object_y, position, prefab
 		// tiled coordinates starts in the bottom left corner
-		object_y = (object.gid) ? object.y - (this.map.tileHeight / 2) : object.y + (object.height / 2);
-		position = {"x": object.x + (this.map.tileHeight / 2), "y": object_y};
+		object_y = object.gid ? object.y - this.map.tileHeight / 2 : object.y + object.height / 2
+		position = { x: object.x + this.map.tileHeight / 2, y: object_y }
 		// create object according to its type
 		if (this.prefab_classes.hasOwnProperty(object.type)) {
-		  prefab = new this.prefab_classes[object.type](this, object.name, position, object.properties);
+			prefab = new this.prefab_classes[object.type](this, object.name, position, object.properties)
 		}
-		this.prefabs[object.name] = prefab;
+		this.prefabs[object.name] = prefab
 		return prefab
 	}
 }

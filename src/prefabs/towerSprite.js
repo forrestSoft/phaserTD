@@ -6,11 +6,15 @@ import TowerSprite from '../prefabs/towerSprite'
 import GLOBALS from '../config/globals'
 
 export default class extends Phaser.Group {
-	constructor ({x,y,key,frame,type,offset,level, signalOver, signalOut, doesInput, doesRange}) {
+	constructor({ x, y, key, frame, type, offset, level, signalOver, signalOut, doesInput, doesRange }) {
 		super(game, null, 'tower', false, false, 0)
 
 		this.data = {
-			type, level, offset, doesInput, doesRange,
+			type,
+			level,
+			offset,
+			doesInput,
+			doesRange,
 			isOver: false,
 			tower: GLOBALS.towers.data(type)
 		}
@@ -20,17 +24,17 @@ export default class extends Phaser.Group {
 		this.buildSprite()
 		this.buildColorDot()
 
-		if(this.data.doesRange){
+		if (this.data.doesRange) {
 			this.buildRangeIndicator()
 		}
 
-		Object.assign(this, {x,y})
+		Object.assign(this, { x, y })
 
-		if(doesInput){
+		if (doesInput) {
 			this.towerSprite.inputEnabled = true
-			this.signalOver = this.towerSprite.events.onInputOver//new Phaser.Signal()
+			this.signalOver = this.towerSprite.events.onInputOver //new Phaser.Signal()
 			this.signalOver.add(this.showRange, this)
-			this.signalOut = this.towerSprite.events.onInputOut//new Phaser.Signal()
+			this.signalOut = this.towerSprite.events.onInputOut //new Phaser.Signal()
 			this.signalOut.add(this.hideRange, this)
 			// this.update = _.throttle(this.update.bind(this), 250)
 
@@ -41,46 +45,46 @@ export default class extends Phaser.Group {
 
 		this.lastOverState = false
 	}
-	clearLastOver(){
+	clearLastOver() {
 		this.lastOverState = null
 	}
-	buildSprite(){
-		this.towerSprite = game.make.sprite(0,0,'tank', 'turret')
-		this.towerSprite.anchor.x = .5
-		this.towerSprite.anchor.y = .5
-		this.towerSprite.scale.setTo(.275, .45)
+	buildSprite() {
+		this.towerSprite = game.make.sprite(0, 0, 'tank', 'turret')
+		this.towerSprite.anchor.x = 0.5
+		this.towerSprite.anchor.y = 0.5
+		this.towerSprite.scale.setTo(0.275, 0.45)
 		this.data.realTower = true
 		this.data.towerType = this.data.tower.index
 
 		this.data.cost = GLOBALS.towers.data(this.data.towerType).cost[0]
 		this.addChild(this.towerSprite)
 	}
-	buildColorDot(type, offset){
-		var style = { 
-			font: "90px Arial",
+	buildColorDot(type, offset) {
+		var style = {
+			font: '90px Arial',
 			fontWeight: 'bold',
-			align: "center",
-			fill:  `#${this.data.tower.tint}`
+			align: 'center',
+			fill: `#${this.data.tower.tint}`
 		}
-		let textValue = (this.data.level || 'x')
+		let textValue = this.data.level || 'x'
 		this.text = game.make.text(this.data.offset.x, this.data.offset.y, textValue, style)
-		this.text.anchor.set(0.5);
-		this.text.scale.setTo(.125,.125)
+		this.text.anchor.set(0.5)
+		this.text.scale.setTo(0.125, 0.125)
 		this.addChild(this.text)
 	}
-	buildRangeIndicator(){
+	buildRangeIndicator() {
 		this.rangeIndicator = game.make.graphics()
 		this.rangeIndicator.lineStyle(2, 0x00ffff, 1)
-		this.rangeIndicator.drawCircle(this.towerSprite.x,this.towerSprite.y,this.data.tower.rangeRadius*2)
+		this.rangeIndicator.drawCircle(this.towerSprite.x, this.towerSprite.y, this.data.tower.rangeRadius * 2)
 		this.addChild(this.rangeIndicator)
 	}
-	hideRange(){
+	hideRange() {
 		this.rangeIndicator && (this.rangeIndicator.alpha = 0)
 	}
-	showRange(){
+	showRange() {
 		this.rangeIndicator && (this.rangeIndicator.alpha = 1)
 	}
-	nextLevel(level){
+	nextLevel(level) {
 		this.data.level = level
 		this.text.destroy()
 		this.buildColorDot()

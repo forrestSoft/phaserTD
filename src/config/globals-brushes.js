@@ -1,7 +1,7 @@
 // prettier-ignore
 var brushes = {
 	fancyBrushes: [
-		{ 
+		{
 			sprite: ['brownWall','brownWall','brownWall',
 					 'brownWall','straightDownB','straightDownA',
 					 'brownWall','straightDownB' ,'brownWall'],
@@ -64,7 +64,7 @@ var brushes = {
 			size: [3,3],
 			name: 'upRight90'
 		},
-		
+
 		{
 			sprite: ['brownWall','straightDownB','brownWall', 'brownWall',
 					 'straightDownA','straightDownB','brownWall', 'brownWall',
@@ -121,7 +121,7 @@ var brushes = {
 
 		let rotate90 = function(a){
 			let rotated = a[0].map(function(col, i) {
-				return a.map(function(row) { 
+				return a.map(function(row) {
 					return row[i]
 				})
 			})
@@ -160,23 +160,24 @@ var brushes = {
 [1,4,7]
 
 */
-brushes.fancyBrushes.sort((a,b)=> {
-	if(a.size[0] > b.size[0]){
+brushes.fancyBrushes.sort((a, b) => {
+	if (a.size[0] > b.size[0]) {
 		return -1
-	}else if(b.size[0] > a.size[0]){
+	} else if (b.size[0] > a.size[0]) {
 		return 1
-	}else if(a.size[1] > b.size[1]){
+	} else if (a.size[1] > b.size[1]) {
 		return -1
-	}else if (b.size[1] > a.size[1]){
+	} else if (b.size[1] > a.size[1]) {
 		return 1
-	}else{
+	} else {
 		return -1
 	}
 })
 
-brushes.fancySortedSizes = brushes.fancyBrushes.map((box,i)=>{
+brushes.fancySortedSizes = brushes.fancyBrushes.map((box, i) => {
 	return {
-		w: box.size[0]+.2, h: box.size[1]+.2
+		w: box.size[0] + 0.2,
+		h: box.size[1] + 0.2
 	}
 })
 

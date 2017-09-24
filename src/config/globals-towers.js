@@ -19,7 +19,7 @@ var towers = {
 			bulletAngleOffset: 90,
 			index: 36,
 			firingInterval: 1500,
-			rangeRadius:75,
+			rangeRadius: 75,
 			bulletSpeed: 350,
 			damage: [19, 35, 55],
 			cost: [25, 20, 50]
@@ -34,8 +34,8 @@ var towers = {
 			rangeRadius: 25,
 			bulletSpeed: 275,
 			cost: [10, 5, 8],
-			scale: [.1,.1],
-			damage: [1,1.25,1.8]
+			scale: [0.1, 0.1],
+			damage: [1, 1.25, 1.8]
 		}
 	}
 }
