@@ -27,11 +27,11 @@ export var Board = stampit()
 			this.buildKaboomManager()
 			// this.buildTowerReferenceManager()
 		},
-		buildTowerReferenceManager(){
-			this.towerReferenceManager = TowerReferenceManager()
-			this.towerReferenceManager.setup()
-			GLOBALS.towerReferenceManager = this.towerReferenceManager
-		},
+		// buildTowerReferenceManager(){
+		// 	this.towerReferenceManager = TowerReferenceManager()
+		// 	this.towerReferenceManager.setup()
+		// 	GLOBALS.towerReferenceManager = this.towerReferenceManager
+		// },
 		buildTowerManager(){
 			this.towerManager = TowerManager({
 				group: this.groups.towers

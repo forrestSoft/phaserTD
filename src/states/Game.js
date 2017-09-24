@@ -2,7 +2,7 @@
 
 import stampit from 'stampit'
 import Phaser from 'phaser'
-import Mushroom from '../sprites/Mushroom'
+
 import {Pathfinders, Pathfinder} from '../engine/pathfinding'
 
 import base_level from './base_level'
@@ -11,7 +11,6 @@ import { buildBoundInputMask } from '../utils'
 
 import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
-import {CreepManager} from '../prefabs/creeps'
 
 import GLOBALS from '../config/globals'
 import config from '../config/config'
@@ -24,10 +23,7 @@ import {Display} from '../ui/display'
 import {CollisionManager} from '../engine/collisionManager'
 import {DebugManager} from '../engine/phaserDebugger'
 
-import GrowingPacker from '../ext/packer.growing'
-import Packer from '../ext/packer'
-
-import {App} from '../react/app.jsx' 
+import {App} from '../react/app.jsx'
 
 export default class extends base_level {
 	init () {

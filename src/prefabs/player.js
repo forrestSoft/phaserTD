@@ -2,28 +2,25 @@ import Prefab from './prefab'
 
 import GLOBALS from '../config/globals'
 
-
-
 export default class extends Prefab {
     constructor (game_state, name, position, properties) {
-        super(game_state, name, position, properties);
+        super(game_state, name, position, properties)
 
         this.data.id = game_state.counters.creepID++
         this.data.beenHitBy = {}
         
-        this.anchor.setTo(0.5);
-        this.scale.setTo(0.666, 0.5);
+        this.anchor.setTo(0.5)
+        this.scale.setTo(0.666, 0.5)
         
-        this.walking_speed = +properties.walking_speed;
+        this.walking_speed = +properties.walking_speed
 
-        this.game_state.game.physics.arcade.enable(this);
+        this.game_state.game.physics.arcade.enable(this)
         
         // change the size and position of the collision box
-        this.body.setSize(8, 14, 8, 12);
-        this.body.collideWorldBounds = true;
+        this.body.setSize(8, 14, 8, 12)
+        this.body.collideWorldBounds = true
             
-        // set anchor point to be the center of the collision box
-        this.anchor.setTo(0.5, 0.5);
+        this.anchor.setTo(0.5, 0.5)
         
         this.path = [];
         this.path_step = -1;
@@ -59,7 +56,6 @@ export default class extends Prefab {
     }
 
     update () {
-        // console.log('u', this.path_step)
         if(!GLOBALS.stars.get('creep').hasPath){
             return
         }
@@ -71,16 +67,18 @@ export default class extends Prefab {
         this.path = GLOBALS.stars.get_path('creep')
 
         let next_position, velocity, tempPath;
-        this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision);
+        this.game_state.game.physics.arcade.collide(this, this.game_state.layers.collision)
         
         if (this.path.length > 0) {
-            next_position = this.path[this.path_step];
+            next_position = this.path[this.path_step]
             
             if (!this.reached_target_position(next_position)) {
                 velocity = new Phaser.Point(next_position.x - this.position.x,
-                                       next_position.y - this.position.y);
+                                            next_position.y - this.position.y)
+
                 velocity.normalize();
                 this.velocity = velocity
+                
                 let s,n
                 n = ((Math.atan2(-velocity.y,-velocity.x)))
                 if(n < -3 || n > 3){

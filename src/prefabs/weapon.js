@@ -21,7 +21,7 @@ W.prototype.update = function(){
 		let coords = {
 			x:  this.x, 
 			y:  this.y,
-			x2: this.target.centerX, 
+			x2: this.target.centerX,
 			y2: this.target.centerY
 		}
 
@@ -37,6 +37,7 @@ W.prototype.update = function(){
 		if(!this.target){
 			return
 		}
+		
 		let tooFar = getTargetDistance() > GLOBALS.towers.towers[this.brush].rangeRadius + 4
 		let outOfBounds = this.target._exists == false
 

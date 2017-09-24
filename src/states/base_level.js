@@ -5,19 +5,6 @@ import Prefab from '../prefabs/prefab'
 import Player from '../prefabs/player'
 
 export default class extends Phaser.State {
-	// buildAndBind_cursor (){
-	// 	this.marker = game.add.graphics();
-	//     this.marker.lineStyle(2, 0xffffff, 1);
-	//     this.marker.drawRect(0, 0, 16,16);
-
-	//     this.game.input.addMoveCallback(this.updateMarker, this);
-	// }
-
-	// updateMarker() {
-	// 	this.marker.x = this.baseLayer.getTileX(this.game.input.activePointer.worldX) * this.map.tileWidth;
-	// 	this.marker.y = this.baseLayer.getTileY(this.game.input.activePointer.worldY) * this.map.tileHeight ;
-	// }
-
 	getTileProperties() {
 		var x = this.layers.layer1.getTileX(this.game.input.activePointer.worldX);
 		var y = this.layers.layer1.getTileY(this.game.input.activePointer.worldY);
@@ -46,7 +33,6 @@ export default class extends Phaser.State {
 
 			    return this.map.getTile(x, y, 0);
 			    break
-
 		}
 	}
 

@@ -66,7 +66,7 @@ export const Tower = stampit()
 				// damageValue: dynamicParams.damage
 			})
 
-			this.weapon.createBullets(1, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
+			this.weapon.createBullets(100, 'weapons', 'bulletBeigeSilver_outline.png', this.group)
 			
 			this.weapon.bullets.forEach((b,i) => {
 				let scaleX = dynamicParams.scale && dynamicParams.scale[0] || .25
@@ -74,7 +74,6 @@ export const Tower = stampit()
 
 				b.scale.setTo(scaleX,scaleY)
 				b.body.setSize(6, 4, 6, 18);
-				// b.body.syncBounds = true
 				b.body.updateBounds();
 				// b.body.preUpdate = this.tappedPreUpdate.bind(b.body)
 				b.data.name = i
@@ -121,25 +120,13 @@ export const Tower = stampit()
 			this.tintTower()
 			let towerData = GLOBALS.towers.data(this.brush)
 			let level = this.level
-			
+
 			let tower = {
 				damage: towerData.damage[level-1],
 				level: level,
 				next: towerData.cost[level] || 'max'
 			}
 			GLOBALS.reactUI.setState({tower})
-		},
-		notOver(){
-			console.log('no')
-			this.tintTower(true)
-			let towerData = GLOBALS.towers.data(this.brush)
-				let level = this.level
-				let tower = {
-					damage: towerData.damage[level-1],
-					level: level,
-					next: towerData.cost[level] || 'max'
-				}
-				// GLOBALS.reactUI.setState({tower})
 		},
 		out(){
 			let towerData = GLOBALS.towers.data(this.brush)
@@ -163,6 +150,7 @@ export const Tower = stampit()
 			if(!this.canUpgrade() || GLOBALS.cursor.towerActive){
 				return
 			}
+			
 			if(this.level < 3){
 				let cost = GLOBALS.towers.towers[this.brush].cost[this.level]
 				GLOBALS.signals.towerLeveled.dispatch(cost)

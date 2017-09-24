@@ -103,11 +103,9 @@ let Proccessors = stampit()
 		processCallBack (a, b){
 			let bullet, creep
 			if(a.weapon){
-				// console.log(1)
 				bullet = a
 				creeep = b
 			}else{
-				// console.log(2)
 				bullet = b
 				creep = a
 			}
@@ -139,7 +137,7 @@ let Proccessors = stampit()
 				splash.sprite.data.id = game.state.states.Game.counters.splashID++
 				// splash.alpha = 0
 				splash.sprite.damageValue = bullet.damage[bullet.level-1]
-				console.log(111,bullet.damage[bullet.level])
+
 				game.physics.arcade.enable(splash.sprite)
 				splash.sprite.body.syncBounds = true
 				GLOBALS.groups.board.addChild(splash.sprite)
@@ -165,7 +163,7 @@ let Proccessors = stampit()
 		},
 		collisionSplashToCreep (splash, creep){
 			let sID = splash.data.id
-			// console.log(splash.data.id, creep.data.id,splash.damageValue,creep.data.beenHitBy[sID] == true)
+
 			if(creep.data.beenHitBy[sID] == true){
 				// console.log('already been hit by', sID, 'no damage')
 			}else{
