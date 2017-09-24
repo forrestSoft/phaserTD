@@ -11,14 +11,9 @@ export const Cursor = stampit()
 	.methods({
 		buildAndBind_cursor (){
 			this.container = game.make.group()
-			this.group.add(this.container)
 			this.marker = game.make.graphics()
-			
-
 			this.container.add(this.marker)
-
-			//fix me !!!
-			// this.container.y = -16
+			this.group.add(this.container)
 
 			// game.input.pollRate = 2
 			this.dataState = {
@@ -58,18 +53,17 @@ export const Cursor = stampit()
 		},
 		smallRect(){
 			this.marker.clear()
-			this.marker.lineStyle(2, 0xffffff, 1);
-		    this.marker.alpha = 1
+			this.marker.lineStyle(2, 0xffffff, 1)
+			this.marker.alpha = 1
 			this.marker.drawRect(0,0,GLOBALS.tH,GLOBALS.tW)
 		},
 		largeRect(){
 			let size = GLOBALS.fancyBrushes[this.cursorState.currentBrush].size
 			
 			this.marker.clear()
-			this.marker.lineStyle(2, 0xffffff, 1);
-		    this.marker.alpha = 1
+			this.marker.lineStyle(2, 0xffffff, 1)
+			this.marker.alpha = 1
 			this.marker.drawRect(0,0,size[0]*GLOBALS.tH,size[1]*GLOBALS.tW)
-			this.cursorState.sprite.moveDown()
 		},
 		events(){
 			this.moveFunction = _.throttle(this.updateMarker.bind(this), 75)
@@ -101,14 +95,13 @@ export const Cursor = stampit()
 
 				this.oldPos = {x, y}
 				
-				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker, r)
-
 				if(this.cursorState.getCursorType() == 'fancy'){
 					this.largeRect()
 				}else{
 					this.smallRect()
 				}
 
+				let nextCursorPosition = this.cursorState.calculateCursorTile(x,y, this.marker, r)
 				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
 
 				this.cursorState.checkValidPlacement()
@@ -125,7 +118,7 @@ export const Cursor = stampit()
 		checkPath(x = this.oldPos.x ,y = this.oldPos.y){
 			let xP = x// - (GLOBALS.globalOffset.x)
 			let yP = y// - (GLOBALS.globalOffset.y)
-			console.log('path',xP, yP)
+
 			this.position = {x:0,y:0}
 			this.findFunction(null,null, this.PathCalculated, this,xP,yP, this.cursorState.rotationFactor)
 		},
@@ -214,12 +207,12 @@ export const CursorState = stampit()
 		getTile(x,y){
 			let size = this.getBrushSize()
 			let  {tH, tW, globalOffset, height, width} = GLOBALS
-			console.log('g',x,y)
+
 			//snap to grid
 			let xN = (Math.floor(x/ tH) * tH)// - globalOffset.x
 			let yN = (Math.floor(y/tW) * tW)// - globalOffset.y
 			let point = {xN, yN}
-			console.log('point',point)
+
 			let cutOffY1 = (tH)
 			let cutOffY = ((height + 1) * tH) - ((size[0]+1)*tH)
 			let cutOffX1 = (tW)
@@ -244,23 +237,20 @@ export const CursorState = stampit()
 				x: (xN/16) - 1,//(globalOffset.x / tW)
 				y: (yN/16) - 1//(globalOffset.y / tH)
 			}
-			console.log('nnn',xN,yN)
+
 			Object.assign(this.dataState,{
 				tile: tile,
 				pos: {x: xN, y: yN}
 			})
-			// console.log(this.dataState.tile, this.dataState.pos)
+
 			return {point, tile}
 		},
 		calculateCursorTile(x,y, marker){
 			this.getTile(x,y)
 			let s = this.dataState.pos
 			
-			// Object.assign(this, tiles)
 			marker.x = s.x
 			marker.y = s.y
-			// debugger
-			marker.alpha = 1
 			
 			this.checkValidPlacement()
 			this.getSprite()
@@ -320,14 +310,16 @@ export const CursorState = stampit()
 						break
 
 					case 'fancy':
-						this.sprite = game.make.sprite(x, y ,game.fancyBrushSprites[this.currentBrush].generateTexture(), this.group)
+						let texture = game.fancyBrushSprites[this.currentBrush].generateTexture()
+
+						this.sprite = game.make.sprite(0,0 ,texture, this.group)
 						this.sprite.boundsPadding = 0
 						// this.sprite.pivot.setTo(this.sprite.width * .5,this.sprite.height * .5)
 						this.sprite.anchor.setTo(.5,.5)
 						
-						this.translateSprite()
 						this.container.add(this.sprite)
-						this.sprite.alpha = 1
+						this.container.bringToTop(this.marker)
+						this.translateSprite()
 
 						this.lastBrushType = 'fancy'
 						game.currentFancyBrush = this.currentBrush
@@ -357,7 +349,7 @@ export const CursorState = stampit()
 			}
 		},
 		translateSprite(){
-			// console.log('tsp')
+			console.log('tsp')
 			Object.assign(this.sprite, {
 				x: this.dataState.pos.x + this.marker.height/2 , // + this.x //+ 33
 				y: this.dataState.pos.y + this.marker.width/2 //+ 33
@@ -365,6 +357,10 @@ export const CursorState = stampit()
 			
 		},
 		rotate(){
+			if(!this.sprite){
+				return
+			}
+
 			this.sprite.angle += 90
 			if(this.rotationFactor == 3){
 				this.rotationFactor = 0
