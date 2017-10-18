@@ -1,9 +1,14 @@
 import stampit from 'stampit'
 import Phaser from 'phaser'
+import tinycolor from 'tinycolor2'
+import nearestColor from 'nearest-color'
+import chroma from 'chroma-js'
 
 import { Points } from '../utils'
 
 import GLOBALS from '../config/globals'
+
+import { SpriteTinter } from '../engine/pixelTransform'
 
 export const Builder = stampit().methods({
 	create_object(object) {
@@ -38,14 +43,28 @@ export const CreepManager = Manager.compose(Builder)
 				return
 			}
 
-			let data = Object.assign(
-				{},
+			let percent
+			let texture
+			let name = GLOBALS.creeps[this.nextCreepType].properties.texture
+			
+			if(!game.cache.checkImageKey('sprites_'+name+this.bossPercent)){
+				texture = SpriteTinter(this.bossPercent, name)
+			}
+
+			let type = name
+			let level = 0
+			
+			let data = Object.assign({},
 				{
 					x: GLOBALS.entrance.columnPX + 8,
 					y: GLOBALS.entrance.rowPX
 				},
-				GLOBALS.creeps[this.nextCreepType]
+				GLOBALS.creeps[this.nextCreepType],
 			)
+
+			let props = Object.assign({}, GLOBALS.creeps[this.nextCreepType].getData(0))
+			props.texture = 'sprites_'+name+this.bossPercent
+			data.properties = props
 
 			let prefab = this.create_object(data, this.state)
 			this.creeps.add(prefab)
@@ -99,6 +118,12 @@ export const CreepManager = Manager.compose(Builder)
 			let i = Phaser.Math.between(this.difficultyMin, this.difficultyMax)
 			// console.log('next wave size:', i)
 			return i
+		},
+		bossNext(){
+			if(this.difficultyMin % GLOBALS.creeps[this.nextCreepType].bossInterval){
+				this.nextBossEnabled = true
+				this.bossPercent = 25
+			}
 		}
 	})
 	.init(function({ data, state, group }, { args, instance, stamp }) {
@@ -111,7 +136,9 @@ export const CreepManager = Manager.compose(Builder)
 			difficultyMin: 1,
 			difficultyMax: 3,
 			team: 0,
-			nextCreepType: 0
+			nextCreepType: 0,
+			nextBossEnabled: false,
+			bossPercent: 25
 		})
 		instance.buildCreeps()
 

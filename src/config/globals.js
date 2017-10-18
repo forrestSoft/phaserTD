@@ -31,7 +31,8 @@ var globals = {
 	creeps: {
 		pool: 10
 	},
-	towerFoundation: 35
+	towerFoundation: 35,
+	renderedTextures: {}
 }
 
 const tempGlobalsExit = {

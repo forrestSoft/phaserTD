@@ -3,8 +3,14 @@ import Prefab from './prefab'
 import GLOBALS from '../config/globals'
 
 export default class extends Prefab {
+	shadeColor2(color, percent) {
+		let f = parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+		return (0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+	}
 	constructor(game_state, name, position, properties) {
 		super(game_state, name, position, properties)
+		// this.createBitMap()
+		// this.createBitMap('female02_rouge_spritesheet', 'new')
 
 		this.data.id = game_state.counters.creepID++
 		this.data.beenHitBy = {}
@@ -13,7 +19,11 @@ export default class extends Prefab {
 		this.scale.setTo(0.666, 0.5)
 
 		this.walking_speed = +properties.walking_speed
+		this.level = properties.level || 0
+		// debugger
 
+		// this.tint = '0x' + this.shadeColor2('#ff0000', -1)
+		// this.createBitMap('female02_rouge_spritesheet', 'new')
 		this.game_state.game.physics.arcade.enable(this)
 
 		// change the size and position of the collision box
@@ -38,7 +48,79 @@ export default class extends Prefab {
 		this.fullLife = properties.health
 		this.value = properties.gold
 	}
+	postUpdate() {
+		// console.log(3,this.position,this.body.position)
 
+        if (this.customRender)
+        {
+            this.key.render();
+        }
+
+        if (this.components.PhysicsBody)
+        {
+            Phaser.Component.PhysicsBody.postUpdate.call(this);
+        }
+        // console.log(4,this.position, this.body.position)
+        if(!window.ii){
+        	window.ii = 1
+        	window.iii = 2
+        }
+        window.ii += 1
+        if(window.ii >= window.iii){
+        	// debugger
+        }
+		// this.y = this.body.y
+        if (this.components.FixedToCamera)
+        {
+            Phaser.Component.FixedToCamera.postUpdate.call(this);
+        }
+
+        for (var i = 0; i < this.children.length; i++)
+        {
+            this.children[i].postUpdate();
+        }
+        // console.log(5,this.x,this.y, this.body.x, this.body.y)
+    }
+
+	preUpdate() {
+		// console.log(1,this.x,this.y)
+	    if (this.pendingDestroy)
+	    {
+	        this.destroy();
+	        return;
+	    }
+
+	    this.previousPosition.set(this.world.x, this.world.y);
+	    this.previousRotation = this.rotation;
+
+	    if (!this.exists || !this.parent.exists)
+	    {
+	        this.renderOrderID = -1;
+	        return false;
+	    }
+
+	    this.world.setTo(this.game.camera.x + this.worldTransform.tx, this.game.camera.y + this.worldTransform.ty);
+
+	    if (this.visible)
+	    {
+	        this.renderOrderID = this.game.stage.currentRenderOrderID++;
+	    }
+
+	    if (this.animations)
+	    {
+	        this.animations.update();
+	    }
+
+	    if (this.body)
+	    {
+	        this.body.preUpdate();
+	    }
+
+	    this.preUpdateChildren();
+	    // console.log(2,this.x,this.y)
+	    return true;
+
+	}
 	hit(damage = 1) {
 		this.life -= damage
 		// console.log(`hit for ${damage}, life left ${this.life}`, this.data.id)
@@ -56,6 +138,8 @@ export default class extends Prefab {
 	}
 
 	update() {
+		// console.log(this.x,this.y)
+		// debugger
 		if (!GLOBALS.stars.get('creep').hasPath) {
 			return
 		}
@@ -74,10 +158,9 @@ export default class extends Prefab {
 
 			if (!this.reached_target_position(next_position)) {
 				velocity = new Phaser.Point(next_position.x - this.position.x, next_position.y - this.position.y)
-
 				velocity.normalize()
 				this.velocity = velocity
-
+				// debugger
 				let s, n
 				n = Math.atan2(-velocity.y, -velocity.x)
 				if (n < -3 || n > 3) {
@@ -105,11 +188,11 @@ export default class extends Prefab {
 				}
 			}
 		}
+		// console.log('--', this.x,this.y)
 	}
 
 	reached_target_position(target_position) {
-		let distance
-		distance = Phaser.Point.distance(this.position, target_position)
+		let distance = Phaser.Point.distance(this.position, target_position)
 		return distance < 1
 	}
 

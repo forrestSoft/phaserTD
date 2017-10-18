@@ -25,9 +25,12 @@ import { DebugManager } from '../engine/phaserDebugger'
 
 import { App } from '../react/app.jsx'
 
+// import { SpriteTinter } from '../engine/pixelTransform'
 export default class extends base_level {
+
 	init() {
 		console.time('boot')
+		// let texture = SpriteTinter(25, 'male_fighter_spritesheet')
 
 		this.buildDynamicGlobals()
 		window.GLOBALS = window.G = GLOBALS
