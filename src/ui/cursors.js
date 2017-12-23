@@ -10,10 +10,9 @@ import GLOBALS from '../config/globals'
 export const Cursor = stampit()
 	.methods({
 		buildAndBind_cursor() {
-			this.container = game.make.group()
 			this.marker = game.make.graphics()
-			this.container.add(this.marker)
-			this.group.add(this.container)
+			this.group.add(this.marker)
+			this.group.pivot.setTo(0,0)
 
 			// game.input.pollRate = 2
 			this.dataState = {
@@ -35,7 +34,6 @@ export const Cursor = stampit()
 			}
 			this.cursorState = CursorState.compose(Brush)({
 				tileMap: this.p.map,
-				container: this.container,
 				group: this.group,
 				marker: this.marker,
 				rotationHappened: this.rotationHappened,
@@ -48,8 +46,14 @@ export const Cursor = stampit()
 			GLOBALS.signals.rotate.add(this.rotateHook, this)
 		},
 		rotateHook() {
-			this.cursorState.rotate()
+			this.group.angle += 90
+			if (this.rotationFactor == 3) {
+				this.rotationFactor = 0
+			} else {
+				this.rotationFactor++
+			}
 			this.updateMarker()
+			this.rotationHappened.dispatch()
 		},
 		smallRect() {
 			this.marker.clear()
@@ -64,6 +68,7 @@ export const Cursor = stampit()
 			this.marker.lineStyle(2, 0xffffff, 1)
 			this.marker.alpha = 1
 			this.marker.drawRect(0, 0, size[0] * GLOBALS.tH, size[1] * GLOBALS.tW)
+			this.marker.position.setTo(-3*8, -3*8)
 		},
 		events() {
 			this.moveFunction = _.throttle(this.updateMarker.bind(this), 75)
@@ -87,6 +92,7 @@ export const Cursor = stampit()
 			let x, y
 
 			if (game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())) {
+
 				let offset = ({ x, y } = game.inputMasks.board.getBounds())
 				x = game.input.activePointer.worldX - offset.x
 				y = game.input.activePointer.worldY - offset.y
@@ -103,7 +109,7 @@ export const Cursor = stampit()
 					this.smallRect()
 				}
 
-				let nextCursorPosition = this.cursorState.calculateCursorTile(x, y, this.marker, r)
+				let nextCursorPosition = this.cursorState.calculateCursorTile(x, y, this.group, r)
 				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
 
 				this.cursorState.checkValidPlacement()
@@ -121,7 +127,7 @@ export const Cursor = stampit()
 			let yP = y // - (GLOBALS.globalOffset.y)
 
 			this.position = { x: 0, y: 0 }
-			this.findFunction(null, null, this.PathCalculated, this, xP, yP, this.cursorState.rotationFactor)
+			this.findFunction(null, null, this.PathCalculated, this, xP, yP, this.rotationFactor)
 		},
 		_ff() {
 			this.findFunction = _.debounce(
@@ -140,7 +146,8 @@ export const Cursor = stampit()
 		Object.assign(instance, {
 			p,
 			group,
-			oldPos: [-1, -1]
+			oldPos: [-1, -1],
+			rotationFactor: 0
 		})
 
 		this._ff()
@@ -219,25 +226,29 @@ export const CursorState = stampit()
 			let point = { xN, yN }
 
 			let cutOffY1 = tH
-			let cutOffY = (height + 1) * tH - (size[0] + 1) * tH
+			let cutOffY = (height ) * tH - (size[0] + 1) * tH
 			let cutOffX1 = tW
-			let cutOffX = (width + 1) * tW - (size[1] + 1) * tW
-
+			let cutOffX = (width ) * tW - (size[1] + 1) * tW
+			
 			// use the above x/y, unless
 			// - over the last/first row/col
 			// then snap
 			if (xN >= cutOffX) {
-				xN = width * tH - (size[0] + 1) * tH
+				xN = width * tH - (size[0] + 1 ) * tH
 			} else if (xN <= globalOffset.x) {
+				console.log(xN,yN)
 				xN = tH + globalOffset.x
 			}
 
 			if (cutOffY <= yN) {
-				yN = height * tW - (size[1] + 1) * tW
+				yN = height * tW - (size[1] + 1 ) * tW
 			} else if (yN <= globalOffset.y) {
 				yN = tW
 			}
 
+			// account for drift
+			// xN = xN + 8
+			// yN = yN + 8
 			let tile = {
 				x: xN / 16 - 1, //(globalOffset.x / tW)
 				y: yN / 16 - 1 //(globalOffset.y / tH)
@@ -254,8 +265,8 @@ export const CursorState = stampit()
 			this.getTile(x, y)
 			let s = this.dataState.pos
 
-			marker.x = s.x
-			marker.y = s.y
+			marker.x = s.x + 24
+			marker.y = s.y + 24
 
 			this.checkValidPlacement()
 			this.getSprite()
@@ -310,21 +321,26 @@ export const CursorState = stampit()
 							angle: tower.displayAngle,
 							doesRange: true
 						})
-						this.container.add(this.sprite)
+						this.group.add(this.sprite)
 
 						GLOBALS.cursor.towerActive = true
 						break
 
 					case 'fancy':
+						let size = GLOBALS.fancyBrushes[this.currentBrush].size
 						let texture = game.fancyBrushSprites[this.currentBrush].generateTexture()
 
 						this.sprite = game.make.sprite(0, 0, texture, this.group)
 						this.sprite.boundsPadding = 0
 						// this.sprite.pivot.setTo(this.sprite.width * .5,this.sprite.height * .5)
-						this.sprite.anchor.setTo(0.5, 0.5)
+						let aH = window.aH || .5
+						let aW = window.aW || .5
+						// debugger
 
-						this.container.add(this.sprite)
-						this.container.bringToTop(this.marker)
+						this.sprite.anchor.setTo(aH, aW)
+
+						this.group.add(this.sprite)
+						this.group.bringToTop(this.marker)
 						this.translateSprite()
 
 						this.lastBrushType = 'fancy'
@@ -356,26 +372,28 @@ export const CursorState = stampit()
 		},
 		translateSprite() {
 			console.log('tsp')
+			return
 			Object.assign(this.sprite, {
 				x: this.dataState.pos.x + this.marker.height / 2, // + this.x //+ 33
 				y: this.dataState.pos.y + this.marker.width / 2 //+ 33
 			})
 		},
-		rotate() {
-			if (!this.sprite) {
-				return
-			}
+		// rotate() {
+		// 	debugger
+		// 	if (!this.sprite) {
+		// 		return
+		// 	}
 
-			this.sprite.angle += 90
-			if (this.rotationFactor == 3) {
-				this.rotationFactor = 0
-			} else {
-				this.rotationFactor++
-			}
+		// 	this.sprite.angle += 90
+		// 	if (this.rotationFactor == 3) {
+		// 		this.rotationFactor = 0
+		// 	} else {
+		// 		this.rotationFactor++
+		// 	}
 
-			this.checkValidPlacement()
-			this.rotationHappened.dispatch()
-		},
+		// 	this.checkValidPlacement()
+		// 	this.rotationHappened.dispatch()
+		// },
 		getBrushSize() {
 			if (this.brushType === 'fancy') {
 				return GLOBALS.fancyBrushes[this.currentBrush].size
@@ -422,9 +440,8 @@ export const CursorState = stampit()
 			GLOBALS.cursor.towerActive = false
 		}
 	})
-	.init(function({ tileMap, container, marker, group, rotationHappened, dataState }, { args, instance, stamp }) {
+	.init(function({ tileMap, marker, group, rotationHappened, dataState }, { args, instance, stamp }) {
 		Object.assign(instance, {
-			container: container,
 			modes: ['basic', 'fancy', 'tower', null],
 			previous: { x: 0, y: 0 },
 			brushType: null,
@@ -441,6 +458,10 @@ export const CursorState = stampit()
 			rotationHappened,
 			dataState
 		})
+
+		this.rotationHappened.add( () => {
+			this.checkValidPlacement()
+		}, this)
 	})
 
 export const Brush = stampit().methods({
