@@ -10,7 +10,7 @@ import Packer from '../ext/packer'
 export const Palette = stampit()
 	.methods({
 		build() {
-			let group = game.add.group()
+			let group = game.add.group(undefined, 'palette')
 			let brushes = this.brushes
 			// let brushes = [28,32,33,34, 46,24]
 			let tw, th, pW, l
@@ -47,7 +47,7 @@ export const Palette = stampit()
 			p.fit(GLOBALS.fancySortedSizes)
 
 			game.fancyBrushSprites = []
-			let brushGroup = game.add.group()
+			let brushGroup = game.add.group(undefined, 'palette')
 			brushGroup.scale.setTo(0.5, 0.5)
 			const th = GLOBALS.tH
 			const tw = GLOBALS.tW

@@ -46,7 +46,7 @@ export var Board = stampit()
 		},
 		buildKaboomManager() {
 			//  Explosion pool
-			let explosions = game.make.group()
+			let explosions = game.make.group(undefined, 'kabooms')
 
 			for (var i = 0; i < 10; i++) {
 				var explosionAnimation = explosions.create(0, 0, 'kaboom', [0], false)
