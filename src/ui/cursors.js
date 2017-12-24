@@ -60,6 +60,7 @@ export const Cursor = stampit()
 			this.marker.lineStyle(2, 0xffffff, 1)
 			this.marker.alpha = 1
 			this.marker.drawRect(0, 0, GLOBALS.tH, GLOBALS.tW)
+			this.marker.position.setTo(-GLOBALS.tH/2, -GLOBALS.tW/2)
 		},
 		largeRect() {
 			let size = GLOBALS.fancyBrushes[this.cursorState.currentBrush].size
@@ -67,8 +68,8 @@ export const Cursor = stampit()
 			this.marker.clear()
 			this.marker.lineStyle(2, 0xffffff, 1)
 			this.marker.alpha = 1
-			this.marker.drawRect(0, 0, size[0] * GLOBALS.tH, size[1] * GLOBALS.tW)
-			this.marker.position.setTo(-3*8, -3*8)
+			this.marker.drawRect(0, 0, size[0] * GLOBALS.tW, size[1] * GLOBALS.tH)
+			this.marker.position.setTo(-size[0]* GLOBALS.tW/2, -size[1]*GLOBALS.tH/2)
 		},
 		events() {
 			this.moveFunction = _.throttle(this.updateMarker.bind(this), 75)
@@ -264,9 +265,10 @@ export const CursorState = stampit()
 		calculateCursorTile(x, y, marker) {
 			this.getTile(x, y)
 			let s = this.dataState.pos
-
-			marker.x = s.x + 24
-			marker.y = s.y + 24
+			let size = this.getBrushSize()
+			// debugger
+			marker.x = s.x + (size[0]*8)
+			marker.y = s.y + (size[1]*8)
 
 			this.checkValidPlacement()
 			this.getSprite()
@@ -322,6 +324,7 @@ export const CursorState = stampit()
 							doesRange: true
 						})
 						this.group.add(this.sprite)
+						this.sprite.position.setTo(0,0)
 
 						GLOBALS.cursor.towerActive = true
 						break
