@@ -41,9 +41,18 @@ export const Cursor = stampit()
 			})
 
 			GLOBALS.signals.updateBrush.add(this.cursorState.setBrushType, this.cursorState)
+			GLOBALS.signals.updateBrush.add(this.resetRotation, this)
 			GLOBALS.signals.paintWithBrush.add(this.cursorState.paint, this.cursorState)
+			// GLOBALS.signals.paintWithBrush.add(this.resetRotation, this)
 			GLOBALS.signals.outOfGame.add(this.cursorState.hideCursor, this.cursorState)
 			GLOBALS.signals.rotate.add(this.rotateHook, this)
+		},
+
+		resetRotation() {
+			console.log('rrrrreeeerrrr')
+			this.rotationFactor = 0
+			this.cursorState.rotationFactor = 0
+			this.group.angle = 0
 		},
 		rotateHook() {
 			this.group.angle += 90
@@ -52,7 +61,9 @@ export const Cursor = stampit()
 			} else {
 				this.rotationFactor++
 			}
-			this.updateMarker()
+
+			this.cursorState.rotationFactor = this.rotationFactor
+			this.updateMarker(false)
 			this.rotationHappened.dispatch()
 		},
 		smallRect() {
@@ -84,19 +95,24 @@ export const Cursor = stampit()
 		withInSameSquare({ x, y }) {
 			let xN = Math.floor(x / 16)
 			let yN = Math.floor(y / 16)
-			let xO = Math.floor(this.oldPos.x / 16)
-			let yO = Math.floor(this.oldPos.y / 16)
+			let xO = Math.floor(this.oldPos.x / GLOBALS.tW)
+			let yO = Math.floor(this.oldPos.y / GLOBALS.tH)
 
 			return xN == xO && yN == yO
 		},
-		updateMarker(r) {
-			let x, y
+		updateMarker(unforce = true) {
+			// console.log(unforce)
+			// let x, y
 
 			if (game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())) {
+				
+				
 
-				let offset = ({ x, y } = game.inputMasks.board.getBounds())
-				x = game.input.activePointer.worldX - offset.x
-				y = game.input.activePointer.worldY - offset.y
+				// let offset = ({ x, y } = game.inputMasks.board.getBounds())
+				// let x = game.input.activePointer.worldX - offset.x
+				// let y = game.input.activePointer.worldY - offset.y
+				let x = game.input.activePointer.worldX
+				let y = game.input.activePointer.worldY - 16
 
 				if (this.withInSameSquare({ x, y })) {
 					return
@@ -110,15 +126,29 @@ export const Cursor = stampit()
 					this.smallRect()
 				}
 
-				let nextCursorPosition = this.cursorState.calculateCursorTile(x, y, this.group, r)
+				let nextCursorPosition = this.cursorState.calculateCursorTile(x, y, this.group, this.rotationFactor,unforce)
 				let validCursorType = ['fancy', 'simple'].includes(this.cursorState.getCursorType())
 
-				this.cursorState.checkValidPlacement()
 
-				if (validCursorType) {
-					let { x, y } = nextCursorPosition
-					this.checkPath(x, y)
+				if (!validCursorType) {
+					return
 				}
+
+				// let { x, y } = nextCursorPosition
+				this.checkPath(nextCursorPosition.x, nextCursorPosition.y)
+
+				// if(this.rotationFactor !== r || this.rotationFactor == undefined){
+				console.log('rrrrrr')
+				// this.rotationFactor = r
+				if(this.rotationFactor % 2 !== 0){
+					// this.group.x = this.group.x - 8
+					// this.group.y = this.group.y + 8
+					// marker.x = marker.x - 8
+				}else{
+					// this.group.y = this.group.y + 8
+					// this.group.x = this.group.x - 8
+				}
+			
 			} else if (this.marker) {
 				this.cursorState.setOutOfBounds(this.marker)
 			}
@@ -226,29 +256,30 @@ export const CursorState = stampit()
 			let yN = Math.floor(y / tW) * tW // - globalOffset.y
 			let point = { xN, yN }
 
-			let cutOffY1 = tH
-			let cutOffY = (height ) * tH - (size[0] + 1) * tH
 			let cutOffX1 = tW
-			let cutOffX = (width ) * tW - (size[1] + 1) * tW
+			let cutOffX = (width ) * tW - (size[0] + 1) * tW
+
+			let cutOffY1 = tH
+			let cutOffY = (height ) * tH - (size[1] + 1) * tH
 			
 			// use the above x/y, unless
 			// - over the last/first row/col
 			// then snap
 			if (xN >= cutOffX) {
-				xN = width * tH - (size[0] + 1 ) * tH
+				xN = width * tH - (size[1] + 1 ) * tH
 			} else if (xN <= globalOffset.x) {
 				console.log(xN,yN)
 				xN = tH + globalOffset.x
 			}
 
 			if (cutOffY <= yN) {
-				yN = height * tW - (size[1] + 1 ) * tW
+				yN = height * tW - (size[0] + 1 ) * tW
 			} else if (yN <= globalOffset.y) {
 				yN = tW
 			}
 
 			// account for drift
-			// xN = xN + 8
+			// xN = xN - 8
 			// yN = yN + 8
 			let tile = {
 				x: xN / 16 - 1, //(globalOffset.x / tW)
@@ -262,7 +293,8 @@ export const CursorState = stampit()
 
 			return { point, tile }
 		},
-		calculateCursorTile(x, y, marker) {
+		calculateCursorTile(x, y, marker, r, force) {
+			this.rotationFactor = r
 			this.getTile(x, y)
 			let s = this.dataState.pos
 			let size = this.getBrushSize()
@@ -374,29 +406,26 @@ export const CursorState = stampit()
 			}
 		},
 		translateSprite() {
-			console.log('tsp')
+			console.log('tsp', this.rotationFactor)
+			return
+			let nX, nY
+			if(this.rotationFactor % 2 !== 0){				
+				nX = this.dataState.pos.x + 8
+				nY = this.dataState.pos.x - 8
+			}else{
+				nX = this.dataState.pos.x - 8
+				nY = this.dataState.pos.x + 8
+			}
+			Object.assign(this.sprite, {
+				x: nX,
+				y: nY
+			})
 			return
 			Object.assign(this.sprite, {
 				x: this.dataState.pos.x + this.marker.height / 2, // + this.x //+ 33
 				y: this.dataState.pos.y + this.marker.width / 2 //+ 33
 			})
 		},
-		// rotate() {
-		// 	debugger
-		// 	if (!this.sprite) {
-		// 		return
-		// 	}
-
-		// 	this.sprite.angle += 90
-		// 	if (this.rotationFactor == 3) {
-		// 		this.rotationFactor = 0
-		// 	} else {
-		// 		this.rotationFactor++
-		// 	}
-
-		// 	this.checkValidPlacement()
-		// 	this.rotationHappened.dispatch()
-		// },
 		getBrushSize() {
 			if (this.brushType === 'fancy') {
 				return GLOBALS.fancyBrushes[this.currentBrush].size
@@ -406,8 +435,8 @@ export const CursorState = stampit()
 		},
 		checkValidPlacement() {
 			let s = this.dataState
-			let tileC = this.tileMap.getTile(s.tile.x + 1, s.tile.y + 1, 'collision', true).index
-			let tileT = this.tileMap.getTile(s.tile.y, s.tile.y, 'towers', true).index
+			let tileC = this.tileMap.getTile(Math.floor(s.tile.x + 1), Math.floor(s.tile.y + 1), 'collision', true).index
+			let tileT = this.tileMap.getTile(Math.floor(s.tile.y), Math.floor(s.tile.y), 'towers', true).index
 			let isTower = this.brushType == 'tower'
 			let isTowerFoundation = GLOBALS.towerFoundation == tileC
 			let isTileAcceptable = !GLOBALS.unacceptableTiles.includes(tileC - 1)
@@ -459,7 +488,8 @@ export const CursorState = stampit()
 			marker: marker,
 			group,
 			rotationHappened,
-			dataState
+			dataState,
+			rotationFactor: 0
 		})
 
 		this.rotationHappened.add( () => {
