@@ -9,7 +9,8 @@ var creeps = [
 			gold: [2, 5, 9],
 			health: [50, 120, 200],
 			bossInterval: 5,
-			miniBossInterval: 2
+			miniBossInterval: 2,
+			hue: 300
 		},
 		type: 'player',
 		visible: true
@@ -24,7 +25,8 @@ var creeps = [
 			gold: [1,2,3],
 			health: [14, 30, 42],
 			bossInterval: 5,
-			miniBossInterval: 2
+			miniBossInterval: 2,
+			hue: 1
 		},
 		type: 'player',
 		visible: true
@@ -39,7 +41,8 @@ var creeps = [
 			gold: [3,7,11],
 			health: [96, 156, 212],
 			bossInterval: 5,
-			miniBossInterval: 2
+			miniBossInterval: 2,
+			hue: 156
 		},
 		type: 'player',
 		visible: true

@@ -1,16 +1,13 @@
-
 import tinycolor from 'tinycolor2'
 import nearestColor from 'nearest-color'
 import chroma from 'chroma-js'
 
-export const SpriteTinter = function(percent = 0, name){
+export const SpriteTinter = function(percent = 0, name, hue=225){
 	if(!GLOBALS.rgbToTinycolor){
 		GLOBALS.rgbToTinycolor = []
 		GLOBALS.rgbToClamped = []
 		GLOBALS.rgbToRGB = []
 	}
-
-	let clampedColors = nearestColor.from(nearestColor.STANDARD_COLORS)
 
 	let cacheSpriteSheet = game.cache.getImage(name, true)
 	let c = cacheSpriteSheet
@@ -28,26 +25,12 @@ export const SpriteTinter = function(percent = 0, name){
 		}
 
 		let color = GLOBALS.rgbToTinycolor[pixel.color]
+		let hsl = color.toHsl()
+		color = tinycolor({h:hue, s:hsl.s + percent/100, l:hsl.l, a:255})
+		let rgb =  color.toRgb()
+		rgb.a = 255
 
-		let clampedColor
-		if(!GLOBALS.rgbToClamped[color]){
-			clampedColor = clampedColors('#'+color.toHex())
-			GLOBALS.rgbToClamped[color] = clampedColor
-		}else{
-			clampedColor = GLOBALS.rgbToClamped[color]
-		}
-
-		if(clampedColor.value !== '#000'){
-			if(!GLOBALS.rgbToRGB[color.toHex()]){
-				GLOBALS.rgbToRGB[color.toHex()] = chroma.mix(color.toHex(), '#ff0000', .5)
-			}
-
-			// let shifted = chroma(color.toHex()).brighten(.4)
-			let shifted = GLOBALS.rgbToRGB[color.toHex()]
-			let s = shifted.rgba()
-			return {r:s[0], g:s[1], b: s[2], a:255}
-		}
-		return pixel
+		return rgb
 	})
 
 	game.cache.addSpriteSheet('sprites_'+name+percent, null, dupe.canvas, c.frameWidth, c.frameHeight, -1)

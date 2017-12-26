@@ -132,6 +132,8 @@ let Proccessors = stampit().methods({
 			splash.x = bullet.centerX
 			splash.y = bullet.centerY
 
+			splash.sprite.alpha = 0
+
 			//this is a dumb way to access this
 			splash.sprite.data.id = game.state.states.Game.counters.splashID++
 			// splash.alpha = 0

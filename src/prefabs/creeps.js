@@ -43,12 +43,15 @@ export const CreepManager = Manager.compose(Builder)
 				return
 			}
 
-			let percent
+			let percent = num % 4 == 0 ? 0 : this.bossPercent*10
 			let texture
 			let name = GLOBALS.creeps[this.nextCreepType].properties.texture
-			
-			if(!game.cache.checkImageKey('sprites_'+name+this.bossPercent)){
-				texture = SpriteTinter(this.bossPercent, name)
+
+			if(!game.cache.checkImageKey('sprites_'+name+percent)){
+				console.log('texture not found, building')
+				texture = SpriteTinter(percent, name, GLOBALS.creeps[this.nextCreepType].properties.hue )
+			}else{
+				texture = game.cache.getImage('sprites_'+name+percent)
 			}
 
 			let type = name
@@ -63,9 +66,9 @@ export const CreepManager = Manager.compose(Builder)
 			)
 
 			let props = Object.assign({}, GLOBALS.creeps[this.nextCreepType].getData(0))
-			props.texture = 'sprites_'+name+this.bossPercent
+			props.texture = 'sprites_'+name+percent
 			data.properties = props
-
+			// debugger
 			let prefab = this.create_object(data, this.state)
 			this.creeps.add(prefab)
 			this.creeps.sendToBack(prefab)
@@ -138,7 +141,7 @@ export const CreepManager = Manager.compose(Builder)
 			team: 0,
 			nextCreepType: 0,
 			nextBossEnabled: false,
-			bossPercent: 25
+			bossPercent: 0
 		})
 		instance.buildCreeps()
 
