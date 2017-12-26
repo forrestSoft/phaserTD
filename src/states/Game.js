@@ -281,6 +281,7 @@ export default class extends base_level {
 
 				if (GLOBALS.player.life <= 0) {
 					console.warn('you are dead')
+					debugger
 				}
 			},
 			loseGold(cost = 5) {

@@ -40,13 +40,13 @@ export default class extends Prefab {
 		this.animations.add('walkSouth', [6, 7, 8], 10, true)
 		this.animations.add('walkWest', [9, 10, 11], 10, true)
 
-		this.buildHealthBar()
-
 		GLOBALS.signals.creepPathReset.add(this.reset, this)
 
 		this.life = properties.health
 		this.fullLife = properties.health
 		this.value = properties.gold
+
+		this.buildHealthBar()
 	}
 	postUpdate() {
 		// console.log(3,this.position,this.body.position)
@@ -225,6 +225,7 @@ export default class extends Prefab {
 
 	updateHealthMeter() {
 		this.healthMeter.width = 8 * ((this.fullLife - this.life) / this.fullLife)
+		this.text.setText(this.life)
 	}
 
 	buildHealthBar() {
@@ -242,5 +243,16 @@ export default class extends Prefab {
 
 		this.healthBar.x = -5
 		this.healthBar.y = -17
+		var style = {
+			font: '12px Arial',
+			fontWeight: 'bold',
+			align: 'center',
+			fill: `#ffffff`
+		}
+		let textValue = this.life
+		this.text = game.make.text(0,0, textValue, style)
+		this.text.anchor.set(0.5)
+		this.text.scale.setTo(1,1)
+		this.addChild(this.text)
 	}
 }

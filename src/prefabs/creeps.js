@@ -43,7 +43,7 @@ export const CreepManager = Manager.compose(Builder)
 				return
 			}
 
-			let percent = num % 4 == 0 ? 0 : this.bossPercent*10
+			let percent = this.wave % 4 == 0 ? 0 : this.bossPercent
 			let texture
 			let name = GLOBALS.creeps[this.nextCreepType].properties.texture
 
@@ -56,20 +56,23 @@ export const CreepManager = Manager.compose(Builder)
 
 			let type = name
 			let level = 0
-			
+			let health = GLOBALS.creeps[this.nextCreepType].getData(0).health
+			let props = Object.assign({}, GLOBALS.creeps[this.nextCreepType].getData(0),
+									  { texture: 'sprites_'+name+percent },
+									  { health: health + (health*percent/100)})
+
 			let data = Object.assign({},
 				{
 					x: GLOBALS.entrance.columnPX + 8,
 					y: GLOBALS.entrance.rowPX
 				},
 				GLOBALS.creeps[this.nextCreepType],
+				{properties: props}
+
 			)
 
-			let props = Object.assign({}, GLOBALS.creeps[this.nextCreepType].getData(0))
-			props.texture = 'sprites_'+name+percent
-			data.properties = props
-			// debugger
 			let prefab = this.create_object(data, this.state)
+
 			this.creeps.add(prefab)
 			this.creeps.sendToBack(prefab)
 
@@ -87,17 +90,19 @@ export const CreepManager = Manager.compose(Builder)
 			// console.group('wave')
 
 			this.team++
+			GLOBALS.reactUI.setState({ wave: this.team })
 			GLOBALS.player.wave = this.team
-			// console.log('Team:', this.team)
+
 			this.checkDifficulty()
 			this.setNextCreepType()
 
-			this.buildCreep(1)
+			this.buildCreep(this.nextWaveSize(this.nextCreepType))
 			// console.groupEnd('wave')
 		},
 		checkDifficulty() {
 			if (this.team % 8 == 0) {
 				this.difficultyMin += Phaser.Math.between(1, 2)
+				this.bossPercent += 10
 			}
 
 			if (this.team % 12 == 0) {
@@ -117,16 +122,17 @@ export const CreepManager = Manager.compose(Builder)
 			// console.log('next creep interval:', i)
 			return i
 		},
-		nextWaveSize() {
+		nextWaveSize(c) {
+			console.log(c)
 			let i = Phaser.Math.between(this.difficultyMin, this.difficultyMax)
 			// console.log('next wave size:', i)
 			return i
 		},
 		bossNext(){
-			if(this.difficultyMin % GLOBALS.creeps[this.nextCreepType].bossInterval){
+			// if(this.difficultyMin % GLOBALS.creeps[this.nextCreepType].bossInterval){
 				this.nextBossEnabled = true
-				this.bossPercent = 25
-			}
+				this.bossPercent += 10
+			// }
 		}
 	})
 	.init(function({ data, state, group }, { args, instance, stamp }) {

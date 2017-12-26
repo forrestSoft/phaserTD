@@ -26,7 +26,7 @@ export const SpriteTinter = function(percent = 0, name, hue=225){
 
 		let color = GLOBALS.rgbToTinycolor[pixel.color]
 		let hsl = color.toHsl()
-		color = tinycolor({h:hue, s:hsl.s + percent/100, l:hsl.l, a:255})
+		color = tinycolor({h:hue, s:25+percent, l:hsl.l, a:255})
 		let rgb =  color.toRgb()
 		rgb.a = 255
 
