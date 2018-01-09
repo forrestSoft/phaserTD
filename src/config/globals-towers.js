@@ -9,7 +9,7 @@ var towers = {
 			firingInterval: 1750,
 			rangeRadius: 40,
 			bulletSpeed: 150,
-			damage: [13.5, 28, 45],
+			damage: [13, 28, 45],
 			cost: [10, 10, 17]
 		},
 		36: {
@@ -21,7 +21,7 @@ var towers = {
 			firingInterval: 1500,
 			rangeRadius: 75,
 			bulletSpeed: 350,
-			damage: [19, 35, 55],
+			damage: [19, 50, 102],
 			cost: [25, 20, 50]
 		},
 		26: {

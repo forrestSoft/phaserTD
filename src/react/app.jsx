@@ -76,6 +76,7 @@ class StatsContainer extends React.Component {
 				<Cell text={'life'} value={stats.life} />
 				<Cell text={'gold'} value={stats.gold} />
 				<Cell text={'score'} value={stats.score} />
+				<Cell text={'wave'} value={stats.wave} />
 				<Cell text={'tile lock'} value={stats.tileLock} />
 				<Cell text={'FPS'} value={stats.FPS} />
 			</tbody>

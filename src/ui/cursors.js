@@ -47,9 +47,7 @@ export const Cursor = stampit()
 			GLOBALS.signals.outOfGame.add(this.cursorState.hideCursor, this.cursorState)
 			GLOBALS.signals.rotate.add(this.rotateHook, this)
 		},
-
 		resetRotation() {
-			console.log('rrrrreeeerrrr')
 			this.rotationFactor = 0
 			this.cursorState.rotationFactor = 0
 			this.group.angle = 0
@@ -101,13 +99,7 @@ export const Cursor = stampit()
 			return xN == xO && yN == yO
 		},
 		updateMarker(unforce = true) {
-			// console.log(unforce)
-			// let x, y
-
 			if (game.input.hitTest(game.inputMasks.board, game.input.activePointer, new Phaser.Point())) {
-				
-				
-
 				// let offset = ({ x, y } = game.inputMasks.board.getBounds())
 				// let x = game.input.activePointer.worldX - offset.x
 				// let y = game.input.activePointer.worldY - offset.y
@@ -305,7 +297,7 @@ export const CursorState = stampit()
 			this.checkValidPlacement()
 			this.getSprite()
 			this.setSpriteTint()
-
+			console.log({ x: s.x, y: s.y }, this.getBrushSize())
 			return { x: s.x, y: s.y }
 		},
 		getSprite() {
@@ -339,6 +331,7 @@ export const CursorState = stampit()
 
 				switch (this.brushType) {
 					case 'tower':
+					console.log('tower')
 						this.lastBrushType = 'tower'
 						let tower = GLOBALS.towers.towers[this.currentBrush]
 
